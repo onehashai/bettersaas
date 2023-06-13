@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include bettersaas *.css
+recursive-include bettersaas *.csv
+recursive-include bettersaas *.html
+recursive-include bettersaas *.ico
+recursive-include bettersaas *.js
+recursive-include bettersaas *.json
+recursive-include bettersaas *.md
+recursive-include bettersaas *.png
+recursive-include bettersaas *.py
+recursive-include bettersaas *.svg
+recursive-include bettersaas *.txt
+recursive-exclude bettersaas *.pyc
