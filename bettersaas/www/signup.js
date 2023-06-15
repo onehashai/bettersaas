@@ -5,7 +5,7 @@ domain = "";
 if (window.dev_server) {
   domain = ".localhost:8000";
 } else {
-  domain = ".onehash.io";
+  domain = ".onehash.store";
 }
 createApp({
   data() {
