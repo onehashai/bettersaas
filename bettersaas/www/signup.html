@@ -1,0 +1,222 @@
+{% extends "bettersaas/templates/web.html" %} {% block style %}
+
+<!-- no-header -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/lightweight-simple-grid@0.0.1/simplegrid.min.css"
+/>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Carter+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;1,100;1,200;1,300;1,400;1,500;1,600&family=Righteous&family=Titan+One&display=swap"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+/>
+<link rel="stylesheet" href="./step.css" />
+<link rel="stylesheet" href="./signup.css" />
+{% endblock %} {% block page_content %}
+<div>
+  <main id="main">
+    <div class="left">
+      <div class="login_box drop-shadow">
+        <div class="logo">
+          <img
+            src="https://uploads-ssl.webflow.com/5e53d34464688e6f5960a338/610a36c2792530d601aaf35f_OneHash_Logo.svg"
+            class="logo-img"
+            aria-hidden="true"
+          />
+          <div class="tagline">
+            <div class="tagline_main">Free 14 day trial</div>
+            <div class="tagline_sub">No credit card required</div>
+          </div>
+        </div>
+        <form
+          @submit="onSubmit"
+          id="form"
+          autocomplete="off"
+          novalidate="novalidate"
+        >
+          <div class="row">
+            <div class="col-6">
+              <input
+                class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                id="first-name"
+                type="text"
+                v-model="fname"
+                placeholder="First name"
+              />
+            </div>
+            <div class="col-6">
+              <input
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                id="last-name"
+                type="text"
+                v-model="lname"
+                placeholder="Last name"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 relative">
+              <input
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border border-red-500 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                id="site-name"
+                type="text"
+                placeholder="Site name"
+                v-on:input="checkSubdomain"
+                v-model="sitename"
+              />
+              <div class="span site-name-right">.onehash.io</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 relative">
+              <input
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border border-red-500 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                id="company-name"
+                type="text"
+                v-model="company_name"
+                placeholder="Company name"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <input
+                class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                id="email"
+                type="text"
+                v-model="email"
+                placeholder="email"
+              />
+            </div>
+            <div class="col-6">
+              <input
+                class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                id="password"
+                type="password"
+                @input="passWordCheckCallPromise"
+                v-model="password"
+                placeholder="password"
+              />
+              <!-- <div class="feedback drop-shadow-sm">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe,
+                voluptatem e
+              </div> -->
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6 relative">
+              <input
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border border-red-500 py-3 px- leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                id="phone"
+                type="phone"
+                v-model="phone"
+                placeholder="Phone number"
+              />
+            </div>
+            <div class="col-6">
+              <input
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border border-red-500 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                id="otp"
+                type="text"
+                placeholder="OTP"
+              />
+              <span class="text-md italic feedback" id="otp-feedback"
+                >Get OTP</span
+              >
+            </div>
+          </div>
+          <div class="mt-2">
+            <input v-model="terms" type="checkbox" name="terms" id="terms" />
+            Accept Terms and conditions
+          </div>
+          <button
+            type="submit"
+            class="submit_btn w-100 drop-shadow-md mt-3"
+            style="display: flex; justify-content: center; align-items: center"
+          >
+            <svg
+              v-if="loading"
+              aria-hidden="true"
+              class="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-blue-800 fill-white"
+              viewBox="0 0 100 101"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                fill="currentColor"
+              />
+              <path
+                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                fill="currentFill"
+              />
+            </svg>
+            <span v-else>Submit</span>
+          </button>
+        </form>
+        <ol class="steps">
+          <li
+            class="step"
+            data-step="1"
+            id="step1"
+            :class="{'is-complete':status.step1 == 'completed','is-active':status.step1 == 'active'}"
+          >
+            Creating site
+          </li>
+          <li
+            class="step"
+            data-step="2"
+            id="step2"
+            :class="{'is-complete':status.step2 == 'completed','is-active':status.step2 == 'active'}"
+          >
+            Creating user
+          </li>
+          <li
+            class="step"
+            data-step="3"
+            id="step3"
+            :class="{'is-complete':status.step3 == 'completed','is-active':status.step3 == 'active'}"
+          >
+            Redirecting
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="right">
+      <div class="ad">
+        <div class="ad-title mb-3">
+          <div>Get started with the</div>
+          <div class="text-black">Most powerfull all in one software</div>
+        </div>
+        <img src="/assets/bettersaas/hero.svg" alt="" />
+        <img src="/assets/bettersaas/hero3.svg" alt="" class="mt-4" />
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %} {% block script %}
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+  integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+  integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="./signup.js"></script>
+
+{% endblock %}

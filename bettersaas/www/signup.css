@@ -1,0 +1,148 @@
+.navbar,
+.web-footer {
+  display: none;
+}
+input ::placeholder {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+input:-ms-input-placeholder {
+  color: rgba(0, 0, 0, 0.65);
+}
+input {
+  border-radius: 20px !important;
+  width: 100%;
+  margin: 0 !important;
+  margin-bottom: 0 !important;
+  border-width: 1px;
+}
+main {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+}
+.left,
+.right {
+  height: 100%;
+}
+.left {
+  width: 45vw;
+}
+.right {
+  width: 60vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login_box {
+  padding: 30px;
+  background-color: white;
+  height: 100%;
+}
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.tagline {
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+}
+.tagline_main {
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 37.5px;
+}
+.tagline_sub {
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+}
+.logo-img {
+  height: 50px;
+}
+form {
+  margin-top: 30px;
+}
+.feedback {
+  position: absolute;
+}
+.feedback,
+.just-validate-error-label {
+  display: block;
+  padding-left: 14px;
+  font-size: 13px;
+}
+body {
+  font-family: "Poppins", sans-serif;
+}
+.site-name-right {
+  position: absolute;
+  top: 20%;
+  right: 50px;
+  color: #007ee5;
+}
+
+.right-attach {
+  position: absolute;
+  top: 0;
+  display: block;
+  right: 20px;
+  width: 30%;
+  padding: 13px;
+  background-color: rgba(0, 126, 229, 0.8) !important;
+  color: white !important;
+  text-transform: uppercase;
+}
+
+.submit_btn {
+  background-color: rgba(0, 126, 229, 0.8) !important;
+  color: white !important;
+  border-radius: 20px;
+  padding: 10px 15px;
+}
+.right-attach:hover {
+  background-color: rgba(0, 126, 229, 1) !important;
+}
+.submit_btn:hover {
+  background-color: rgba(0, 126, 229, 1) !important;
+}
+main {
+  background: #f3f3f3;
+}
+.ad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ad-title {
+  font-weight: 500;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+[class*="col-"] {
+  padding: 5px;
+  height: 4rem;
+}
+.error-feedback {
+  color: rgb(184, 17, 17);
+}
+.success-feedback {
+  color: rgb(111, 195, 111);
+}
+.long-feedback {
+  z-index: 100;
+  background: white;
+  color: orange;
+  border: 1px solid orange;
+  border-radius: 10px;
+  margin-top: 3px;
+  font-size: 10px;
+  padding: 2px;
+}
+.iti {
+  width: 100% !important;
+}
