@@ -36,6 +36,15 @@ def check_subdomain():
     restricted_subdomains = frappe.get_doc("SaaS settings").restricted_subdomains.split(
         ","
     )
+    site = frappe.get_all(
+        "SaaS sites",
+        filters={
+            "site_name": frappe.form_dict.get("subdomain") + "." + frappe.conf.domain
+        },
+    )
+    print(site)
+    if len(site) > 0:
+        return {"status": "failed"}
     subdomain = frappe.form_dict.get("subdomain")
     if subdomain in restricted_subdomains:
         return {"status": "failed"}

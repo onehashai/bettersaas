@@ -40,16 +40,6 @@ createApp({
     console.log("created");
   },
   async mounted() {
-    if (true) {
-      this.fname = "test";
-      this.lname = "test";
-      this.email = Math.random().toString(36).substring(7) + "@test.com";
-      this.password = "Rohit123";
-      this.company_name = "Test Company";
-      this.phone = "6203861756";
-      this.sitename = Math.random().toString(36).substring(7);
-      this.terms = true;
-    }
     const inputFields = document.querySelectorAll("input");
     inputFields.forEach((input) => {
       document.getElementById(input.id).addEventListener("focus", () => {

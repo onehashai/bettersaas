@@ -72,6 +72,14 @@ def refreshStockSites(*args, **kwargs):
                     subdomain + "." + domain, adminPassword, config.db_password
                 )
             )
+            apps_to_install = frappe.get_doc("SaaS settings").apps_to_install.split(",")
+            for app in apps_to_install:
+                this_command.append(
+                    "bench --site {} install-app {}".format(
+                        subdomain + "." + domain, app.strip()
+                    )
+                )
+
             this_command.append(
                 "bench --site {} install-app clientside".format(
                     subdomain + "." + domain
@@ -94,6 +102,7 @@ def refreshStockSites(*args, **kwargs):
                     subdomain + "." + domain, site_defaults.default_email_limit
                 )
             )
+
             command = " ; ".join(this_command)
             print("ADDED COMMAND", command)
             commands.append(command)

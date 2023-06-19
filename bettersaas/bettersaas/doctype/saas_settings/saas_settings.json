@@ -13,7 +13,8 @@
   "root_password",
   "default_user_limit",
   "default_email_limit",
-  "stock_site_count"
+  "stock_site_count",
+  "apps_to_install"
  ],
  "fields": [
   {
@@ -50,12 +51,17 @@
    "fieldname": "stock_site_count",
    "fieldtype": "Data",
    "label": "stock site count"
+  },
+  {
+   "fieldname": "apps_to_install",
+   "fieldtype": "Data",
+   "label": "Apps to install on client"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-06-14 10:26:56.902966",
+ "modified": "2023-06-19 16:29:43.729546",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS settings",
