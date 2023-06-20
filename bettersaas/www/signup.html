@@ -33,7 +33,7 @@
             <div class="tagline_sub">No credit card required</div>
           </div>
         </div>
-        <form
+        <v-form
           @submit="onSubmit"
           id="form"
           autocomplete="off"
@@ -41,82 +41,140 @@
         >
           <div class="row">
             <div class="col-6">
-              <input
-                class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                id="first-name"
+              <v-field
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                name="first-name"
                 type="text"
-                v-model="fname"
-                placeholder="First name"
-              />
+                placeholder="First Name"
+                :rules="isRequired"
+              ></v-field>
+
+              <error-message
+                name="first-name"
+                as="div"
+                class="feedback error-feedback"
+              ></error-message>
             </div>
             <div class="col-6">
-              <input
+              <v-field
                 class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                id="last-name"
+                name="last-name"
                 type="text"
-                v-model="lname"
-                placeholder="Last name"
-              />
+                placeholder="Last Name"
+                :rules="isRequired"
+              ></v-field>
+
+              <error-message
+                name="last-name"
+                as="div"
+                class="feedback error-feedback"
+              ></error-message>
             </div>
           </div>
           <div class="row">
             <div class="col-12 relative">
-              <input
-                class="appearance-none placeholder:text-slate-600 block text-black-900 border border-red-500 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                id="site-name"
-                type="text"
-                placeholder="Site name"
-                v-on:input="checkSubdomain"
-                v-model="sitename"
-              />
+              <v-field
+                v-slot="{meta,field,errorMessage}"
+                :rules="checkSubdomain"
+                :validateOnInput="true"
+                name="site-name"
+              >
+                <input
+                  id="site-name"
+                  type="text"
+                  placeholder="Site name"
+                  v-bind="field"
+                  class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                />
+                <div v-if=" errorMessage" class="feedback error-feedback">
+                  Site name is invalid or not available
+                </div>
+                <div
+                  class="success-feedback feedback"
+                  v-if="meta.dirty && meta.valid "
+                >
+                  Subdomain is available
+                </div>
+              </v-field>
               <div class="span site-name-right">.onehash.io</div>
             </div>
           </div>
           <div class="row">
             <div class="col-12 relative">
-              <input
-                class="appearance-none placeholder:text-slate-600 block text-black-900 border border-red-500 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                id="company-name"
+              <v-field
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                name="company-name"
                 type="text"
-                v-model="company_name"
-                placeholder="Company name"
-              />
+                placeholder="Company Name"
+                :rules="isRequired"
+              ></v-field>
+
+              <error-message
+                name="company-name"
+                as="div"
+                class="feedback error-feedback"
+              ></error-message>
             </div>
           </div>
           <div class="row">
             <div class="col-6">
-              <input
-                class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                id="email"
+              <v-field
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                name="email"
                 type="text"
-                v-model="email"
-                placeholder="email"
-              />
+                placeholder="Email"
+                :rules="isEmailRegex"
+              ></v-field>
+
+              <error-message
+                name="email"
+                as="div"
+                class="feedback error-feedback"
+              ></error-message>
             </div>
             <div class="col-6">
-              <input
-                class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
-                id="password"
-                type="password"
-                @input="passWordCheckCallPromise"
-                v-model="password"
-                placeholder="password"
-              />
-              <!-- <div class="feedback drop-shadow-sm">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe,
-                voluptatem e
-              </div> -->
+              <v-field
+                v-slot="{meta,field,errorMessage}"
+                :rules="passWordCheckCallPromise"
+                :validateOnInput="true"
+                name="password"
+              >
+                <input
+                  id="password"
+                  type="text"
+                  placeholder="Password"
+                  v-bind="field"
+                  class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                />
+                <div v-if=" errorMessage" class="feedback long-feedback">
+                  {{errorMessage}}
+                </div>
+                <div
+                  class="success-feedback feedback"
+                  v-if="meta.dirty && meta.valid "
+                >
+                  password is good to go
+                </div>
+              </v-field>
             </div>
           </div>
           <div class="row">
             <div class="col-6 relative">
-              <input
-                class="appearance-none placeholder:text-slate-600 block text-black-900 border border-red-500 py-3 px- leading-tight bg-white focus:outline-none focus:bg-gray-500"
+              <v-field
+                style="padding-left: 50px !important"
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                name="phone"
+                type="text"
                 id="phone"
-                type="phone"
-                v-model="phone"
-                placeholder="Phone number"
-              />
+                placeholder="Phone Number"
+                :rules="isPhoneRegex"
+              ></v-field>
+
+              <error-message
+                name="phone"
+                as="div"
+                class="feedback error-feedback"
+              ></error-message>
             </div>
             <div class="col-6">
               <input
@@ -131,12 +189,24 @@
             </div>
           </div>
           <div class="mt-2">
-            <input v-model="terms" type="checkbox" name="terms" id="terms" />
-            Accept Terms and conditions
+            <v-field
+              name="terms"
+              type="checkbox"
+              id="terms"
+              :rules="isTermsChecked"
+              value="no"
+            ></v-field>
+            Accept terms and conditions
+
+            <error-message
+              name="terms"
+              as="div"
+              class="feedback error-feedback"
+            ></error-message>
           </div>
           <button
             type="submit"
-            class="submit_btn w-100 drop-shadow-md mt-3"
+            class="submit_btn w-100 drop-shadow-md mt-5"
             style="display: flex; justify-content: center; align-items: center"
           >
             <svg
@@ -158,7 +228,7 @@
             </svg>
             <span v-else>Submit</span>
           </button>
-        </form>
+        </v-form>
         <ol class="steps">
           <li
             class="step"
@@ -217,6 +287,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
 <script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/vee-validate@4.5.8/dist/vee-validate.js"></script>
 <script src="./signup.js"></script>
 
 {% endblock %}

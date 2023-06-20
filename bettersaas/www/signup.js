@@ -1,12 +1,16 @@
 const { createApp } = Vue;
 let TESTING = false;
-
 domain = "";
 if (window.dev_server) {
   domain = ".localhost:8000";
 } else {
   domain = ".onehash.store";
 }
+VeeValidate.configure({
+  validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
+  validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
+  validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
+});
 createApp({
   data() {
     return {
@@ -36,11 +40,15 @@ createApp({
       },
     };
   },
-  async created() {
-    console.log("created");
+  components: {
+    VForm: VeeValidate.Form,
+    VField: VeeValidate.Field,
+    ErrorMessage: VeeValidate.ErrorMessage,
   },
+
   async mounted() {
-    const inputFields = document.querySelectorAll("input");
+    //  const inputFields = document.querySelectorAll("input");
+    const inputFields = [];
     inputFields.forEach((input) => {
       document.getElementById(input.id).addEventListener("focus", () => {
         console.log(input.id);
@@ -74,112 +82,88 @@ createApp({
       },
     });
     this.phoneInput = phoneInput;
-    const validate = new window.JustValidate("#form", {
-      validateBeforeSubmitting: false,
-    });
-
-    validate.addField("#first-name", [
-      {
-        rule: "required",
-      },
-    ]);
-    validate.addField("#last-name", [
-      {
-        rule: "required",
-      },
-    ]);
-    validate.addField("#email", [
-      {
-        rule: "required",
-      },
-      {
-        rule: "email",
-      },
-    ]);
-    validate.addField("#company-name", [
-      {
-        rule: "required",
-      },
-    ]);
-
-    console.log(document.getElementById("site-name"));
-
-    this.validate = validate;
   },
   methods: {
     setcountry(value) {
       this.country = value;
     },
-    async onSubmit() {
-      console.log(this.phoneInput);
-      this.checkSubdomain(null);
-      this.passWordCheckCallPromise();
-      this.checkPhone();
-      const errorClasses = [
-        ".long-feedback",
-        ".just-validate-error-label",
-        ".error-feedback",
-      ];
-      for (let i = 0; i < errorClasses.length; i++) {
-        const errorNodes = document.querySelectorAll(errorClasses[i]);
-        if (errorNodes.length > 0) {
-          return;
-        }
+
+    isTermsChecked(value) {
+      console.log(value);
+      if (value && value === "no") {
+        return true;
       }
-      // replace all space in sitename with -
+      return "Please accept the terms and conditions";
+    },
+
+    isRequired(value) {
+      if (value && value.length > 0) {
+        return true;
+      }
+      return "This field is required";
+    },
+    isEmailRegex(value) {
+      if (value && value.length > 0) {
+        const emailRegex = new RegExp(
+          "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$"
+        );
+        if (emailRegex.test(value)) {
+          return true;
+        }
+        return "Please enter a valid email";
+      }
+      return "This field is required";
+    },
+    isPhoneRegex(value) {
+      if (value && value.length > 0) {
+        const phoneRegex = new RegExp("^[0-9]{10}$");
+        if (phoneRegex.test(value)) {
+          return true;
+        }
+        return "Please enter a valid phone number";
+      }
+      return "This field is required";
+    },
+
+    async onSubmit(values) {
+      console.log("onSubmit", values);
+      this.fname = values["first-name"];
+      this.lname = values["last-name"];
+      this.email = values["email"];
+      this.password = values["password"];
+      this.phone = values["phone"];
+      this.company_name = values["company-name"];
+      this.sitename = values["site-name"];
       this.createSite();
     },
-    removeFeedback(parentId) {
-      if (document.getElementById(parentId + "-feedback")) {
-        document.getElementById(parentId + "-feedback").remove();
+
+    async checkSubdomain(sitename) {
+      console.log("checkSubdomain", sitename);
+      const admin_url = window.location.origin;
+      if (!sitename) {
+        return "subdomain cannot be empty";
       }
-    },
-    async checkPassWord(resolve) {},
-    addFeedbackNode(parentId, message, isSuccess = false, extraClasses = []) {
-      this.removeFeedback(parentId);
-      const errorNode = document.createElement("div");
-      errorNode.classList.add("feedback");
-      if (isSuccess) {
-        errorNode.classList.add("success-feedback");
-      } else {
-        errorNode.classList.add("error-feedback");
+      if (sitename.length === 0) {
+        console.log("sitename", sitename);
+        return "subdomain cannot be empty";
       }
-      errorNode.id = parentId + "-feedback";
-      errorNode.textContent = message;
-      errorNode.classList.add(...extraClasses);
-      document.getElementById(parentId).parentNode.appendChild(errorNode);
-    },
-    checkPhone() {
-      this.removeFeedback("phone");
-      if (this.phone.length === 10) {
-        this.addFeedbackNode("phone", "Phone number is valid", true);
-      } else {
-        this.addFeedbackNode("phone", "Phone number is not valid");
+      try {
+        const res = await $.ajax({
+          url: `${admin_url}/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.check_subdomain`,
+          type: "GET",
+          data: {
+            subdomain: sitename,
+          },
+        });
+        if (res.message.status === "success") {
+          return true;
+        } else {
+          return "Subdomain is not available";
+        }
+      } catch (error) {
+        console.log(error);
+        return "Subdomain is not available";
       }
-    },
-    async checkSubdomain(e, resolve = null) {
-      this.sitename = this.sitename.replace(/\s+/g, "-").toLowerCase();
-      console.log("check subdomain", resolve);
-      this.removeFeedback("site-name");
-      if (this.sitename.length === 0) {
-        this.addFeedbackNode("site-name", "Subdomain cannot be empty");
-        return;
-      }
-      frappe.call({
-        method:
-          "bettersaas.bettersaas.doctype.saas_sites.saas_sites.check_subdomain",
-        args: {
-          subdomain: this.sitename,
-        },
-        callback: (r) => {
-          console.log(r);
-          if (r.message.status == "success") {
-            this.addFeedbackNode("site-name", "Subdomain is available", true);
-          } else {
-            this.addFeedbackNode("site-name", "Subdomain is not available");
-          }
-        },
-      });
     },
 
     checkEmailFormatWIthRegex(email) {
@@ -188,36 +172,24 @@ createApp({
       console.log(p);
       return p;
     },
-    async passWordCheckCallPromise() {
-      frappe.call({
-        method:
-          "bettersaas.bettersaas.doctype.saas_sites.saas_sites.check_password_strength",
-        args: {
-          password: this.password,
-          first_name: this.fname,
-          last_name: this.lname,
-          email: this.email,
-        },
-        callback: (r) => {
-          console.log(r);
-          if (Object.keys(r).length === 0) {
-            this.addFeedbackNode("password", "Password is required");
-            return;
-          }
-
-          if (r.message.feedback.password_policy_validation_passed) {
-            this.addFeedbackNode("password", "Good to go", true);
-          } else {
-            console.log("Password is weak");
-            this.addFeedbackNode(
-              "password",
-              r.message.feedback.suggestions.join("."),
-              false,
-              ["long-feedback"]
-            );
-          }
+    async passWordCheckCallPromise(password, { form }) {
+      if (!password) {
+        return "Password cannot be empty";
+      }
+      const { message } = await $.ajax({
+        url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.check_password_strength",
+        type: "GET",
+        data: {
+          password: password,
+          first_name: form["first-name"] || "",
+          last_name: form["last-name"] || "",
+          email: form["email"] || "",
         },
       });
+      if (message.feedback.password_policy_validation_passed) {
+        return true;
+      }
+      return message.feedback.suggestions.join(" .");
     },
     checkSiteCreated() {
       let response;
@@ -318,12 +290,20 @@ createApp({
         },
         callback: (r) => {
           console.log("functon called", r);
-          this.status.step1 = "completed";
-          this.status.step2 = "completed";
-          if (r.message) {
+
+          if (r.message.subdomain) {
             this.targetSubdomain = r.message.subdomain;
+            this.status.step1 = "completed";
+            this.status.step2 = "completed";
             this.checkSiteCreatedPoll();
+          } else {
+            this.status.step1 = "failed";
+            this.loading = false;
           }
+        },
+        error: (e) => {
+          this.status.step1 = "failed";
+          this.loading = false;
         },
       });
     },
