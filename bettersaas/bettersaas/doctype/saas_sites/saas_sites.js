@@ -19,9 +19,17 @@ frappe.ui.form.on("SaaS sites", {
     frm.add_custom_button(__("Login as admin"), async function () {
       // When this button is clicked, do this
 
-      var subject = frm.doc.subject;
-      var event_type = frm.doc.event_type;
-      const dec_db_password = "Rohit123";
+      const dec_db_password = (
+        await $.ajax({
+          url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.getDecryptedPassword",
+          type: "GET",
+          dataType: "json",
+          data: {
+            site_name: frm.doc.site_name,
+          },
+        })
+      ).message;
+      console.log(dec_db_password);
       let enc_password = CryptoJS.enc.Base64.stringify(
         CryptoJS.enc.Utf8.parse(dec_db_password)
       );
@@ -36,6 +44,7 @@ frappe.ui.form.on("SaaS sites", {
       }
       const urlToRedirect = `http://${site_name}/redirect` + query;
       console.log(urlToRedirect);
+      window.open(urlToRedirect, "_blank");
     });
     if (!frm.doc.user_limit) {
       frappe.db

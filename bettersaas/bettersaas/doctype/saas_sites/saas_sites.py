@@ -224,5 +224,13 @@ def updateLimitsOfSite(*args, **kwargs):
     os.system(" & ".join(commands))
 
 
+@frappe.whitelist()
+def getDecryptedPassword(*args, **kwargs):
+    print(kwargs)
+    site = frappe.db.get("SaaS sites", filters={"site_name": kwargs["site_name"]})
+    print(site, frappe.conf.enc_key)
+    return decrypt(site.encrypted_password, frappe.conf.enc_key)
+
+
 class SaaSsites(Document):
     pass
