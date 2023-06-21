@@ -129,6 +129,7 @@ def setupSite(*args, **kwargs):
             )
         )
         commands.append("bench --site {} install-app clientside".format(new_site))
+        commands.append("bench --site {} install-app whitelabel".format(new_site))
         site = frappe.new_doc("SaaS stock sites")
         site.subdomain = subdomain
         site.admin_password = admin_password
