@@ -72,7 +72,11 @@ def refreshStockSites(*args, **kwargs):
                     subdomain + "." + domain, adminPassword, config.db_password
                 )
             )
-            apps_to_install = frappe.get_doc("SaaS settings").apps_to_install.split(",")
+            apps_to_install = [
+                frappe.get_doc("Available Apps", x.as_dict().app).appname
+                for x in frappe.get_doc("SaaS settings").apps_to_install
+            ]
+            print(apps_to_install)
             for app in apps_to_install:
                 this_command.append(
                     "bench --site {} install-app {}".format(

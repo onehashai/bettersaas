@@ -14,6 +14,7 @@ VeeValidate.configure({
 createApp({
   data() {
     return {
+      showSubmitbtn: false,
       terms: false,
       validate: "",
       phoneInput: "",
@@ -64,7 +65,7 @@ createApp({
       utilsScript:
         "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
       initialCountry: "auto",
-      preferredCountries: ["US", "IN", "SG"],
+      preferredCountries: ["US", "IN", "SG", "AE"],
       utilsScript:
         "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
       geoIpLookup: (callback) => {
@@ -80,6 +81,11 @@ createApp({
           callback(countryCode);
         });
       },
+    });
+    phoneInputField.addEventListener("countrychange", () => {
+      this.country = phoneInput.getSelectedCountryData().iso2.toUpperCase();
+      this.setcountry(this.country);
+      console.log(this.country);
     });
     this.phoneInput = phoneInput;
   },
@@ -131,7 +137,7 @@ createApp({
       this.lname = values["last-name"];
       this.email = values["email"];
       this.password = values["password"];
-      this.phone = values["phone"];
+      this.phone = this.phoneInput.getNumber();
       this.company_name = values["company-name"];
       this.sitename = values["site-name"];
       this.createSite();
@@ -241,36 +247,33 @@ createApp({
         }, 3000);
       }
     },
-    async sendOTP() {
+    async sendOtp() {
       console.log("sending otp");
-      frappe.call({
-        method: "bettersaas.bettersaas.doctype.saas_users.saas_users.send_otp",
-        args: {
-          email: this.email,
-        },
-        callback: (r) => {
-          console.log(r.message);
-          if (r.message == "success") {
-            this.otpSent = true;
-          }
-        },
-      });
+      // send otp and set otpSent to true
     },
     verifyOTP() {
-      frappe.call({
-        method:
-          "setup_app.setup_app.doctype.saas_users.saas_users.verify_account_request",
-        args: {
-          email: this.email,
-          otp: this.otp,
-        },
-        callback: (r) => {
-          console.log(r.message);
-          if (r.message == "success") {
-            this.otpVerified = true;
-          }
-        },
-      });
+      console.log("verifying otp");
+      if (this.otpSent == false) {
+        return true;
+      }
+      // verify
+      // if veried set showSubmitBtn to true
+      // if invalid otp show message
+      return true;
+      // frappe.call({
+      //   method:
+      //     "setup_app.setup_app.doctype.saas_users.saas_users.verify_account_request",
+      //   args: {
+      //     email: this.email,
+      //     otp: this.otp,
+      //   },
+      //   callback: (r) => {
+      //     console.log(r.message);
+      //     if (r.message == "success") {
+      //       this.otpVerified = true;
+      //     }
+      //   },
+      // });
     },
 
     async createSite() {
@@ -286,6 +289,7 @@ createApp({
             email: this.email,
             first_name: this.fname,
             last_name: this.lname,
+            phone: this.phone,
           },
         },
         callback: (r) => {

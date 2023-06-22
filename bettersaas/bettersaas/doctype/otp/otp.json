@@ -1,39 +1,27 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2023-06-13 21:43:51.197517",
+ "creation": "2023-06-21 16:39:04.196835",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "phone",
   "email",
-  "first_name",
-  "last_name",
-  "site",
   "otp",
-  "phone"
+  "id"
  ],
  "fields": [
   {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "phone"
+  },
+  {
    "fieldname": "email",
    "fieldtype": "Data",
-   "label": "Email"
-  },
-  {
-   "fieldname": "first_name",
-   "fieldtype": "Data",
-   "label": "First Name"
-  },
-  {
-   "fieldname": "last_name",
-   "fieldtype": "Data",
-   "label": "Last Name"
-  },
-  {
-   "fieldname": "site",
-   "fieldtype": "Data",
-   "label": "Linked to site"
+   "label": "email"
   },
   {
    "fieldname": "otp",
@@ -41,17 +29,17 @@
    "label": "otp"
   },
   {
-   "fieldname": "phone",
+   "fieldname": "id",
    "fieldtype": "Data",
-   "label": "phone"
+   "label": "id"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-21 17:06:33.994604",
+ "modified": "2023-06-21 16:39:04.196835",
  "modified_by": "Administrator",
  "module": "Bettersaas",
- "name": "SaaS users",
+ "name": "OTP",
  "owner": "Administrator",
  "permissions": [
   {

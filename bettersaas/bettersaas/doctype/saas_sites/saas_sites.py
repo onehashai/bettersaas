@@ -115,6 +115,7 @@ def setupSite(*args, **kwargs):
         last_name=lname,
         email=email,
         site=subdomain + "." + frappe.conf.domain,
+        phone=doc["phone"],
     )
     stock_sites = frappe.db.get_list(
         "SaaS stock sites", filters={"is_used": "no"}, ignore_permissions=True

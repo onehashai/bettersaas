@@ -54,14 +54,15 @@
   },
   {
    "fieldname": "apps_to_install",
-   "fieldtype": "Data",
-   "label": "Apps to install on client"
+   "fieldtype": "Table MultiSelect",
+   "label": "Apps to install on client",
+   "options": "Installed apps"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-06-19 16:29:43.729546",
+ "modified": "2023-06-21 14:50:46.078968",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS settings",

@@ -36,6 +36,7 @@
         <v-form
           @submit="onSubmit"
           id="form"
+          v-slot="{meta}"
           autocomplete="off"
           novalidate="novalidate"
         >
@@ -204,6 +205,14 @@
               class="feedback error-feedback"
             ></error-message>
           </div>
+          <!-- <button
+            :disabled="!meta.valid"
+            v-if="!showSubmitbtn"
+            class="submit_btn w-100 drop-shadow-md mt-5"
+            @click="sendOtp"
+          >
+            Get OTP
+          </button> -->
           <button
             type="submit"
             class="submit_btn w-100 drop-shadow-md mt-5"

@@ -27,19 +27,19 @@ def send_otp_sms(number, otp):
     send_sms(receiver_list, message, sender_name="", success_msg=False)
 
 
-def send_otp_email(site_user):
+def send_otp_email(otp, email):
     STANDARD_USERS = ("Guest", "Administrator")
     subject = "Please confirm this email address for OneHash"
     template = "signup_otp_email"
     args = {
-        "first_name": site_user.first_name or site_user.last_name or "user",
-        "last_name": site_user.last_name,
+        "first_name": "user",
+        "last_name": "",
         "title": subject,
-        "otp": site_user.otp,
+        "otp": otp,
     }
     sender = None
     frappe.sendmail(
-        recipients=site_user.email,
+        recipients=email,
         sender=sender,
         subject=subject,
         bcc=["anand@onehash.ai"],
@@ -60,28 +60,22 @@ def verifyPhoneAndEmailDuplicacy(email, phone):
 
 
 @frappe.whitelist(allow_guest=True)
-def send_otp(email):
-    doc = frappe.get_doc("SaaS Users", {"phone": email})
-    if (
-        frappe.utils.time_diff_in_seconds(
-            frappe.utils.now(), doc.modified.strftime("%Y-%m-%d %H:%M:%S.%f")
-        )
-        > 600
-    ):
-        doc.otp = generate_otp()
-        doc.save()
-
-    send_otp_sms(doc.mobile, doc.otp)
-    send_otp_email(doc)
-    return "success"
+def send_otp(email, phone):
+    # generate random string
+    unique_id = frappe.generate_hash("", 5)
+    new_otp_doc = frappe.new_doc("OTP")
+    new_otp_doc.id = unique_id
+    new_otp_doc.otp = generate_otp()
+    new_otp_doc.email = email
+    new_otp_doc.phone = phone
+    send_otp_sms(phone, new_otp_doc)
+    send_otp_email(new_otp_doc.otp, email)
+    return unique_id
 
 
 @frappe.whitelist(allow_guest=True)
-def verify_account_request(email, otp):
-    doc = frappe.get_doc("SaaS users", {"email": email})
-    # if(doc.otp!=otp):
-    # frappe.throw("Please enter valid OTP","ValidationError")
-    return "success"
+def verify_account_request(uniq_id, otp):
+    doc = frappe.get_doc("OTP", {"id": id})
     if (
         frappe.utils.time_diff_in_seconds(
             frappe.utils.now(), doc.modified.strftime("%Y-%m-%d %H:%M:%S.%f")
@@ -91,16 +85,17 @@ def verify_account_request(email, otp):
         return "OTP_EXPIRED"
     elif doc.otp != otp:
         return "INVALID_OTP"
-    return "success"
+    return "SUCCESS"
 
 
 @frappe.whitelist()
-def create_user(first_name, last_name, email, site):
+def create_user(first_name, last_name, email, site, phone):
     user = frappe.new_doc("SaaS users")
     user.email = email
     user.first_name = first_name
     user.last_name = last_name
     user.site = site
+    user.phone = phone
     user.save(ignore_permissions=True)
     return user
 
