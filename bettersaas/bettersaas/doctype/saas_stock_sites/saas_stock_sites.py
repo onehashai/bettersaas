@@ -109,8 +109,8 @@ def refreshStockSites(*args, **kwargs):
 
             command = " ; ".join(this_command)
             print("ADDED COMMAND", command)
-            commands.append(command)
-            db_values.append([subdomain, adminPassword])
+        # commands.append(command)
+        # db_values.append([subdomain, adminPassword])
     # frappe.enqueue(create_multiple_sites_in_parallel,commands=commands,db_values=db_values,is_async=True,job_name="create_multiple_sites_in_parallel",at_front=True)
     create_multiple_sites_in_parallel(commands, db_values)
     return "Database will be updated soon with stock sites "
