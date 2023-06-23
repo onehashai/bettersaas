@@ -11,20 +11,63 @@ VeeValidate.configure({
   validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
   validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
 });
+let timerOn = true;
+
+class OTPVerificationStatus {
+  constructor() {
+    this.otpVerified = false;
+    this.reset();
+  }
+  reset() {
+    if (document.getElementById("timer")) {
+      document.getElementById("timer").innerText = "";
+    }
+
+    this.otpSent = false;
+    this.otpUniqueId = "";
+    this.verifyingOTP = false;
+    this.waitingForResend = false;
+    this.sendingOTP = false;
+  }
+  setOTPVerified() {
+    this.otpVerified = true;
+  }
+
+  setOTPSent() {
+    this.otpSent = true;
+  }
+  setUniqueId(id) {
+    this.otpUniqueId = id;
+  }
+  setVerifyingOTP() {
+    this.verifyingOTP = true;
+  }
+  setWaitingForResend() {
+    this.waitingForResend = true;
+  }
+  setSendingOTP() {
+    this.sendingOTP = true;
+  }
+}
 createApp({
   data() {
     return {
+      otp: "",
+      otpVerificationStatus: new OTPVerificationStatus(),
       showSubmitbtn: false,
       terms: false,
       validate: "",
       phoneInput: "",
       fname: "",
+      isOTPButtonDisabled: false,
       lname: "",
+      submiitBtnText: "Submit",
       email: "",
       password: "",
       siteCreated: false,
       loading: false,
       sitename: "",
+      otpUniqueId: "",
       otpVerified: true,
       phone: "",
       company_name: "",
@@ -84,12 +127,37 @@ createApp({
     });
     phoneInputField.addEventListener("countrychange", () => {
       this.country = phoneInput.getSelectedCountryData().iso2.toUpperCase();
+      console.log(phoneInput.isValidNumber());
       this.setcountry(this.country);
       console.log(this.country);
     });
     this.phoneInput = phoneInput;
   },
   methods: {
+    timer(remaining) {
+      var m = Math.floor(remaining / 60);
+      var s = remaining % 60;
+
+      m = m < 10 ? "0" + m : m;
+      s = s < 10 ? "0" + s : s;
+      document.getElementById("timer").innerText = "Wait for " + s + " seconds";
+      remaining -= 1;
+
+      if (remaining >= 0 && timerOn) {
+        setTimeout(() => {
+          this.timer(remaining);
+        }, 1000);
+        return;
+      }
+
+      if (!timerOn) {
+        // Do validate stuff here
+        return;
+      }
+
+      // Do timeout stuff here
+      this.otpVerificationStatus.reset();
+    },
     setcountry(value) {
       this.country = value;
     },
@@ -121,9 +189,15 @@ createApp({
       return "This field is required";
     },
     isPhoneRegex(value) {
+      if (!value) {
+        return "This field is required";
+      }
+      const cc = this.phoneInput.getSelectedCountryData().iso2.toUpperCase();
+      if (cc !== "IN") {
+        return true;
+      }
       if (value && value.length > 0) {
-        const phoneRegex = new RegExp("^[0-9]{10}$");
-        if (phoneRegex.test(value)) {
+        if (this.phoneInput.isValidNumber()) {
           return true;
         }
         return "Please enter a valid phone number";
@@ -140,7 +214,8 @@ createApp({
       this.phone = this.phoneInput.getNumber();
       this.company_name = values["company-name"];
       this.sitename = values["site-name"];
-      this.createSite();
+      this.otpVerificationStatus.setSendingOTP();
+      this.sendOtp();
     },
 
     async checkSubdomain(sitename) {
@@ -248,32 +323,61 @@ createApp({
       }
     },
     async sendOtp() {
-      console.log("sending otp");
-      // send otp and set otpSent to true
-    },
-    verifyOTP() {
-      console.log("verifying otp");
-      if (this.otpSent == false) {
-        return true;
+      if (!this.isEmailRegex(this.email)) {
+        return;
       }
-      // verify
-      // if veried set showSubmitBtn to true
-      // if invalid otp show message
+      let t_phone = "";
+      if (this.phoneInput.isValidNumber()) {
+        t_phone = this.phoneInput.getNumber();
+      }
+
+      frappe.show_alert("Please check your email for OTP", 5);
+      // send otp and set otpSent to true
+      const { message } = await $.ajax({
+        url: "/api/method/bettersaas.bettersaas.doctype.saas_users.saas_users.send_otp",
+        type: "GET",
+        data: {
+          email: this.email,
+          phone: t_phone.replace("+", ""),
+        },
+      });
+      this.otpUniqueId = message;
+      this.otpVerificationStatus.setOTPSent();
+      console.log(this.otpVerificationStatus.otpSent);
+      this.timer(10);
+      this.otpVerificationStatus.sendingOTP = false;
+    },
+    async verifyOTP() {
+      const otp = this.otp;
+      if (otp.length !== 6) {
+        return;
+      }
+      console.log("verifying otp");
+      this.otpVerificationStatus.setVerifyingOTP();
+      document.getElementById("otp-feedback").innerHTML = "verifying OTP ..";
+      if (!this.isEmailRegex(this.email)) {
+        return "Email is not valid";
+      }
+      const { message } = await $.ajax({
+        url: "/api/method/bettersaas.bettersaas.doctype.saas_users.saas_users.verify_account_request",
+        type: "GET",
+        data: {
+          unique_id: this.otpUniqueId,
+          otp: otp,
+        },
+      });
+      if (message === "SUCCESS") {
+        this.otpVerificationStatus.otpVerified = true;
+        document.getElementById("otp-feedback").innerHTML = "OTP verified";
+        this.createSite();
+      } else if (message === "OTP_EXPIRED") {
+        document.getElementById("otp-feedback").innerHTML = "OTP Expired";
+      } else if (message == "INVALID_OTP") {
+        document.getElementById("otp-feedback").innerHTML = "OTP Incorrect";
+      }
+      this.otpVerificationStatus.verifyingOTP = false;
+      console.log(message);
       return true;
-      // frappe.call({
-      //   method:
-      //     "setup_app.setup_app.doctype.saas_users.saas_users.verify_account_request",
-      //   args: {
-      //     email: this.email,
-      //     otp: this.otp,
-      //   },
-      //   callback: (r) => {
-      //     console.log(r.message);
-      //     if (r.message == "success") {
-      //       this.otpVerified = true;
-      //     }
-      //   },
-      // });
     },
 
     async createSite() {

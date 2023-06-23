@@ -1,0 +1,73 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-06-22 22:50:31.742146",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sent_on",
+  "message",
+  "no_of_requested_sms",
+  "requested_numbers",
+  "no_of_sent_sms",
+  "sent_to"
+ ],
+ "fields": [
+  {
+   "fieldname": "sent_on",
+   "fieldtype": "Date",
+   "label": "sent_on"
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Data",
+   "label": "message"
+  },
+  {
+   "fieldname": "no_of_requested_sms",
+   "fieldtype": "Data",
+   "label": "no_of_requested_sms"
+  },
+  {
+   "fieldname": "requested_numbers",
+   "fieldtype": "Data",
+   "label": "requested_numbers"
+  },
+  {
+   "fieldname": "no_of_sent_sms",
+   "fieldtype": "Data",
+   "label": "no_of_sent_sms"
+  },
+  {
+   "fieldname": "sent_to",
+   "fieldtype": "Data",
+   "label": "sent_to"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-06-22 22:50:31.742146",
+ "modified_by": "Administrator",
+ "module": "Bettersaas",
+ "name": "SMS Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
