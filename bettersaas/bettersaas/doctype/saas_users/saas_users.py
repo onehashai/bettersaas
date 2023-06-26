@@ -62,24 +62,29 @@ def verifyPhoneAndEmailDuplicacy(email, phone):
 @frappe.whitelist(allow_guest=True)
 def send_otp(email, phone):
     # generate random string
-    doc = frappe.db.get_all("OTP", filters={"email": email}, fields=["modified", "otp"])
-    otp = ""
-    if len(doc) > 0:
-        # if modiefied in last 10 minutes
-        if (
-            frappe.utils.time_diff_in_seconds(
-                frappe.utils.now(), doc.modified.strftime("%Y-%m-%d %H:%M:%S.%f")
-            )
-            > 10 * 60
-        ):
-            otp = doc[0].otp
+    doc = frappe.db.get_all(
+        "OTP",
+        filters={"email": email},
+        fields=["otp", "modified"],
+        order_by="modified desc",
+    )
+    new_otp_doc = frappe.new_doc("OTP")
+    if (
+        len(doc) > 0
+        and frappe.utils.time_diff_in_seconds(
+            frappe.utils.now(), doc[0].modified.strftime("%Y-%m-%d %H:%M:%S.%f")
+        )
+        < 10 * 60
+    ):
+        new_otp_doc.otp = doc[0].otp
     else:
-        otp = generate_otp()
+        print("GENERATING")
+        new_otp_doc.otp = generate_otp()
 
     unique_id = frappe.generate_hash("", 5)
-    new_otp_doc = frappe.new_doc("OTP")
+
     new_otp_doc.id = unique_id
-    new_otp_doc.otp = otp
+
     new_otp_doc.email = email
     if phone:
         new_otp_doc.phone = phone

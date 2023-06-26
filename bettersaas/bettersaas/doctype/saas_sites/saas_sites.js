@@ -14,6 +14,8 @@ frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
   });
 });
 // set default values fetched from SaaS settings
+
+// frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_s3
 frappe.ui.form.on("SaaS sites", {
   refresh: function (frm) {
     frm.add_custom_button(__("Login as admin"), async function () {
@@ -45,6 +47,28 @@ frappe.ui.form.on("SaaS sites", {
       const urlToRedirect = `http://${site_name}/redirect` + query;
       console.log(urlToRedirect);
       window.open(urlToRedirect, "_blank");
+    });
+    frm.add_custom_button(__("create backup"), async function () {
+      const { resp } = $.ajax({
+        url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.take_backup_of_site",
+        type: "GET",
+        dataType: "json",
+        data: {
+          sitename: frm.doc.site_name,
+        },
+      });
+      console.log(resp);
+    });
+    frm.add_custom_button(__("Download backup"), async function () {
+      const { resp } = $.ajax({
+        url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.download_backup",
+        type: "GET",
+        dataType: "json",
+        data: {
+          sitename: frm.doc.site_name,
+        },
+      });
+      console.log(resp);
     });
     if (!frm.doc.user_limit) {
       frappe.db

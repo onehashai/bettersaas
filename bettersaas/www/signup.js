@@ -221,6 +221,7 @@ createApp({
     async checkSubdomain(sitename) {
       console.log("checkSubdomain", sitename);
       const admin_url = window.location.origin;
+      this.sitename = sitename.replace(/ /g, "-");
       if (!sitename) {
         return "subdomain cannot be empty";
       }
@@ -388,7 +389,7 @@ createApp({
         args: {
           doc: {
             company_name: this.company_name,
-            subdomain: this.sitename,
+            subdomain: this.sitename.replace(/ /g, "-"),
             password: this.password,
             email: this.email,
             first_name: this.fname,

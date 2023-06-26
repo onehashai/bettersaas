@@ -234,5 +234,28 @@ def getDecryptedPassword(*args, **kwargs):
     return decrypt(site.encrypted_password, frappe.conf.enc_key)
 
 
+@frappe.whitelist()
+def take_backup_of_site(sitename):
+    print("take_backup_of_site", sitename)
+    command = (
+        "bench --site {} execute clientside.clientside.utils.take_backups_s3".format(
+            sitename
+        )
+    )
+    frappe.utils.execute_in_shell(command)
+    return "executing command: " + command
+
+
+def insert_backup_record(file_name, key, site):
+    import datetime
+
+    doc = frappe.get_doc("SaaS site backups")
+    doc.site_name = site
+    doc.file_name = file_name
+    doc.created_on = datetime.datetime.now()
+    doc.key = key
+    doc.save(ignore_permissions=True)
+
+
 class SaaSsites(Document):
     pass

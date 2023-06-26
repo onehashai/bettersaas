@@ -79,6 +79,7 @@
                 :rules="checkSubdomain"
                 :validateOnInput="true"
                 name="site-name"
+                v-model="sitename"
               >
                 <input
                   id="site-name"
@@ -94,10 +95,10 @@
                   class="success-feedback feedback"
                   v-if="meta.dirty && meta.valid "
                 >
-                  Subdomain is available
+                  {{_(sitename)}} Subdomain is available
                 </div>
               </v-field>
-              <div class="span site-name-right">.onehash.io</div>
+              <div class="span site-name-right">.onehash.is</div>
             </div>
           </div>
           <div class="row">
