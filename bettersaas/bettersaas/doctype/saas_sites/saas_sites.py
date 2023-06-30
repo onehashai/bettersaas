@@ -122,7 +122,7 @@ def setupSite(*args, **kwargs):
     )
     target_site = None
     commands = []
-
+    print(len(stock_sites))
     if len(stock_sites) == 0:
         commands.append(
             "bench new-site {} --install-app erpnext  --admin-password {} --db-root-password {}".format(
@@ -164,12 +164,28 @@ def setupSite(*args, **kwargs):
         )
     )
     commands.append(
-        "bench --site {} set-config max_email_limit {}".format(
+        "bench --site {} set-config max_email {}".format(
             new_site, site_defaults.default_email_limit
         )
     )
     commands.append(
+        "bench --site {} set-config max_space {}".format(
+            new_site, site_defaults.default_space_limit
+        )
+    )
+    commands.append(
         "bench --site {} set-config site_name {}".format(new_site, new_site)
+    )
+    expiry_days = int(config.expiry_days)
+    expiry_date = frappe.utils.add_days(frappe.utils.nowdate(), expiry_days)
+    commands.append(
+        "bench --site {} set-config expiry_date {}".format(new_site, expiry_date)
+    )
+    commands.append(
+        "bench --site {} set-config space {}".format(new_site, expiry_date)
+    )
+    commands.append(
+        "bench --site {} set-config creation_date {}".format(new_site, frappe.utils.nowdate())
     )
     commands.append("bench --site {} set-maintenance-mode off".format(new_site))
     commands.append(
@@ -177,7 +193,6 @@ def setupSite(*args, **kwargs):
             subdomain + "." + frappe.conf.domain, subdomain
         )
     )
-
     target_site.is_used = "yes"
     target_site.save(ignore_permissions=True)
     commands.append("bench setup nginx --yes")
@@ -188,6 +203,7 @@ def setupSite(*args, **kwargs):
     new_site_doc.encrypted_password = enc_key
     new_site_doc.linked_email = email
     new_site_doc.site_name = new_site
+    new_site_doc.expiry_date = expiry_date
     new_site_doc.save(ignore_permissions=True)
     print("creating the first user")
     sub = subdomain
@@ -217,7 +233,7 @@ def updateLimitsOfSite(*args, **kwargs):
     print("updaing limits", kwargs)
     commands = []
     for key, value in kwargs.items():
-        if key in ["max_users", "max_email", "max_space"]:
+        if key in ["max_users", "max_email", "max_space","expiry_date"]:
             commands.append(
                 "bench --site   {} set-config {} {}".format(
                     kwargs["sitename"], key, value
@@ -234,5 +250,35 @@ def getDecryptedPassword(*args, **kwargs):
     return decrypt(site.encrypted_password, frappe.conf.enc_key)
 
 
+@frappe.whitelist()
+def take_backup_of_site(sitename):
+    print("take_backup_of_site", sitename)
+    command = (
+        "bench --site {} execute clientside.clientside.utils.take_backups_s3".format(
+            sitename
+        )
+    )
+    frappe.utils.execute_in_shell(command)
+    return "executing command: " + command
+
+
+def insert_backup_record(file_name, key, site):
+    import datetime
+
+    doc = frappe.get_doc("SaaS site backups")
+    doc.site_name = site
+    doc.file_name = file_name
+    doc.created_on = datetime.datetime.now()
+    doc.key = key
+    doc.save(ignore_permissions=True)
+
+@frappe.whitelist(allow_guest=True)
+def delete_site(*args, **kwargs):
+    print("DELETING SITE", kwargs)
+    doc = frappe.get_doc("SaaS sites", {"site_name": kwargs["site_name"]})
+    doc.site_deleted  = 1
+    doc.save(ignore_permissions=True)
+    frappe.db.commit()
+    return "done"
 class SaaSsites(Document):
     pass

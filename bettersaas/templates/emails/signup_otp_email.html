@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+  <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: "Roboto", sans-serif;
+      text-decoration: none;
+    }
+
+    .link-list,
+    .social-links {
+      text-align: center;
+      padding: 1.6rem 0;
+    }
+
+    .link-list li,
+    .social-links li {
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 22px;
+      list-style: none;
+      display: inline-block;
+      margin-right: 12px;
+    }
+
+    a,
+    .link-list li a,
+    .social-links li a {
+      text-decoration: none;
+      color: #fff;
+    }
+  </style>
+
+  <body>
+    <div style="background-color: rgb(238, 238, 238)">
+      <div
+        style="
+          margin: 0px auto;
+          font-family: arial;
+          padding-bottom: 30px;
+          padding-top: 45px;
+          max-width: 520px;
+        "
+      >
+        <div
+          style="border: 1px solid rgb(204, 204, 204); background-color: #fff"
+        >
+          <div style="width: 100%">
+            <div style="margin: 50px 50px 0 50px">
+              <div>
+                <a
+                  href="https://www.onehash.ai/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src="https://uploads-ssl.webflow.com/5e53d34464688e6f5960a338/610a36c2792530d601aaf35f_OneHash_Logo.svg"
+                    alt="logo"
+                    title="OneHash"
+                  />
+                </a>
+              </div>
+              <div>
+                <p style="font-weight: 700; font-size: 24px; line-height: 36px">
+                  Verify Your Login
+                </p>
+                <p style="font-weight: 400; font-size: 18px; line-height: 27px">
+                  Below is your One Time Password for verification
+                </p>
+              </div>
+              <div
+                style="
+                  font-family: 'DM Mono', monospace;
+                  font-style: normal;
+                  font-weight: 800;
+                  font-size: 38px;
+                  width: 211px;
+                  line-height: 49px;
+                  display: flex;
+                  align-items: center;
+                  text-align: center;
+                  letter-spacing: 14px;
+                  color: #007ee5;
+                "
+              >
+                {{otp}}
+              </div>
+              <div style="margin: 19px 0">
+                <div
+                  style="font-weight: 400; font-size: 18px; line-height: 22px"
+                >
+                  Hello, <span style="font-weight: 700">{{first_name}}</span>
+                </div>
+                <div
+                  style="
+                    margin-top: 12px;
+                    font-weight: 400;
+                    font-size: 14px;
+                    line-height: 130%;
+                  "
+                >
+                  Here is your OTP to verify your account. Please return to the
+                  login page and enter your code.
+                  <br /><br />Best Regards,<br />Team OneHash
+                </div>
+              </div>
+              <div
+                style="margin-bottom: 22px; display: flex; align-items: center"
+              >
+                <p style="font-weight: 300; font-size: 14px; line-height: 22px">
+                  This email is automatically generated, please don't reply.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            style="
+              width: 100%;
+              height: auto;
+              padding-bottom: 20px;
+              background-color: #007ee5;
+              color: #fff;
+              margin-top: 50px;
+            "
+          >
+            <div style="width: 70%; margin: auto">
+              <div>
+                <ul class="link-list">
+                  <li>
+                    <a
+                      href="https://www.onehash.ai/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >OneChat</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.onehash.ai/onecrm"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >OneCRM</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.onehash.ai/about"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >About Us</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.onehash.ai/legal/terms-of-services"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Terms of Service</a
+                    >
+                  </li>
+                  <li><a href="mailto:support@onehash.ai">Email Support</a></li>
+                </ul>
+              </div>
+              <p
+                style="
+                  text-align: center;
+                  padding: 14px 0;
+                  font-weight: 500;
+                  font-size: 10px;
+                  line-height: 22px;
+                "
+              >
+                Need any support ?
+                <span style="font-weight: 600"
+                  ><a
+                    style="color: #fff"
+                    href="https://www.onehash.ai/contact"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Contact Us</a
+                  ></span
+                >
+              </p>
+              <hr color="#fff" />
+              <div>
+                <ul class="social-links">
+                  <li>
+                    <a
+                      href="https://www.linkedin.com/company/onehash/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      ><img
+                        src="https://staging.onehash.ai/files/linkedin.png"
+                        alt="linkedin page"
+                    /></a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://twitter.com/OneHash"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      ><img
+                        src="https://staging.onehash.ai/files/twitter.png"
+                        alt="twitter page"
+                    /></a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.facebook.com/onehashinc"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      ><img
+                        src="https://staging.onehash.ai/files/facebook.png"
+                        alt="facebook page"
+                    /></a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.instagram.com/onehash.ai/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      ><img
+                        src="https://staging.onehash.ai/files/instagram.png"
+                        alt="instagram page"
+                    /></a>
+                  </li>
+                </ul>
+              </div>
+              <div
+                style="font-weight: 500; font-size: 10px; text-align: center"
+              >
+                © 2022 OneHash. All rights reserved
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

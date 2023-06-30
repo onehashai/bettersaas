@@ -62,20 +62,54 @@ def verifyPhoneAndEmailDuplicacy(email, phone):
 @frappe.whitelist(allow_guest=True)
 def send_otp(email, phone):
     # generate random string
-    unique_id = frappe.generate_hash("", 5)
+    doc = frappe.db.get_all(
+        "OTP",
+        filters={"email": email},
+        fields=["otp", "modified"],
+        order_by="modified desc",
+    )
     new_otp_doc = frappe.new_doc("OTP")
+    if (
+        len(doc) > 0
+        and frappe.utils.time_diff_in_seconds(
+            frappe.utils.now(), doc[0].modified.strftime("%Y-%m-%d %H:%M:%S.%f")
+        )
+        < 10 * 60
+    ):
+        new_otp_doc.otp = doc[0].otp
+        
+    else:
+        print("GENERATING")
+        new_otp_doc.otp = generate_otp()
+
+    unique_id = frappe.generate_hash("", 5)
+
     new_otp_doc.id = unique_id
-    new_otp_doc.otp = generate_otp()
+
     new_otp_doc.email = email
-    new_otp_doc.phone = phone
-    send_otp_sms(phone, new_otp_doc)
+    if phone:
+        new_otp_doc.phone = phone
+        send_otp_sms(phone, new_otp_doc.otp)
+    print(new_otp_doc.otp)
     send_otp_email(new_otp_doc.otp, email)
+    new_otp_doc.save(ignore_permissions=True)
+    print(new_otp_doc)
+    frappe.db.commit()
     return unique_id
 
 
 @frappe.whitelist(allow_guest=True)
-def verify_account_request(uniq_id, otp):
-    doc = frappe.get_doc("OTP", {"id": id})
+def verify_account_request(unique_id, otp):
+    print("ed", unique_id, otp)
+    doc = frappe.db.get_all(
+        "OTP", filters={"id": unique_id}, fields=["otp", "modified"]
+    )
+    print(
+        "s",
+    )
+    if len(doc) == 0:
+        return "OTP_NOT_FOUND"
+    doc = doc[0]
     if (
         frappe.utils.time_diff_in_seconds(
             frappe.utils.now(), doc.modified.strftime("%Y-%m-%d %H:%M:%S.%f")
@@ -85,6 +119,7 @@ def verify_account_request(uniq_id, otp):
         return "OTP_EXPIRED"
     elif doc.otp != otp:
         return "INVALID_OTP"
+    frappe.db.commit()
     return "SUCCESS"
 
 
@@ -133,3 +168,6 @@ def check_user_name_and_password_for_a_site(site_name, email, password):
 
 class SaaSusers(Document):
     pass
+
+
+# 980555

@@ -102,7 +102,7 @@ def refreshStockSites(*args, **kwargs):
                 )
             )
             this_command.append(
-                "bench --site {} set-config max_email_limit {}".format(
+                "bench --site {} set-config max_email {}".format(
                     subdomain + "." + domain, site_defaults.default_email_limit
                 )
             )

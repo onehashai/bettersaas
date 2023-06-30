@@ -13,8 +13,10 @@
   "root_password",
   "default_user_limit",
   "default_email_limit",
+  "default_space_limit",
   "stock_site_count",
-  "apps_to_install"
+  "apps_to_install",
+  "expiry_days"
  ],
  "fields": [
   {
@@ -57,12 +59,22 @@
    "fieldtype": "Table MultiSelect",
    "label": "Apps to install on client",
    "options": "Available Apps CT"
+  },
+  {
+   "fieldname": "expiry_days",
+   "fieldtype": "Data",
+   "label": "default expiry days"
+  },
+  {
+   "fieldname": "default_space_limit",
+   "fieldtype": "Data",
+   "label": "Default space limit in GB"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-06-22 11:44:41.868919",
+ "modified": "2023-06-28 14:50:13.391077",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS settings",

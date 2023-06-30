@@ -13,7 +13,10 @@
   "user_limit",
   "email_limit",
   "do_backup",
-  "space_limit"
+  "space_limit",
+  "expiry_date",
+  "site_creation_date",
+  "last_purchase_date"
  ],
  "fields": [
   {
@@ -51,11 +54,26 @@
    "fieldname": "space_limit",
    "fieldtype": "Data",
    "label": "Space limit"
+  },
+  {
+   "fieldname": "expiry_date",
+   "fieldtype": "Data",
+   "label": "expiry_date"
+  },
+  {
+   "fieldname": "site_creation_date",
+   "fieldtype": "Date",
+   "label": "Site creation date"
+  },
+  {
+   "fieldname": "last_purchase_date",
+   "fieldtype": "Date",
+   "label": "Last purchase date"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-19 15:48:41.120156",
+ "modified": "2023-06-30 12:04:45.386429",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS sites",
