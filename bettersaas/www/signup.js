@@ -306,7 +306,10 @@ createApp({
         console.log(this);
         const query = `?domain=${this.sitename}&email=${this.email}&password=${enc_password}&firstname=${this.fname}&lastname=${this.lname}&companyname=${this.company_name}&country=${this.country}&createUser=true`;
         console.log(this.ipRespo);
+        this.status.step2 = "completed";
+
         setTimeout(() => {
+          this.status.step3 = "completed";
           let domainToRedirect = "";
           if (window.dev_server) {
             domainToRedirect = this.targetSubdomain;
@@ -333,15 +336,23 @@ createApp({
       }
 
       frappe.show_alert("Please check your email for OTP", 5);
-      // send otp and set otpSent to true
-      const { message } = await $.ajax({
-        url: "/api/method/bettersaas.bettersaas.doctype.saas_users.saas_users.send_otp",
-        type: "GET",
-        data: {
-          email: this.email,
-          phone: t_phone.replace("+", ""),
-        },
-      });
+      // send otp and set otpSent to tru;
+      let message;
+      console.log(window.dev_server);
+      if (!window.dev_server) {
+        const resp = await $.ajax({
+          url: "/api/method/bettersaas.bettersaas.doctype.saas_users.saas_users.send_otp",
+          type: "GET",
+          data: {
+            email: this.email,
+            phone: t_phone.replace("+", ""),
+          },
+        });
+        message = resp.message;
+      } else {
+        message = "123456";
+      }
+
       this.otpUniqueId = message;
       this.otpVerificationStatus.setOTPSent();
       console.log(this.otpVerificationStatus.otpSent);
@@ -359,14 +370,21 @@ createApp({
       if (!this.isEmailRegex(this.email)) {
         return "Email is not valid";
       }
-      const { message } = await $.ajax({
-        url: "/api/method/bettersaas.bettersaas.doctype.saas_users.saas_users.verify_account_request",
-        type: "GET",
-        data: {
-          unique_id: this.otpUniqueId,
-          otp: otp,
-        },
-      });
+      let message;
+      if (!window.dev_server) {
+        const resp = await $.ajax({
+          url: "/api/method/bettersaas.bettersaas.doctype.saas_users.saas_users.verify_account_request",
+          type: "GET",
+          data: {
+            unique_id: this.otpUniqueId,
+            otp: otp,
+          },
+        });
+        message = resp.message;
+      } else {
+        message = "SUCCESS";
+      }
+      console.log(message);
       if (message === "SUCCESS") {
         this.otpVerificationStatus.otpVerified = true;
         document.getElementById("otp-feedback").innerHTML = "OTP verified";
@@ -383,7 +401,7 @@ createApp({
 
     async createSite() {
       this.loading = true;
-      this.status.step1 = "loading";
+      this.status.step1 = "active";
       frappe.call({
         method: "bettersaas.bettersaas.doctype.saas_sites.saas_sites.setupSite",
         args: {
@@ -403,7 +421,12 @@ createApp({
           if (r.message.subdomain) {
             this.targetSubdomain = r.message.subdomain;
             this.status.step1 = "completed";
-            this.status.step2 = "completed";
+            this.status.step2 = "active";
+            setTimeout(() => {
+              this.status.step2 = "completed";
+              this.status.step3 = "active";
+            }, 1500);
+
             this.checkSiteCreatedPoll();
           } else {
             this.status.step1 = "failed";

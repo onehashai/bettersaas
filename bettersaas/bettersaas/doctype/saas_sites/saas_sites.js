@@ -7,6 +7,7 @@ frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
       sitename: frm.doc.site_name,
       max_space: frm.doc.space_limit,
       max_email: frm.doc.email_limit,
+      expiry_date: frm.doc.expiry_date,
     },
     callback: function (r) {
       console.log("limits updated", r);
@@ -78,7 +79,7 @@ frappe.ui.form.on("SaaS sites", {
           frm.set_value("user_limit", r);
         });
     }
-    if (!frm.doc.max_email_limit) {
+    if (!frm.doc.email_limit) {
       frappe.db
         .get_single_value("SaaS settings", "default_email_limit")
         .then(async (r) => {

@@ -77,6 +77,7 @@ def send_otp(email, phone):
         < 10 * 60
     ):
         new_otp_doc.otp = doc[0].otp
+        
     else:
         print("GENERATING")
         new_otp_doc.otp = generate_otp()
