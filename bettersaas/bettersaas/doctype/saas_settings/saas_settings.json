@@ -1,104 +1,104 @@
 {
- "actions": [],
- "allow_rename": 1,
- "creation": "2023-06-13 14:00:18.837597",
- "default_view": "List",
- "doctype": "DocType",
- "editable_grid": 1,
- "engine": "InnoDB",
- "field_order": [
-  "domain",
-  "restricted_subdomains",
-  "db_password",
-  "root_password",
-  "default_user_limit",
-  "default_email_limit",
-  "default_space_limit",
-  "stock_site_count",
-  "apps_to_install",
-  "expiry_days",
-  "server_user_name"
- ],
- "fields": [
-  {
-   "fieldname": "domain",
-   "fieldtype": "Data",
-   "label": "Domain"
-  },
-  {
-   "fieldname": "restricted_subdomains",
-   "fieldtype": "Long Text",
-   "label": "restricted subdomains"
-  },
-  {
-   "fieldname": "db_password",
-   "fieldtype": "Data",
-   "label": "Database password"
-  },
-  {
-   "fieldname": "root_password",
-   "fieldtype": "Data",
-   "label": "Server root password"
-  },
-  {
-   "fieldname": "default_user_limit",
-   "fieldtype": "Data",
-   "label": "Default user limit"
-  },
-  {
-   "fieldname": "default_email_limit",
-   "fieldtype": "Data",
-   "label": "Default email limit"
-  },
-  {
-   "fieldname": "stock_site_count",
-   "fieldtype": "Data",
-   "label": "stock site count"
-  },
-  {
-   "fieldname": "apps_to_install",
-   "fieldtype": "Table MultiSelect",
-   "label": "Apps to install on client",
-   "options": "Available Apps CT"
-  },
-  {
-   "fieldname": "expiry_days",
-   "fieldtype": "Data",
-   "label": "default expiry days"
-  },
-  {
-   "fieldname": "default_space_limit",
-   "fieldtype": "Data",
-   "label": "Default space limit in GB"
-  },
-  {
-   "default": "frappe",
-   "fieldname": "server_user_name",
-   "fieldtype": "Data",
-   "label": "Server user name"
-  }
- ],
- "index_web_pages_for_search": 1,
- "issingle": 1,
- "links": [],
- "modified": "2023-07-01 15:54:51.913144",
- "modified_by": "Administrator",
- "module": "Bettersaas",
- "name": "SaaS settings",
- "owner": "Administrator",
- "permissions": [
-  {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
-  }
- ],
- "sort_field": "modified",
- "sort_order": "DESC",
- "states": []
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2023-06-13 14:00:18.837597",
+  "default_view": "List",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "domain",
+    "restricted_subdomains",
+    "db_password",
+    "root_password",
+    "default_user_limit",
+    "default_email_limit",
+    "default_space_limit",
+    "stock_site_count",
+    "apps_to_install",
+    "expiry_days",
+    "server_user_name"
+  ],
+  "fields": [
+    {
+      "fieldname": "domain",
+      "fieldtype": "Data",
+      "label": "Domain"
+    },
+    {
+      "fieldname": "restricted_subdomains",
+      "fieldtype": "Long Text",
+      "label": "restricted subdomains"
+    },
+    {
+      "fieldname": "db_password",
+      "fieldtype": "Data",
+      "label": "Database password"
+    },
+    {
+      "fieldname": "root_password",
+      "fieldtype": "Data",
+      "label": "Server root password"
+    },
+    {
+      "fieldname": "default_user_limit",
+      "fieldtype": "Data",
+      "label": "Default user limit"
+    },
+    {
+      "fieldname": "default_email_limit",
+      "fieldtype": "Data",
+      "label": "Default email limit"
+    },
+    {
+      "fieldname": "stock_site_count",
+      "fieldtype": "Data",
+      "label": "stock site count"
+    },
+    {
+      "fieldname": "apps_to_install",
+      "fieldtype": "Table MultiSelect",
+      "label": "Apps to install on client",
+      "options": "Available Apps CT"
+    },
+    {
+      "fieldname": "expiry_days",
+      "fieldtype": "Data",
+      "label": "default expiry days"
+    },
+    {
+      "fieldname": "default_space_limit",
+      "fieldtype": "Data",
+      "label": "Default space limit in GB"
+    },
+    {
+      "default": "frappe",
+      "fieldname": "server_user_name",
+      "fieldtype": "Data",
+      "label": "Server user name for new sites"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "issingle": 1,
+  "links": [],
+  "modified": "2023-07-01 15:54:51.913144",
+  "modified_by": "Administrator",
+  "module": "Bettersaas",
+  "name": "SaaS settings",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "print": 1,
+      "read": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
 }
