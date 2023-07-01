@@ -16,7 +16,8 @@
   "default_space_limit",
   "stock_site_count",
   "apps_to_install",
-  "expiry_days"
+  "expiry_days",
+  "server_user_name"
  ],
  "fields": [
   {
@@ -69,12 +70,18 @@
    "fieldname": "default_space_limit",
    "fieldtype": "Data",
    "label": "Default space limit in GB"
+  },
+  {
+   "default": "frappe",
+   "fieldname": "server_user_name",
+   "fieldtype": "Data",
+   "label": "Server user name"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-06-28 14:50:13.391077",
+ "modified": "2023-07-01 15:54:51.913144",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS settings",

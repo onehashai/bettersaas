@@ -153,8 +153,8 @@ def setupSite(*args, **kwargs):
         )
     )
     commands.append(
-        "cd /home/frappe/frappe-bench/sites & mv {}.{} {}".format(
-            target_site.subdomain, frappe.conf.domain, new_site
+        "cd /home/{}/frappe-bench/sites & mv {}.{} {}".format(
+            config.server_user_name,target_site.subdomain, frappe.conf.domain, new_site
         )
     )
     site_defaults = frappe.get_doc("SaaS settings")
@@ -190,7 +190,7 @@ def setupSite(*args, **kwargs):
     commands.append("bench --site {} set-maintenance-mode off".format(new_site))
     commands.append(
         "bench --site {} execute bettersaas.bettersaas.doctype.saas_sites.saas_sites.markSiteAsUsed --args \"'{}'\"".format(
-            subdomain + "." + frappe.conf.domain, subdomain
+            frappe.local.site , subdomain
         )
     )
     target_site.is_used = "yes"
