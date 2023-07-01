@@ -1,11 +1,11 @@
 const { createApp } = Vue;
 let TESTING = false;
-domain = "";
-if (window.dev_server) {
-  domain = ".localhost:8000";
-} else {
-  domain = ".onehash.store";
+let domain = "." + window.location.hostname.split(".").splice(1, 2).join(".");
+if (window.location.port) {
+  domain += ":" + window.location.port;
 }
+console.log("domain", domain);
+const http_protocol = window.location.protocol;
 VeeValidate.configure({
   validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
   validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
