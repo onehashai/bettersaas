@@ -23,15 +23,7 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
         script: |
           echo "Deploying to EC2"
-          cd /home/oh/frappe-bench/apps/clientside
-          git add .
-          git stash 
-          git pull
           cd /home/oh/frappe-bench/apps/bettersaas
-          git add .
-          git stash
-          git pull
-          cd /home/oh/frappe-bench/apps/whitelabel
           git add .
           git stash
           git pull
