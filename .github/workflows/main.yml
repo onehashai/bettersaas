@@ -1,6 +1,13 @@
-name: SSH into EC2 server
+name: Deploy on production
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [closed]
+    branches:
+      - main
 
 jobs:
   build:
@@ -12,7 +19,7 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: 13.126.170.144
-        username: "ubuntu"
+        username: "oh"
         key: ${{ secrets.EC2_KEY }}
         script: |
-          echo 'Hello, EC2 World!'
+          echo "hello"
