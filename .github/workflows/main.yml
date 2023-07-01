@@ -35,6 +35,6 @@ jobs:
           git add .
           git stash
           git pull
-          bench --site admin.onehash.store migrate
+          bench --site app.onehash.is migrate
           echo ${{secrets.EC2_PROD_PW}} | sudo -S supervisorctl restart all
-          echo ${{secrets.EC2_PROD_PW}} | sudo -S bench setup production oh
+          echo ${{secrets.EC2_PROD_PW}} | sudo -S bench setup production oh --yes
