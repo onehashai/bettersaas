@@ -22,5 +22,7 @@ jobs:
         username: "oh"
         key: ${{ secrets.EC2_KEY }}
         script: |
-          echo "hello"
-          whoami
+          echo "Deplotying to EC2"
+          cd /home/oh/frappe-bench/apps/clientside
+          ./pull_and_restart.sh
+          
