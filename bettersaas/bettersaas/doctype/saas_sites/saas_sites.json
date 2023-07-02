@@ -15,8 +15,7 @@
   "do_backup",
   "space_limit",
   "expiry_date",
-  "site_creation_date",
-  "last_purchase_date"
+  "linked_domains"
  ],
  "fields": [
   {
@@ -61,19 +60,14 @@
    "label": "expiry_date"
   },
   {
-   "fieldname": "site_creation_date",
-   "fieldtype": "Date",
-   "label": "Site creation date"
-  },
-  {
-   "fieldname": "last_purchase_date",
-   "fieldtype": "Date",
-   "label": "Last purchase date"
+   "fieldname": "linked_domains",
+   "fieldtype": "Data",
+   "label": "Linked domains"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-30 12:04:45.386429",
+ "modified": "2023-07-01 21:31:10.212394",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS sites",
