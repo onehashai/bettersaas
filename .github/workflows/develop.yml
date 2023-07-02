@@ -1,4 +1,4 @@
-name: Deploy on production
+name: Deploy on staging
 
 on:
   push:
@@ -29,4 +29,4 @@ jobs:
           git pull
           bench --site admin.onehash.store migrate
           echo ${{secrets.EC2_PROD_PW}} | sudo -S supervisorctl restart all
-          echo ${{secrets.EC2_PROD_PW}} | sudo -S bench setup production oh --yes
+          echo ${{secrets.EC2_PROD_PW}} | sudo -S bench setup production frappe --yes
