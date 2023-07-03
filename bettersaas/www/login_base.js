@@ -447,6 +447,7 @@ async function getSites(email){
         return;
     }
     const siteSelectList = document.createElement("select");
+	siteSelectList.classList.add("form-select");
     siteSelectList.style.width = "100%";
     siteSelectList.id = "siteSelectList";  
     parent = document.getElementById("sites");
