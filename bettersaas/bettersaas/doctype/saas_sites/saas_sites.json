@@ -9,18 +9,22 @@
  "field_order": [
   "site_name",
   "encrypted_password",
+  "column_break_h9hvt",
   "linked_email",
+  "linked_domains",
+  "limits_tab",
   "user_limit",
   "email_limit",
   "do_backup",
+  "column_break_r1mem",
   "space_limit",
-  "expiry_date",
-  "linked_domains"
+  "expiry_date"
  ],
  "fields": [
   {
    "fieldname": "site_name",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Site name"
   },
   {
@@ -57,17 +61,30 @@
   {
    "fieldname": "expiry_date",
    "fieldtype": "Data",
-   "label": "expiry_date"
+   "label": "Expiry Date"
   },
   {
    "fieldname": "linked_domains",
    "fieldtype": "Data",
-   "label": "Linked domains"
+   "label": "Added Domains"
+  },
+  {
+   "fieldname": "limits_tab",
+   "fieldtype": "Tab Break",
+   "label": "Limits"
+  },
+  {
+   "fieldname": "column_break_r1mem",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_h9hvt",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-01 21:31:10.212394",
+ "modified": "2023-07-03 11:33:29.263592",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS sites",
