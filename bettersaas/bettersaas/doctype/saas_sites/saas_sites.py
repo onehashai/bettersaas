@@ -280,5 +280,11 @@ def delete_site(*args, **kwargs):
     doc.save(ignore_permissions=True)
     frappe.db.commit()
     return "done"
+
+
+
+
+
+        
 class SaaSsites(Document):
     pass
