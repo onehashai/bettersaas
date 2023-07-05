@@ -21,7 +21,7 @@
 <div>
   <main id="main">
     <div class="left">
-      <div class="login_box drop-shadow">
+      <div class="login_box">
         <div class="logo">
           <img
             src="https://uploads-ssl.webflow.com/5e53d34464688e6f5960a338/610a36c2792530d601aaf35f_OneHash_Logo.svg"
@@ -41,7 +41,7 @@
           novalidate="novalidate"
         >
           <div class="row">
-            <div class="col-6">
+            <div class="col-12 col-md-6 mb-1">
               <v-field
                 class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
                 name="first-name"
@@ -56,7 +56,7 @@
                 class="feedback error-feedback"
               ></error-message>
             </div>
-            <div class="col-6">
+            <div class="col-12 col-md-6 mb-1">
               <v-field
                 class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
                 name="last-name"
@@ -73,7 +73,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-12 relative">
+            <div class="col-12 mb-1 relative">
               <v-field
                 v-slot="{meta,field,errorMessage}"
                 :rules="checkSubdomain"
@@ -102,7 +102,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-12 relative">
+            <div class="col-12 mb-1 relative">
               <v-field
                 class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
                 name="company-name"
@@ -119,7 +119,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-6">
+            <div class="col-12 col-md-6 mb-1">
               <v-field
                 class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
                 name="email"
@@ -135,7 +135,7 @@
                 class="feedback error-feedback"
               ></error-message>
             </div>
-            <div class="col-6">
+            <div class="col-12 col-md-6 mb-1">
               <v-field
                 v-slot="{meta,field,errorMessage}"
                 :rules="checkPasswordStrength"
@@ -162,7 +162,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-6 relative">
+            <div class="col-12 col-md-6 mb-1 relative">
               <v-field
                 style="padding-left: 50px !important"
                 class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
@@ -180,9 +180,9 @@
                 class="feedback error-feedback"
               ></error-message>
             </div>
-            <div class="col-6">
+            <div class="col-12 col-md-6 ">
               <input
-                v-if="otpUniqueId"
+
                 type="text"
                 name="otp"
                 @input="verifyOTP"
@@ -194,7 +194,7 @@
               <span id="otp-feedback" class="feedback"> </span>
             </div>
           </div>
-          <div class="mt-2">
+          <div class="mt-10">
             <v-field
               name="terms"
               type="checkbox"
@@ -218,22 +218,24 @@
           >
             Get OTP
           </button> -->
-          <button
-            :disabled="otpVerificationStatus.sendingOTP || otpVerificationStatus.otpSent || otpVerificationStatus.waitingForResend || otpVerificationStatus.otpVerified"
-            type="submit"
-            class="submit_btn w-100 drop-shadow-md mt-5 disabled:opacity-50"
-            style="display: flex; justify-content: center; align-items: center"
-          >
-            <span
-              v-if="!otpVerificationStatus.otpSent && !otpVerificationStatus.otpVerified && !otpVerificationStatus.sendingOTP"
-              >Send OTP</span
-            >
-            <span id="timer" v-if="!otpVerificationStatus.otpVerified"></span>
-            <span v-if="otpVerificationStatus.sendingOTP">Sending OTP</span>
-            <span v-if="otpVerificationStatus.otpVerified"
-              >Processing ....</span
-            >
-          </button>
+          <div class="w-100 flex justify-content-center">
+              <button
+                :disabled="otpVerificationStatus.sendingOTP || otpVerificationStatus.otpSent || otpVerificationStatus.waitingForResend || otpVerificationStatus.otpVerified"
+                type="submit"
+                class="submit_btn drop-shadow-md mt-5 disabled:opacity-50"
+                style="display: flex; justify-content: center; align-items: center"
+              >
+                <span
+                  v-if="!otpVerificationStatus.otpSent && !otpVerificationStatus.otpVerified && !otpVerificationStatus.sendingOTP"
+                  >Send OTP</span
+                >
+                <span id="timer" v-if="!otpVerificationStatus.otpVerified"></span>
+                <span v-if="otpVerificationStatus.sendingOTP">Sending OTP</span>
+                <span v-if="otpVerificationStatus.otpVerified"
+                  >Processing ....</span
+                >
+              </button>
+          </div>
         </v-form>
         <ol class="steps">
           <li
