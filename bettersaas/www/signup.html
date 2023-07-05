@@ -138,7 +138,7 @@
             <div class="col-6">
               <v-field
                 v-slot="{meta,field,errorMessage}"
-                :rules="passWordCheckCallPromise"
+                :rules="checkPasswordStrength"
                 :validateOnInput="true"
                 name="password"
               >
@@ -294,6 +294,7 @@
 <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
 <script src="https://unpkg.com/@popperjs/core@2"></script>
 <script src="https://unpkg.com/vee-validate@4.5.8/dist/vee-validate.js"></script>
+<script src="./config.js"></script>
 <script src="./signup.js"></script>
 
 {% endblock %}

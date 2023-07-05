@@ -81,14 +81,13 @@ def checkEmailFormatWithRegex(email):
 
 @frappe.whitelist(allow_guest=True)
 def setupSite(*args, **kwargs):
-    print(kwargs)
-    doc = json.loads(kwargs["doc"])
-    company_name = doc["company_name"]
-    subdomain = doc["subdomain"]
-    admin_password = doc["password"]
-    fname = doc["first_name"]
-    lname = doc["last_name"]
-    email = doc["email"]
+    company_name = kwargs["company_name"]
+    subdomain = kwargs["subdomain"]
+    admin_password = kwargs["password"]
+    fname = kwargs["first_name"]
+    lname = kwargs["last_name"]
+    email = kwargs["email"]
+    phone = kwargs["phone"]
     config = frappe.get_doc("SaaS settings")
     if not subdomain:
         return "SUBDOMAIN_NOT_PROVIDED"
@@ -115,7 +114,7 @@ def setupSite(*args, **kwargs):
         last_name=lname,
         email=email,
         site=subdomain + "." + frappe.conf.domain,
-        phone=doc["phone"],
+        phone=phone,
     )
     stock_sites = frappe.db.get_list(
         "SaaS stock sites", filters={"is_used": "no"}, ignore_permissions=True
@@ -281,7 +280,18 @@ def delete_site(*args, **kwargs):
     frappe.db.commit()
     return "done"
 
-
+@frappe.whitelist(allow_guest=True,methods=["POST"])
+def upgrade_user(*args, **kwargs):
+    print("upgrading user")
+    site = kwargs["site_name"]
+    user_count = kwargs["user_count"]
+    product_id = kwargs["product_id"]
+    site_doc = frappe.get_doc("SaaS sites", {"site_name": site})
+    site_doc.plan = product_id
+    site_doc.user_limit = user_count
+    site_doc.save(ignore_permissions=True)
+    return "done"
+    
     
 
         

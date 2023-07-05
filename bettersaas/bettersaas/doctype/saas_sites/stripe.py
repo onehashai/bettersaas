@@ -13,9 +13,10 @@ stripe.api_key = "sk_test_..."
 endpoint_secret = 'whsec_eda93bf372ba5a19f4ca1c1dc9b076566a44d700f1a0f35a1d7ac47f5d929fa7'
 
 
-@frappe.whitelist(methods=['POST'])
+@frappe.whitelist(allow_guest=True,methods=['POST'])
 def webhook(*args, **kwargs):
     print("webhook called")
+    return "hi"
     # event = None
     # payload = kwargs["payload"]
     # sig_header = frappe.local.requst.headers['STRIPE_SIGNATURE']
