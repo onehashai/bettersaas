@@ -180,9 +180,8 @@
                 class="feedback error-feedback"
               ></error-message>
             </div>
-            <div class="col-12 col-md-6 ">
+            <div class="col-12 col-md-6">
               <input
-
                 type="text"
                 name="otp"
                 @input="verifyOTP"
@@ -219,22 +218,26 @@
             Get OTP
           </button> -->
           <div class="w-100 flex justify-content-center">
-              <button
-                :disabled="otpVerificationStatus.sendingOTP || otpVerificationStatus.otpSent || otpVerificationStatus.waitingForResend || otpVerificationStatus.otpVerified"
-                type="submit"
-                class="submit_btn drop-shadow-md mt-5 disabled:opacity-50"
-                style="display: flex; justify-content: center; align-items: center"
+            <button
+              :disabled="otpVerificationStatus.sendingOTP || otpVerificationStatus.otpSent || otpVerificationStatus.waitingForResend || otpVerificationStatus.otpVerified"
+              type="submit"
+              class="submit_btn drop-shadow-md mt-5 disabled:opacity-50"
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <span
+                v-if="!otpVerificationStatus.otpSent && !otpVerificationStatus.otpVerified && !otpVerificationStatus.sendingOTP"
+                >Send OTP</span
               >
-                <span
-                  v-if="!otpVerificationStatus.otpSent && !otpVerificationStatus.otpVerified && !otpVerificationStatus.sendingOTP"
-                  >Send OTP</span
-                >
-                <span id="timer" v-if="!otpVerificationStatus.otpVerified"></span>
-                <span v-if="otpVerificationStatus.sendingOTP">Sending OTP</span>
-                <span v-if="otpVerificationStatus.otpVerified"
-                  >Processing ....</span
-                >
-              </button>
+              <span id="timer" v-if="!otpVerificationStatus.otpVerified"></span>
+              <span v-if="otpVerificationStatus.sendingOTP">Sending OTP</span>
+              <span v-if="otpVerificationStatus.otpVerified"
+                >Processing ....</span
+              >
+            </button>
           </div>
         </v-form>
         <ol class="steps">
