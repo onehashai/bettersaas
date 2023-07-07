@@ -272,7 +272,8 @@ def backup():
     sites = frappe.get_all("SaaS sites", filters={"do_backup": 1}, fields=["site_name"])
     
     for site in sites:
-        take_backup_of_site(site.site_name)
+        print("backing up site", site.site_name)
+        frappe.enqueue("bettersaas.bettersaas.doctype.saas_sites.saas_sites.take_backup_of_site",sitename=site.site_name,at_front=1,queue="long",timeout=1500)
     return "done"
 def insert_backup_record(database_file,private_file,public_file,site_config,site,backup_size):
     
