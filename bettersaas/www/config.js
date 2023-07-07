@@ -65,7 +65,7 @@ const config = {
         UNIQUE_ID: "unique_id",
         OTP: "otp",
       },
-      SUCCESS_MESSAGE: "success",
+      SUCCESS_MESSAGE: "SUCCESS",
     },
     CREATE_SITE: {
       ENDPOINT: "bettersaas.bettersaas.doctype.saas_sites.saas_sites.setupSite",
