@@ -182,6 +182,7 @@
             </div>
             <div class="col-12 col-md-6">
               <input
+                v-if="otpUniqueId"
                 type="text"
                 name="otp"
                 @input="verifyOTP"

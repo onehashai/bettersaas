@@ -10,7 +10,7 @@ import os
 from frappe.utils.password import decrypt, encrypt
 from frappe.model.document import Document
 import re
-
+from bettersaas.bettersaas.api import upgrade_site
 
 @frappe.whitelist(allow_guest=True)
 def markSiteAsUsed(site):
@@ -163,6 +163,11 @@ def setupSite(*args, **kwargs):
         )
     )
     commands.append(
+        "bench --site {} set-config customer_email {}".format(
+            new_site, email
+        )
+    )
+    commands.append(
         "bench --site {} set-config max_email {}".format(
             new_site, site_defaults.default_email_limit
         )
@@ -180,9 +185,7 @@ def setupSite(*args, **kwargs):
     commands.append(
         "bench --site {} set-config expiry_date {}".format(new_site, expiry_date)
     )
-    commands.append(
-        "bench --site {} set-config space {}".format(new_site, expiry_date)
-    )
+   
     commands.append(
         "bench --site {} set-config creation_date {}".format(new_site, frappe.utils.nowdate())
     )
@@ -198,7 +201,6 @@ def setupSite(*args, **kwargs):
     executeCommands(commands)
     new_site_doc = frappe.new_doc("SaaS sites")
     enc_key = encrypt(admin_password, frappe.conf.enc_key)
-    print(enc_key)
     new_site_doc.encrypted_password = enc_key
     new_site_doc.linked_email = email
     new_site_doc.site_name = new_site
@@ -208,6 +210,13 @@ def setupSite(*args, **kwargs):
     sub = subdomain
     if frappe.conf.subdomain == "localhost":
         sub = target_site.subdomain
+    # try:
+        
+    #     plan = frappe.get_doc("SaaS site plans", new_site_doc.site_name)
+    #     if plan:
+    #         upgrade_site(plan.metadata,subdomain)
+    # except Exception as e:
+    #     print(e)
     return {"subdomain": sub, "enc_password": enc_key}
 
 

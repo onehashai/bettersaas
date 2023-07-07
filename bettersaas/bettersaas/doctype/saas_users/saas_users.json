@@ -12,7 +12,8 @@
   "last_name",
   "site",
   "otp",
-  "phone"
+  "phone",
+  "stripe_cus_id"
  ],
  "fields": [
   {
@@ -44,11 +45,16 @@
    "fieldname": "phone",
    "fieldtype": "Data",
    "label": "phone"
+  },
+  {
+   "fieldname": "stripe_cus_id",
+   "fieldtype": "Data",
+   "label": "Stripe customer id"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-21 17:06:33.994604",
+ "modified": "2023-07-06 16:54:10.789382",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS users",

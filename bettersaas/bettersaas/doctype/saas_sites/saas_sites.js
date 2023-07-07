@@ -36,7 +36,7 @@ frappe.ui.form.on("SaaS sites", {
       let enc_password = CryptoJS.enc.Base64.stringify(
         CryptoJS.enc.Utf8.parse(dec_db_password)
       );
-      const query = `?domain=${frm.doc.site_name}&email=Administrator&password=${enc_password}`;
+      const query = `?domain=${frm.doc.site_name}&email=Administrator&utm_id=${enc_password}`;
 
       // do something with these values, like an ajax request
       // or call a server side frappe function using frappe.call
