@@ -1,8 +1,10 @@
 import frappe
 def upgrade_site(plan_metadata,subdomain):
+    import subprocess as sp
     config = frappe.get_doc("SaaS settings")
     def set_config(key,value):
         try:
+            sp.Popen("bench --site {} set-config {} {}".format(subdomain +"."+ config.domain,key,value),shell=True)
             frappe.utils.execute_in_shell("bench --site {} set-config {} {}".format(subdomain +"."+ config.domain,key,value))
         
         except Exception as e:

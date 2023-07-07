@@ -1,10 +1,7 @@
 {% extends "bettersaas/templates/web.html" %} {% block style %}
 
 <!-- no-header -->
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/lightweight-simple-grid@0.0.1/simplegrid.min.css"
-/>
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
@@ -19,7 +16,13 @@
 <link rel="stylesheet" href="./signup.css" />
 {% endblock %} {% block page_content %}
 <div>
-  <main id="main">
+  <div class="spinner-bg" id="spinner-bg">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+
+  <main id="main" style="visibility: hidden">
     <div class="left">
       <div class="login_box">
         <div class="logo">
@@ -194,7 +197,7 @@
               <span id="otp-feedback" class="feedback"> </span>
             </div>
           </div>
-          <div class="mt-10">
+          <div>
             <v-field
               name="terms"
               type="checkbox"

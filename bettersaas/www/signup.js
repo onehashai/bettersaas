@@ -6,7 +6,11 @@ function getDomain() {
   }
   return domain;
 }
-
+window.onload = function () {
+  document.getElementById("main").style.visibility = "visible";
+  document.getElementById("spinner-bg").style.height = "0vh";
+  document.querySelector(".spinner-border").style.visibility = "hidden";
+};
 VeeValidate.configure({
   validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
   validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler

@@ -7,36 +7,60 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "site_name",
-  "file_name",
   "created_on",
-  "key"
+  "time",
+  "site_config",
+  "private_files",
+  "site_files",
+  "database_files",
+  "site",
+  "backup_size"
  ],
  "fields": [
-  {
-   "fieldname": "site_name",
-   "fieldtype": "Data",
-   "label": "Site Name"
-  },
-  {
-   "fieldname": "file_name",
-   "fieldtype": "Data",
-   "label": "File Name on S3"
-  },
   {
    "fieldname": "created_on",
    "fieldtype": "Date",
    "label": "Created on"
   },
   {
-   "fieldname": "key",
+   "fieldname": "time",
+   "fieldtype": "Time",
+   "label": "time"
+  },
+  {
+   "fieldname": "site_config",
    "fieldtype": "Data",
-   "label": "key"
+   "label": "site config"
+  },
+  {
+   "fieldname": "private_files",
+   "fieldtype": "Data",
+   "label": "private files"
+  },
+  {
+   "fieldname": "site_files",
+   "fieldtype": "Data",
+   "label": "site files"
+  },
+  {
+   "fieldname": "database_files",
+   "fieldtype": "Data",
+   "label": "database files"
+  },
+  {
+   "fieldname": "site",
+   "fieldtype": "Data",
+   "label": "site"
+  },
+  {
+   "fieldname": "backup_size",
+   "fieldtype": "Data",
+   "label": "backup size in MB"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-25 20:31:52.521098",
+ "modified": "2023-07-07 14:32:17.816002",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS site backups",

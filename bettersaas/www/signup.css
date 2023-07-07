@@ -106,7 +106,6 @@ body {
   border-radius: 20px;
   padding: 10px 15px;
   width: 100%;
-
 }
 .right-attach:hover {
   background-color: rgba(0, 126, 229, 1) !important;
@@ -154,15 +153,14 @@ main {
   width: 100% !important;
 }
 
-
-@media screen and (min-width:768px) and (max-width:1200px){
+@media screen and (min-width: 768px) and (max-width: 1200px) {
   main {
     height: 100vh;
     width: 100vw;
     display: flex;
     align-content: center;
   }
-  .left{
+  .left {
     width: 100%;
     height: 100%;
     display: flex;
@@ -178,14 +176,14 @@ main {
   }
 }
 
-@media screen and (min-width:1200px) {
+@media screen and (min-width: 1200px) {
   main {
     height: 100vh;
     width: 100vw;
     display: flex;
     align-content: center;
   }
-  .left{
+  .left {
     width: 40vw;
     height: auto;
     display: flex;
@@ -205,10 +203,17 @@ main {
     justify-content: center;
     align-items: center;
   }
-  .ad-title{
+  .ad-title {
     margin-top: 1.5em;
   }
   .error-feedback {
     color: rgb(184, 17, 17);
   }
+}
+.spinner-bg {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: all 2 ease-in-out;
 }

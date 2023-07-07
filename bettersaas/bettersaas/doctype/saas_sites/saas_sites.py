@@ -258,9 +258,7 @@ def getDecryptedPassword(*args, **kwargs):
     return decrypt(site.encrypted_password, frappe.conf.enc_key)
 
 
-@frappe.whitelist()
 def take_backup_of_site(sitename):
-    print("take_backup_of_site", sitename)
     command = (
         "bench --site {} execute clientside.clientside.utils.take_backups_s3".format(
             sitename
@@ -269,16 +267,31 @@ def take_backup_of_site(sitename):
     frappe.utils.execute_in_shell(command)
     return "executing command: " + command
 
-
-def insert_backup_record(file_name, key, site):
+@frappe.whitelist()
+def backup():
+    sites = frappe.get_all("SaaS sites", filters={"do_backup": 1}, fields=["site_name"])
+    
+    for site in sites:
+        take_backup_of_site(site.site_name)
+    return "done"
+def insert_backup_record(database_file,private_file,public_file,site_config,site,backup_size):
+    
+    print("inserting ", database_file,private_file,public_file,site_config,site)
     import datetime
-
-    doc = frappe.get_doc("SaaS site backups")
-    doc.site_name = site
-    doc.file_name = file_name
-    doc.created_on = datetime.datetime.now()
-    doc.key = key
-    doc.save(ignore_permissions=True)
+    try:
+        doc = frappe.new_doc("SaaS site backups")
+        doc.site_name = site
+        doc.site_files = public_file[2:]
+        doc.database_files = database_file[2:]
+        doc.private_files = private_file[2:]
+        doc.site_config = site_config[2:]
+        doc.created_on = datetime.datetime.now()
+        doc.time = datetime.datetime.now().strftime("%H:%M:%S")
+        doc.site = site
+        doc.backup_size = backup_size
+        doc.save(ignore_permissions=True)
+    except Exception as e:
+        print("hey", e)
 
 @frappe.whitelist(allow_guest=True)
 def delete_site(*args, **kwargs):
@@ -302,7 +315,12 @@ def upgrade_user(*args, **kwargs):
     return "done"
     
     
-
+@frappe.whitelist(allow_guest=True)
+def get_site_backup_size(sitename):
+    docs = frappe.db.get_list("SaaS site backups",filters={"site":sitename},fields=["backup_size"],ignore_permissions=True)
+    return sum([float(doc.backup_size[:-1]) for doc in docs])
         
+
+    
 class SaaSsites(Document):
     pass
