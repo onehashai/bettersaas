@@ -9,22 +9,21 @@
  "field_order": [
   "site_name",
   "encrypted_password",
-  "column_break_h9hvt",
   "linked_email",
-  "linked_domains",
-  "limits_tab",
   "user_limit",
   "email_limit",
   "do_backup",
-  "column_break_r1mem",
   "space_limit",
-  "expiry_date"
+  "expiry_date",
+  "site_creation_date",
+  "last_purchase_date",
+  "last_login",
+  "plan"
  ],
  "fields": [
   {
    "fieldname": "site_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Site name"
   },
   {
@@ -60,31 +59,33 @@
   },
   {
    "fieldname": "expiry_date",
+   "fieldtype": "Date",
+   "label": "Expiry date"
+  },
+  {
+   "fieldname": "site_creation_date",
+   "fieldtype": "Date",
+   "label": "Site creation date"
+  },
+  {
+   "fieldname": "last_purchase_date",
+   "fieldtype": "Date",
+   "label": "Last purchase date"
+  },
+  {
+   "fieldname": "last_login",
+   "fieldtype": "Date",
+   "label": "Last login"
+  },
+  {
+   "fieldname": "plan",
    "fieldtype": "Data",
-   "label": "Expiry Date"
-  },
-  {
-   "fieldname": "linked_domains",
-   "fieldtype": "Data",
-   "label": "Added Domains"
-  },
-  {
-   "fieldname": "limits_tab",
-   "fieldtype": "Tab Break",
-   "label": "Limits"
-  },
-  {
-   "fieldname": "column_break_r1mem",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "column_break_h9hvt",
-   "fieldtype": "Column Break"
+   "label": "Plan"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-03 11:33:29.263592",
+ "modified": "2023-07-08 17:56:23.720414",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS sites",
