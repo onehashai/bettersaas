@@ -365,6 +365,7 @@ window.Vue.createApp({
           first_name: this.fname,
           last_name: this.lname,
           phone: this.phone,
+          country: this.country,
         },
         callback: (r) => {
           if (r.message.subdomain) {

@@ -18,7 +18,9 @@
   "do_backup",
   "column_break_r1mem",
   "space_limit",
-  "expiry_date"
+  "expiry_date",
+  "payment_details_tab",
+  "cus_id"
  ],
  "fields": [
   {
@@ -80,11 +82,21 @@
   {
    "fieldname": "column_break_h9hvt",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payment_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Payment details"
+  },
+  {
+   "fieldname": "cus_id",
+   "fieldtype": "Data",
+   "label": "Stripe customer id"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-03 11:33:29.263592",
+ "modified": "2023-07-08 12:08:52.900094",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS sites",
