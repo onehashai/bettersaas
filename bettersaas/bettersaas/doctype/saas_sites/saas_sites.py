@@ -10,8 +10,8 @@ import os
 from frappe.utils.password import decrypt, encrypt
 from frappe.model.document import Document
 import re
+from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
-from whitelabel.api import StripeSubscriptionManager
 @frappe.whitelist(allow_guest=True)
 def markSiteAsUsed(site):
     print(site)
@@ -148,7 +148,9 @@ def setupSite(*args, **kwargs):
             "SaaS stock sites", stock_sites[0]["name"], ignore_permissions=True
         )
     print("using ", target_site.subdomain, "to create ", subdomain)
-
+    commands.append(
+        "bench --site {} clear-cache".format(target_site.subdomain + "." + frappe.conf.domain)
+    )
     commands.append(
         "bench --site {} set-admin-password {}".format(
             target_site.subdomain + "." + frappe.conf.domain, admin_password
@@ -217,6 +219,7 @@ def setupSite(*args, **kwargs):
     customer = subscription.create_customer( new_site,email,fname,lname,phone)
     new_site_doc.cus_id = customer.id
     frappe.utils.execute_in_shell("bench --site {} set-config customer_id {}".format(new_site,customer.id))
+    frappe.utils.execute_in_shell("bench --site {} set-config has_subscription {}".format(new_site,"yes"))
     # create trial subscription
     subscription.start_free_trial_of_site(customer.id)
     
@@ -225,6 +228,8 @@ def setupSite(*args, **kwargs):
     
     if frappe.conf.subdomain == "localhost":
         sub = target_site.subdomain
+    from clientside.stripe import hasActiveSubscription
+    hasActiveSubscription(invalidate_cache=True,site=new_site)
     return {"subdomain": sub, "enc_password": enc_key}
 
 

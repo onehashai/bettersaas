@@ -1,7 +1,7 @@
 import frappe
 import json
 import stripe
-from whitelabel.api import StripeSubscriptionManager
+from clientside.stripe import StripeSubscriptionManager
 stripe_manager = StripeSubscriptionManager(country="IN")
 
     

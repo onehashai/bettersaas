@@ -6,7 +6,7 @@ import math
 import random
 from frappe.core.doctype.sms_settings.sms_settings import send_sms
 from frappe.utils.password import decrypt, encrypt
-from whitelabel.api import StripeSubscriptionManager
+from clientside.stripe import StripeSubscriptionManager
 
 def generate_otp():
     # Declare a digits variable
