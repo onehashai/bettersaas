@@ -267,7 +267,9 @@ window.Vue.createApp({
           }
           domainToRedirect = this.sitename;
           window.location.href =
-            `http://${siteToRedirect}${getDomain()}/redirect` + query;
+            `${
+              window.location.protocol
+            }//${siteToRedirect}${getDomain()}/redirect` + query;
         }, 1500);
       } else {
         setTimeout(() => {
