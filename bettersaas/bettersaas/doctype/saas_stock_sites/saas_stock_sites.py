@@ -113,7 +113,7 @@ def refreshStockSites(*args, **kwargs):
             db_values.append([subdomain, adminPassword])
     method = "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.create_multiple_sites_in_parallel"
     
-    frappe.enqueue(method, commands=commands, queue="shirt")
+    frappe.enqueue(method, commands=commands, queue="short")
     return "Database will be updated soon with stock sites "
 
 
