@@ -73,7 +73,7 @@ def refreshStockSites(*args, **kwargs):
                 )
             )
             apps_to_install = [
-                frappe.get_doc("Available Apps", x.as_dict().app).appname
+                frappe.get_doc("Available Apps", x.as_dict().app).app_name
                 for x in frappe.get_doc("SaaS settings").apps_to_install
             ]
             print(apps_to_install)
