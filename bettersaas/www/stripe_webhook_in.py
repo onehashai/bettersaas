@@ -23,6 +23,8 @@ def handler(*args, **kwargs):
         print("invalid signature")
         raise e
     print("event type", event["type"])
+    # check customer id in event
+    # if not customer id in event:
     if event["type"] == "checkout.session.completed":
         stripe_manager.handle_checkout_session_completed(event)
         

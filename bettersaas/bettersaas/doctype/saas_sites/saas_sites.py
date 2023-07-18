@@ -208,7 +208,14 @@ def setupSite(*args, **kwargs):
         )
     )
     commands.append("bench setup nginx --yes")
-    executeCommands(commands)
+    # enque long running tasks - executeCommands 
+    frappe.enqueue(
+        "bettersaas.bettersaas.doctype.saas_sites.saas_sites.executeCommands",
+        commands=commands
+        ,queue="long",
+        at_front=True
+    )
+   #     executeCommands(commands)
     new_site_doc = frappe.new_doc("SaaS sites")
     enc_key = encrypt(admin_password, frappe.conf.enc_key)
     new_site_doc.encrypted_password = enc_key
