@@ -19,6 +19,8 @@
   "column_break_r1mem",
   "space_limit",
   "expiry_date",
+  "plan",
+  "is_deleted"
   "payment_details_tab",
   "cus_id"
  ],
@@ -62,8 +64,17 @@
   },
   {
    "fieldname": "expiry_date",
-   "fieldtype": "Data",
+   "fieldtype": "Date",
    "label": "Expiry Date"
+  },
+  {
+   "fieldname": "plan",
+   "fieldtype": "Data",
+   "label": "Plan"
+  },
+  {
+   "fieldname": "column_break_h9hvt",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "linked_domains",
@@ -80,6 +91,9 @@
    "fieldtype": "Column Break"
   },
   {
+   "fieldname": "is_deleted",
+   "fieldtype": "Data",
+   "label": "Is Deleted"
    "fieldname": "column_break_h9hvt",
    "fieldtype": "Column Break"
   },
@@ -96,7 +110,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-08 12:08:52.900094",
+ "modified": "2023-07-10 14:25:16.471443",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS sites",
