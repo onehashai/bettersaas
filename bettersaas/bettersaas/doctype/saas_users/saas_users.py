@@ -6,7 +6,7 @@ import math
 import random
 from frappe.core.doctype.sms_settings.sms_settings import send_sms
 from frappe.utils.password import decrypt, encrypt
-
+from clientside.stripe import StripeSubscriptionManager
 
 def generate_otp():
     # Declare a digits variable
@@ -149,21 +149,35 @@ def get_sites(email):
 
 @frappe.whitelist(allow_guest=True)
 def check_user_name_and_password_for_a_site(site_name, email, password):
+    print("checkin")
     site = frappe.db.get_all(
         "SaaS sites",
         filters={"site_name": site_name, "linked_email": email},
-        fields=["linked_email", "encrypted_password", "site_name"],
+        fields=["linked_email", "encrypted_password", "site_name","cus_id"],
     )
     if len(site) == 0:
         return "INVALID_SITE"
+    
     site = site[0]
+    
     dec_password = decrypt(site.encrypted_password, frappe.conf.enc_key)
     if site:
-        if dec_password == password:
-            return "OK"
-        else:
+        if dec_password != password:
             return "INVALID_CREDENTIALS"
+    # check for active subscription
+  #  print(frappe.conf)
+    country = frappe.get_site_config(site_path=site.site_name)["country"]
+    stripe_subscription_manager = StripeSubscriptionManager(country = country )
+    has_sub =stripe_subscription_manager.has_valid_site_subscription(site.cus_id)
+    # find user and check if has role of Administator
+    hasRoleAdmin = frappe.db.exists(
+        "Has Role", {"parent": email, "role": "Administrator"}
+    )
+    print(hasRoleAdmin)
+    if not has_sub:
+        return "NO_SUBSCRIPTION"
     return "OK"
+
 
 
 class SaaSusers(Document):

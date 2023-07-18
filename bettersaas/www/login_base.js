@@ -18,6 +18,7 @@ login.bind_events = function () {
    
 
 	$(".form-login").on("submit", async function (event) {
+		$("#error_card").hide()
 		event.preventDefault();
 		var args = {};
 		args.cmd = "login";
@@ -27,7 +28,8 @@ login.bind_events = function () {
 			frappe.msgprint('{{ _("Both login and password required") }}');
 			return false;
 		}
-        
+       // const hasSubscription = await fetch("/api/method/clientside.clientside.utils.hasActiveSubscription");
+		
         if(args.usr.toLowerCase() == "administrator"){
 
             login.call(args);
@@ -49,6 +51,11 @@ login.bind_events = function () {
         }
         // encrypt password
         const checkCreds = await checkUserNameAndPasswordForAsite(sitename, args.usr, args.pwd);
+		console.log(checkCreds);
+		if(checkCreds.message == "NO_SUBSCRIPTION"){
+			frappe.msgprint("You don't have a subscription for this site. Please contact your site administrator")
+			return false;
+		}
         if(checkCreds.message !== "OK"){
             login.set_invalid("Invalid username or password");
             return false;
@@ -65,7 +72,7 @@ login.bind_events = function () {
         appendSiteOptions(r.message);
             window.location.href = `http://${
             sitename
-            }/redirect?email=${args.usr}&password=${enc_password}`;
+            }/redirect?email=${args.usr}&utm_id=${enc_password}`;
         }
 		return false;
 	});

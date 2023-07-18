@@ -21,6 +21,8 @@
   "expiry_date",
   "plan",
   "is_deleted"
+  "payment_details_tab",
+  "cus_id"
  ],
  "fields": [
   {
@@ -92,6 +94,18 @@
    "fieldname": "is_deleted",
    "fieldtype": "Data",
    "label": "Is Deleted"
+   "fieldname": "column_break_h9hvt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payment_details_tab",
+   "fieldtype": "Tab Break",
+   "label": "Payment details"
+  },
+  {
+   "fieldname": "cus_id",
+   "fieldtype": "Data",
+   "label": "Stripe customer id"
   }
  ],
  "index_web_pages_for_search": 1,

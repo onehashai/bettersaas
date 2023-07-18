@@ -16,3 +16,8 @@ def upgrade_site(plan_metadata,subdomain):
             set_config("max_users", "1000000")
         else:
             set_config("max_users", plan_metadata["user_count"])
+
+
+
+            
+        
