@@ -209,13 +209,7 @@ def setupSite(*args, **kwargs):
     )
     commands.append("bench setup nginx --yes")
     # enque long running tasks - executeCommands 
-    frappe.enqueue(
-        "bettersaas.bettersaas.doctype.saas_sites.saas_sites.executeCommands",
-        commands=commands
-        ,queue="long",
-        at_front=True
-    )
-   #     executeCommands(commands)
+    executeCommands(commands)
     new_site_doc = frappe.new_doc("SaaS sites")
     enc_key = encrypt(admin_password, frappe.conf.enc_key)
     new_site_doc.encrypted_password = enc_key
@@ -277,10 +271,10 @@ def getDecryptedPassword(*args, **kwargs):
     print(site, frappe.conf.enc_key)
     return decrypt(site.encrypted_password, frappe.conf.enc_key)
 
-@frappe.whitelist()
-def take_backup_of_site(sitename):
+@frappe.whitelist(allow_guest=True)
+def take_backup_of_site(sitename,is_manual=0):
     command = (
-        "bench --site {} execute clientside.clientside.utils.take_backups_s3".format(
+        "bench --site {} execute clientside.clientside.utils.take_backups_s3 --args {}".format(
             sitename
         )
     )
@@ -297,21 +291,19 @@ def backup():
             continue
         frappe.enqueue("bettersaas.bettersaas.doctype.saas_sites.saas_sites.take_backup_of_site",sitename=site.site_name,at_front=1)
     return "done"
-def insert_backup_record(database_file,private_file,public_file,site_config,site,backup_size):
-    
-    print("inserting ", database_file,private_file,public_file,site_config,site)
+def insert_backup_record(site,backup_size,key,is_manual):
+    is_manual = int(is_manual)
     import datetime
     try:
         doc = frappe.new_doc("SaaS site backups")
         doc.site_name = site
-        doc.site_files = public_file
-        doc.database_files = database_file
-        doc.private_files = private_file
-        doc.site_config = site_config
         doc.created_on = datetime.datetime.now()
+        doc.site_files = key
         doc.time = datetime.datetime.now().strftime("%H:%M:%S")
         doc.site = site
         doc.backup_size = backup_size
+        if is_manual:
+            doc.created_by_user = 1
         doc.save(ignore_permissions=True)
     except Exception as e:
         print("hey", e)
@@ -393,9 +385,22 @@ def create_new_site_from_backup(*args, **kwargs):
     print(resp)
     
     
+@frappe.whitelist(allow_guest=True)
+def delete_old_backups(limit,site_name):
+    print()
+    limit = int(limit)
+    # we delete the old backups and keep only the latest "limit" backups
+    records = frappe.get_list("SaaS site backups",filters={"site":site_name,"created_by_user":1},fields=["name","created_on"],order_by="created_on desc",ignore_permissions=True)
+    for i in range(limit,len(records)):
+        print("deleting",records[i].name)
+        frappe.delete_doc("SaaS site backups",records[i].name)
+        frappe.db.commit()
+    return "deletion done"
     
-    
+import boto3
+
 
     
+   
 class SaaSsites(Document):
     pass

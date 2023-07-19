@@ -9,12 +9,10 @@
  "field_order": [
   "created_on",
   "time",
-  "site_config",
-  "private_files",
   "site_files",
-  "database_files",
   "site",
-  "backup_size"
+  "backup_size",
+  "created_by_user"
  ],
  "fields": [
   {
@@ -25,17 +23,8 @@
   {
    "fieldname": "time",
    "fieldtype": "Time",
+   "in_list_view": 1,
    "label": "time"
-  },
-  {
-   "fieldname": "site_config",
-   "fieldtype": "Data",
-   "label": "site config"
-  },
-  {
-   "fieldname": "private_files",
-   "fieldtype": "Data",
-   "label": "private files"
   },
   {
    "fieldname": "site_files",
@@ -43,24 +32,26 @@
    "label": "site files"
   },
   {
-   "fieldname": "database_files",
-   "fieldtype": "Data",
-   "label": "database files"
-  },
-  {
    "fieldname": "site",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "site"
   },
   {
    "fieldname": "backup_size",
    "fieldtype": "Data",
    "label": "backup size in MB"
+  },
+  {
+   "default": "0",
+   "fieldname": "created_by_user",
+   "fieldtype": "Check",
+   "label": "Is this created by the user"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-07 14:32:17.816002",
+ "modified": "2023-07-19 15:55:57.191586",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS site backups",
