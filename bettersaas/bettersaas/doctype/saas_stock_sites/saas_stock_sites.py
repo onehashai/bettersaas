@@ -20,11 +20,13 @@ def insertSite(site_name, admin_password):
     site.insert()
 
 
-def create_multiple_sites_in_parallel(commands):
+def create_multiple_sites_in_parallel(command,db_values):
     print("creating multiple sites in parallel")
-    from subprocess import Popen
+    frappe.utils.execute_in_shell(command)
+    for db_value in db_values:
+        insertSite(db_value[0], db_value[1])
+    
 
-    processes = [Popen(cmd, shell=True, stdout=log, stderr=log) for cmd in commands]
 
 
 def deleteSite(sitename):
@@ -106,14 +108,11 @@ def refreshStockSites(*args, **kwargs):
                     subdomain + "." + domain, site_defaults.default_email_limit
                 )
             )
-
-            command = " ; ".join(this_command)
-
-            commands.append(command)
+            method = "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.create_multiple_sites_in_parallel"
+            
+            frappe.enqueue(method, command=this_command, db_values=db_values,queue="short")
             db_values.append([subdomain, adminPassword])
-    method = "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.create_multiple_sites_in_parallel"
     
-    frappe.enqueue(method, commands=commands, queue="short")
     return "Database will be updated soon with stock sites "
 
 
