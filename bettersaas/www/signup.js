@@ -1,18 +1,21 @@
-const { createApp } = Vue;
-let TESTING = false;
-let domain = "." + window.location.hostname.split(".").splice(1, 2).join(".");
-if (window.location.port) {
-  domain += ":" + window.location.port;
+// config.js conatins the "config" variable imported through signup.html
+function getDomain() {
+  let domain = "." + window.location.hostname.split(".").splice(1, 2).join(".");
+  if (window.location.port) {
+    domain += ":" + window.location.port;
+  }
+  return domain;
 }
-console.log("domain", domain);
-const http_protocol = window.location.protocol;
+window.onload = function () {
+  document.getElementById("main").style.visibility = "visible";
+  document.getElementById("spinner-bg").style.height = "0vh";
+  document.querySelector(".spinner-border").style.visibility = "hidden";
+};
 VeeValidate.configure({
   validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
   validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
   validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
 });
-let timerOn = true;
-
 class OTPVerificationStatus {
   constructor() {
     this.otpVerified = false;
@@ -22,7 +25,6 @@ class OTPVerificationStatus {
     if (document.getElementById("timer")) {
       document.getElementById("timer").innerText = "";
     }
-
     this.otpSent = false;
     this.otpUniqueId = "";
     this.verifyingOTP = false;
@@ -49,19 +51,14 @@ class OTPVerificationStatus {
     this.sendingOTP = true;
   }
 }
-createApp({
+window.Vue.createApp({
   data() {
     return {
       otp: "",
       otpVerificationStatus: new OTPVerificationStatus(),
-      showSubmitbtn: false,
-      terms: false,
-      validate: "",
       phoneInput: "",
       fname: "",
-      isOTPButtonDisabled: false,
       lname: "",
-      submiitBtnText: "Submit",
       email: "",
       password: "",
       siteCreated: false,
@@ -71,12 +68,9 @@ createApp({
       otpVerified: true,
       phone: "",
       company_name: "",
-      inputErrors: [],
       targetSubdomain: "",
       otpSent: false,
-      sendOtpButtonDisabled: true,
       country: "",
-      enc_password: "",
       status: {
         step1: "neutral",
         step2: "neutral",
@@ -91,35 +85,18 @@ createApp({
   },
 
   async mounted() {
-    //  const inputFields = document.querySelectorAll("input");
-    const inputFields = [];
-    inputFields.forEach((input) => {
-      document.getElementById(input.id).addEventListener("focus", () => {
-        console.log(input.id);
-        if (document.getElementById(input.id + "-feedback")) {
-          document.getElementById(input.id + "-feedback").remove();
-        }
-      });
-    });
-
     const phoneInputField = document.querySelector("#phone");
-    const p = this;
     const phoneInput = window.intlTelInput(phoneInputField, {
       utilsScript:
         "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
       initialCountry: "auto",
-      preferredCountries: ["US", "IN", "SG", "AE"],
-      utilsScript:
-        "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+      preferredCountries: config.DEFAULT_COUNTRIES,
       geoIpLookup: (callback) => {
         $.get(
-          "https://ipinfo.io?token=3bd603a67da440",
+          "https://ipinfo.io?token=" + config.IPINFO_TOKEN,
           () => {},
           "jsonp"
         ).always((resp) => {
-          console.log(this);
-          p.country = resp.country;
-          p.setcountry(resp.country);
           let countryCode = resp && resp.country ? resp.country : "us";
           callback(countryCode);
         });
@@ -127,86 +104,65 @@ createApp({
     });
     phoneInputField.addEventListener("countrychange", () => {
       this.country = phoneInput.getSelectedCountryData().iso2.toUpperCase();
-      console.log(phoneInput.isValidNumber());
-      this.setcountry(this.country);
-      console.log(this.country);
     });
     this.phoneInput = phoneInput;
   },
   methods: {
-    timer(remaining) {
-      var m = Math.floor(remaining / 60);
-      var s = remaining % 60;
-
+    otpTimer(remainingSeconds) {
+      var m = Math.floor(remainingSeconds / 60);
+      var s = remainingSeconds % 60;
       m = m < 10 ? "0" + m : m;
       s = s < 10 ? "0" + s : s;
       document.getElementById("timer").innerText = "Wait for " + s + " seconds";
-      remaining -= 1;
-
-      if (remaining >= 0 && timerOn) {
+      remainingSeconds -= 1;
+      if (remainingSeconds >= 0) {
         setTimeout(() => {
-          this.timer(remaining);
+          this.otpTimer(remainingSeconds);
         }, 1000);
         return;
       }
-
-      if (!timerOn) {
-        // Do validate stuff here
-        return;
-      }
-
-      // Do timeout stuff here
       this.otpVerificationStatus.reset();
     },
-    setcountry(value) {
-      this.country = value;
-    },
-
     isTermsChecked(value) {
-      console.log(value);
       if (value && value === "no") {
         return true;
       }
-      return "Please accept the terms and conditions";
+      return config.ERROR_MESSAGES.ACCEPT_TERMS;
     },
 
     isRequired(value) {
       if (value && value.length > 0) {
         return true;
       }
-      return "This field is required";
+      return config.ERROR_MESSAGES.REQUIRED;
     },
     isEmailRegex(value) {
       if (value && value.length > 0) {
-        const emailRegex = new RegExp(
-          "^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$"
-        );
+        const emailRegex = new RegExp(config.EMAIL_REGEX);
         if (emailRegex.test(value)) {
           return true;
         }
-        return "Please enter a valid email";
+        return config.ERROR_MESSAGES.INVALID_EMAIL;
       }
-      return "This field is required";
+      return config.ERROR_MESSAGES.REQUIRED;
     },
     isPhoneRegex(value) {
       if (!value) {
-        return "This field is required";
+        return config.ERROR_MESSAGES.REQUIRED;
       }
-      const cc = this.phoneInput.getSelectedCountryData().iso2.toUpperCase();
-      if (cc !== "IN") {
+      if (this.country !== "IN") {
         return true;
       }
       if (value && value.length > 0) {
         if (this.phoneInput.isValidNumber()) {
           return true;
         }
-        return "Please enter a valid phone number";
+        return config.ERROR_MESSAGES.INVALID_PHONE;
       }
-      return "This field is required";
+      return config.ERROR_MESSAGES.REQUIRED;
     },
 
     async onSubmit(values) {
-      console.log("onSubmit", values);
       this.fname = values["first-name"];
       this.lname = values["last-name"];
       this.email = values["email"];
@@ -219,53 +175,48 @@ createApp({
     },
 
     async checkSubdomain(sitename) {
-      console.log("checkSubdomain", sitename);
-      const admin_url = window.location.origin;
       this.sitename = sitename.replace(/ /g, "-");
-      if (!sitename) {
-        return "subdomain cannot be empty";
-      }
-      if (sitename.length === 0) {
-        console.log("sitename", sitename);
-        return "subdomain cannot be empty";
+      if (!sitename || sitename.length === 0) {
+        return config.ERROR_MESSAGES.SUBDOMAIN_REQUIRED;
       }
       try {
         const res = await $.ajax({
-          url: `${admin_url}/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.check_subdomain`,
-          type: "GET",
+          url:
+            window.location.origin +
+            config.HTTP_METHODS.CHECK_SUBDOMAIN.ENDPOINT,
+          type: config.HTTP_METHODS.CHECK_SUBDOMAIN.METHOD,
           data: {
             subdomain: sitename,
           },
         });
-        if (res.message.status === "success") {
+        if (
+          res.message.status ===
+          config.HTTP_METHODS.CHECK_SUBDOMAIN.SUCCESS_MESSAGE
+        ) {
           return true;
         } else {
-          return "Subdomain is not available";
+          return config.ERROR_MESSAGES.SUBDOMAIN_NOT_AVAILABLE;
         }
       } catch (error) {
-        console.log(error);
-        return "Subdomain is not available";
+        return config.ERROR_MESSAGES.SUBDOMAIN_NOT_AVAILABLE;
       }
     },
 
-    checkEmailFormatWIthRegex(email) {
-      const regex = /\S+@\S+\.\S+/;
-      const p = regex.test(email);
-      console.log(p);
-      return p;
-    },
-    async passWordCheckCallPromise(password, { form }) {
+    async checkPasswordStrength(password, { form }) {
       if (!password) {
-        return "Password cannot be empty";
+        return config.ERROR_MESSAGES.PASSWORD_REQUIRED;
       }
       const { message } = await $.ajax({
-        url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.check_password_strength",
-        type: "GET",
+        url: config.HTTP_METHODS.CHECK_PASSWORD_STRENGTH.ENDPOINT,
+        type: config.HTTP_METHODS.CHECK_PASSWORD_STRENGTH.METHOD,
         data: {
-          password: password,
-          first_name: form["first-name"] || "",
-          last_name: form["last-name"] || "",
-          email: form["email"] || "",
+          [config.HTTP_METHODS.CHECK_PASSWORD_STRENGTH.DATA.PASSWORD]: password,
+          [config.HTTP_METHODS.CHECK_PASSWORD_STRENGTH.DATA.FIRST_NAME]:
+            form["first-name"] || "",
+          [config.HTTP_METHODS.CHECK_PASSWORD_STRENGTH.DATA.LAST_NAME]:
+            form["last-name"] || "",
+          [config.HTTP_METHODS.CHECK_PASSWORD_STRENGTH.DATA.EMAIl]:
+            form["email"] || "",
         },
       });
       if (message.feedback.password_policy_validation_passed) {
@@ -276,8 +227,7 @@ createApp({
     checkSiteCreated() {
       let response;
       frappe.call({
-        method:
-          "bettersaas.bettersaas.doctype.saas_sites.saas_sites.checkSiteCreated",
+        method: config.HTTP_METHODS.CHECK_SITE_CREATED.ENDPOINT,
         args: {
           doc: {
             site_name: this.sitename,
@@ -285,7 +235,9 @@ createApp({
         },
         async: false,
         callback: (r) => {
-          if (r.message == "yes") {
+          if (
+            r.message == config.HTTP_METHODS.CHECK_SITE_CREATED.SUCCESS_MESSAGE
+          ) {
             this.siteCreated = true;
           }
           response = r.message;
@@ -303,27 +255,26 @@ createApp({
         enc_password = CryptoJS.enc.Base64.stringify(
           CryptoJS.enc.Utf8.parse(pass)
         );
-        console.log(this);
-        const query = `?domain=${this.sitename}&email=${this.email}&password=${enc_password}&firstname=${this.fname}&lastname=${this.lname}&companyname=${this.company_name}&country=${this.country}&createUser=true`;
-        console.log(this.ipRespo);
+        const query = `?domain=${this.sitename}&email=${this.email}&utm_id=${enc_password}&firstname=${this.fname}&lastname=${this.lname}&companyname=${this.company_name}&country=${this.country}&createUser=true`;
         this.status.step2 = "completed";
-
         setTimeout(() => {
           this.status.step3 = "completed";
-          let domainToRedirect = "";
+          let siteToRedirect = "";
           if (window.dev_server) {
-            domainToRedirect = this.targetSubdomain;
+            siteToRedirect = this.targetSubdomain;
           } else {
-            domainToRedirect = this.sitename;
+            siteToRedirect = this.sitename;
           }
           domainToRedirect = this.sitename;
           window.location.href =
-            `http://${domainToRedirect}${domain}/redirect` + query;
-        }, 2000);
+            `${
+              window.location.protocol
+            }//${siteToRedirect}${getDomain()}/redirect` + query;
+        }, 1500);
       } else {
         setTimeout(() => {
           this.checkSiteCreatedPoll();
-        }, 3000);
+        }, config.SITE_CREATION_POLL_TIME);
       }
     },
     async sendOtp() {
@@ -338,14 +289,13 @@ createApp({
       frappe.show_alert("Please check your email for OTP", 5);
       // send otp and set otpSent to tru;
       let message;
-      console.log(window.dev_server);
       if (!window.dev_server) {
         const resp = await $.ajax({
-          url: "/api/method/bettersaas.bettersaas.doctype.saas_users.saas_users.send_otp",
-          type: "GET",
+          url: config.HTTP_METHODS.SEND_OTP.ENDPOINT,
+          type: config.HTTP_METHODS.SEND_OTP.METHOD,
           data: {
-            email: this.email,
-            phone: t_phone.replace("+", ""),
+            [config.HTTP_METHODS.SEND_OTP.DATA.EMAIl]: this.email,
+            [config.HTTP_METHODS.SEND_OTP.DATA.PHONE]: t_phone.replace("+", ""),
           },
         });
         message = resp.message;
@@ -355,8 +305,7 @@ createApp({
 
       this.otpUniqueId = message;
       this.otpVerificationStatus.setOTPSent();
-      console.log(this.otpVerificationStatus.otpSent);
-      this.timer(10);
+      this.otpTimer(config.OTP_RESEND_TIME_SECONDS);
       this.otpVerificationStatus.sendingOTP = false;
     },
     async verifyOTP() {
@@ -364,38 +313,44 @@ createApp({
       if (otp.length !== 6) {
         return;
       }
-      console.log("verifying otp");
       this.otpVerificationStatus.setVerifyingOTP();
-      document.getElementById("otp-feedback").innerHTML = "verifying OTP ..";
+      document.getElementById(
+        config.DOM_ELEMENT_SELECTOR.OTP_FEEDBACK
+      ).innerHTML = config.FEEDBACK.VERIFYING_OTP;
       if (!this.isEmailRegex(this.email)) {
-        return "Email is not valid";
+        return config.ERROR_MESSAGES.INVALID_EMAIL;
       }
       let message;
       if (!window.dev_server) {
         const resp = await $.ajax({
-          url: "/api/method/bettersaas.bettersaas.doctype.saas_users.saas_users.verify_account_request",
-          type: "GET",
+          url: config.HTTP_METHODS.VERIFY_OTP.ENDPOINT,
+          type: config.HTTP_METHODS.VERIFY_OTP.METHOD,
           data: {
-            unique_id: this.otpUniqueId,
-            otp: otp,
+            [config.HTTP_METHODS.VERIFY_OTP.DATA.UNIQUE_ID]: this.otpUniqueId,
+            [config.HTTP_METHODS.VERIFY_OTP.DATA.OTP]: otp,
           },
         });
         message = resp.message;
       } else {
-        message = "SUCCESS";
+        message = config.HTTP_METHODS.VERIFY_OTP.SUCCESS_MESSAGE;
       }
       console.log(message);
-      if (message === "SUCCESS") {
+      if (message === config.HTTP_METHODS.VERIFY_OTP.SUCCESS_MESSAGE) {
         this.otpVerificationStatus.otpVerified = true;
-        document.getElementById("otp-feedback").innerHTML = "OTP verified";
+        document.getElementById(
+          config.DOM_ELEMENT_SELECTOR.OTP_FEEDBACK
+        ).innerHTML = config.FEEDBACK.OTP_VERIFIED;
         this.createSite();
       } else if (message === "OTP_EXPIRED") {
-        document.getElementById("otp-feedback").innerHTML = "OTP Expired";
+        document.getElementById(
+          config.DOM_ELEMENT_SELECTOR.OTP_FEEDBACK
+        ).innerHTML = config.ERROR_MESSAGES.OTP_EXPIRED;
       } else if (message == "INVALID_OTP") {
-        document.getElementById("otp-feedback").innerHTML = "OTP Incorrect";
+        document.getElementById(
+          config.DOM_ELEMENT_SELECTOR.OTP_FEEDBACK
+        ).innerHTML = config.ERROR_MESSAGES.INVALID_OTP;
       }
       this.otpVerificationStatus.verifyingOTP = false;
-      console.log(message);
       return true;
     },
 
@@ -403,21 +358,18 @@ createApp({
       this.loading = true;
       this.status.step1 = "active";
       frappe.call({
-        method: "bettersaas.bettersaas.doctype.saas_sites.saas_sites.setupSite",
+        method: config.HTTP_METHODS.CREATE_SITE.ENDPOINT,
         args: {
-          doc: {
-            company_name: this.company_name,
-            subdomain: this.sitename.replace(/ /g, "-"),
-            password: this.password,
-            email: this.email,
-            first_name: this.fname,
-            last_name: this.lname,
-            phone: this.phone,
-          },
+          company_name: this.company_name,
+          subdomain: this.sitename.replace(/ /g, "-"),
+          password: this.password,
+          email: this.email,
+          first_name: this.fname,
+          last_name: this.lname,
+          phone: this.phone,
+          country: this.country,
         },
         callback: (r) => {
-          console.log("functon called", r);
-
           if (r.message.subdomain) {
             this.targetSubdomain = r.message.subdomain;
             this.status.step1 = "completed";
@@ -426,7 +378,6 @@ createApp({
               this.status.step2 = "completed";
               this.status.step3 = "active";
             }, 1500);
-
             this.checkSiteCreatedPoll();
           } else {
             this.status.step1 = "failed";

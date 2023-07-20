@@ -20,11 +20,11 @@ def insertSite(site_name, admin_password):
     site.insert()
 
 
-def create_multiple_sites_in_parallel(commands, db_values):
+def create_multiple_sites_in_parallel(command,db_values):
     print("creating multiple sites in parallel")
-    from subprocess import Popen
+    frappe.utils.execute_in_shell(command)
+    
 
-    processes = [Popen(cmd, shell=True, stdout=log, stderr=log) for cmd in commands]
 
 
 def deleteSite(sitename):
@@ -73,7 +73,7 @@ def refreshStockSites(*args, **kwargs):
                 )
             )
             apps_to_install = [
-                frappe.get_doc("Available Apps", x.as_dict().app).appname
+                frappe.get_doc("Available Apps", x.as_dict().app).app_name
                 for x in frappe.get_doc("SaaS settings").apps_to_install
             ]
             print(apps_to_install)
@@ -106,14 +106,12 @@ def refreshStockSites(*args, **kwargs):
                     subdomain + "." + domain, site_defaults.default_email_limit
                 )
             )
-
-            command = " ; ".join(this_command)
-
-            commands.append(command)
+            this_command = " ; ".join(this_command)
+            print("adding to queue,", this_command)
+            method = "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.create_multiple_sites_in_parallel"
             db_values.append([subdomain, adminPassword])
-
-    # frappe.enqueue(create_multiple_sites_in_parallel,commands=commands,db_values=db_values,is_async=True,job_name="create_multiple_sites_in_parallel",at_front=True)
-    create_multiple_sites_in_parallel(commands, db_values)
+            frappe.enqueue(method, command=this_command, db_values=db_values,queue="short")
+    
     return "Database will be updated soon with stock sites "
 
 

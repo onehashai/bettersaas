@@ -36,7 +36,7 @@ frappe.ui.form.on("SaaS sites", {
       let enc_password = CryptoJS.enc.Base64.stringify(
         CryptoJS.enc.Utf8.parse(dec_db_password)
       );
-      const query = `?domain=${frm.doc.site_name}&email=Administrator&password=${enc_password}`;
+      const query = `?domain=${frm.doc.site_name}&email=Administrator&utm_id=${enc_password}`;
 
       // do something with these values, like an ajax request
       // or call a server side frappe function using frappe.call
@@ -60,17 +60,7 @@ frappe.ui.form.on("SaaS sites", {
       });
       console.log(resp);
     });
-    frm.add_custom_button(__("Download backup"), async function () {
-      const { resp } = $.ajax({
-        url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.download_backup",
-        type: "GET",
-        dataType: "json",
-        data: {
-          sitename: frm.doc.site_name,
-        },
-      });
-      console.log(resp);
-    });
+
     if (!frm.doc.user_limit) {
       frappe.db
         .get_single_value("SaaS settings", "default_user_limit")

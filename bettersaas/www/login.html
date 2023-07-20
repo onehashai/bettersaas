@@ -107,6 +107,24 @@ if not disable_user_pass_login or (ldap_settings and ldap_settings.enabled) %}
 {% endmacro %} {% block page_content %}
 <!-- {{ for_test }} -->
 <div>
+  <div class="card text-center" id="error_card" style="display: none">
+    <div class="card-header">No active subscription</div>
+    <div class="card-body">
+      <h5 class="card-title">Your dont have any active subscription.</h5>
+      <p class="card-text text-dark">
+        We appreciate your support and would love to have you continue enjoying
+        our services.
+      </p>
+      <div class="d-grid gap-2 col-6 mx-auto">
+        <button type="button" class="btn btn-primary btn-lg" id="purchase">
+          Buy a New Plan
+        </button>
+        <button type="button" class="btn btn-outline-dark btn-lg" id="manage">
+          Manage Subscription
+        </button>
+      </div>
+    </div>
+  </div>
   <section class="for-login">
     <div class="login-content page-card">
       {{ logo_section() }}
