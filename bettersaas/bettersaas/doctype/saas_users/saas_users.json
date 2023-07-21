@@ -10,10 +10,9 @@
   "email",
   "first_name",
   "last_name",
-  "site",
-  "otp",
   "phone",
-  "stripe_cus_id"
+  "column_break_7cbup",
+  "site"
  ],
  "fields": [
   {
@@ -37,24 +36,18 @@
    "label": "Linked to site"
   },
   {
-   "fieldname": "otp",
-   "fieldtype": "Data",
-   "label": "otp"
-  },
-  {
    "fieldname": "phone",
    "fieldtype": "Data",
    "label": "phone"
   },
   {
-   "fieldname": "stripe_cus_id",
-   "fieldtype": "Data",
-   "label": "Stripe customer id"
+   "fieldname": "column_break_7cbup",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-06 16:54:10.789382",
+ "modified": "2023-07-20 17:33:00.309052",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS users",

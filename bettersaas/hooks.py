@@ -113,23 +113,23 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"bettersaas.tasks.all"
-# 	],
-# 	"daily": [
-# 		"bettersaas.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"bettersaas.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"bettersaas.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"bettersaas.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"monthly": [
+		"bettersaas.api.delete_free_sites"
+	],
+ "weekly": [
+     "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
+ ],
+ "hourly": [
+     "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites"
+ ],
+ "cron":{
+      "*/1 * * * *": [
+     "erpnext.projects.doctype.project.project.hourly_reminder"
+    ]
+ }
+
+}
 
 # Testing
 # -------

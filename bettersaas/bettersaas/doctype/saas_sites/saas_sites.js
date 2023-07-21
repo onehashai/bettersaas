@@ -18,7 +18,7 @@ frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
 
 // frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_s3
 frappe.ui.form.on("SaaS sites", {
-  refresh: function (frm) {
+  refresh: async function (frm) {
     frm.add_custom_button(__("Login as admin"), async function () {
       // When this button is clicked, do this
 
@@ -60,22 +60,19 @@ frappe.ui.form.on("SaaS sites", {
       });
       console.log(resp);
     });
-
-    if (!frm.doc.user_limit) {
-      frappe.db
-        .get_single_value("SaaS settings", "default_user_limit")
-        .then(async (r) => {
-          console.log(await frappe.db.get_doc("SaaS settings"));
-          frm.set_value("user_limit", r);
-        });
-    }
-    if (!frm.doc.email_limit) {
-      frappe.db
-        .get_single_value("SaaS settings", "default_email_limit")
-        .then(async (r) => {
-          console.log(await frappe.db.get_doc("SaaS settings"));
-          frm.set_value("email_limit", r);
-        });
-    }
+    // set limits
+    const { message } = await $.ajax({
+      url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.getLimitsOfSite",
+      type: "GET",
+      dataType: "json",
+      data: {
+        site_name: frm.doc.site_name,
+      },
+    });
+    console.log(message);
+    frm.set_value("user_limit", message.users);
+    frm.set_value("space_limit", message.space);
+    frm.set_value("email_limit", message.emails);
+    frm.set_value("plan", message.plan || "Free");
   },
 });

@@ -21,7 +21,9 @@
   "column_break_ngw1o",
   "apps_to_install",
   "expiry_days",
-  "server_user_name"
+  "server_user_name",
+  "backup_settings_tab",
+  "backup_limit"
  ],
  "fields": [
   {
@@ -98,12 +100,22 @@
   {
    "fieldname": "column_break_idl9z",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "backup_settings_tab",
+   "fieldtype": "Tab Break",
+   "label": "Backup settings"
+  },
+  {
+   "fieldname": "backup_limit",
+   "fieldtype": "Data",
+   "label": "Backup Limit"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-07-03 11:12:41.103793",
+ "modified": "2023-07-21 10:43:06.698153",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS settings",
