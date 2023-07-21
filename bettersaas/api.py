@@ -80,3 +80,4 @@ def send_email(email, content,):
 def testss():
     print("hello")
     frappe.msgprint("hello")
+    frappe.utils.execute_in_shell("bench execute")
