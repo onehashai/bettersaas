@@ -120,9 +120,15 @@ scheduler_events = {
  "weekly": [
      "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
  ],
- "* * * * * *": [
-     "bettersaas.api.testss"
- ]
+ "hourly": [
+     "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites"
+ ],
+ "cron":{
+      "*/1 * * * *": [
+     "erpnext.projects.doctype.project.project.hourly_reminder"
+    ]
+ }
+
 }
 
 # Testing
