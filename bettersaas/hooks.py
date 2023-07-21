@@ -113,23 +113,14 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"bettersaas.tasks.all"
-# 	],
-# 	"daily": [
-# 		"bettersaas.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"bettersaas.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"bettersaas.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"bettersaas.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"monthly": [
+		"bettersaas.api.delete_free_sites"
+	],
+ "weekly": [
+     "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
+ ]
+}
 
 # Testing
 # -------
