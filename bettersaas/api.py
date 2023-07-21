@@ -77,3 +77,6 @@ def send_email(email, content,):
         args=args,
     )
     return 1
+def testss():
+    print("hello")
+    frappe.msgprint("hello")

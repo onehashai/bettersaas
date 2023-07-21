@@ -119,6 +119,9 @@ scheduler_events = {
 	],
  "weekly": [
      "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
+ ],
+ "* * * * * *": [
+     "bettersaas.api.testss"
  ]
 }
 
