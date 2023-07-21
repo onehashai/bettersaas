@@ -297,9 +297,9 @@ def insert_backup_record(site,backup_size,key,is_manual):
     try:
         doc = frappe.new_doc("SaaS site backups")
         doc.site_name = site
-        doc.created_on = datetime.datetime.now()
+        doc.created_on = frappe.utils.now_datetime()
         doc.site_files = key
-        doc.time = datetime.datetime.now().strftime("%H:%M:%S")
+        doc.time = frappe.utils.now_datetime().strftime("%H:%M:%S")
         doc.site = site
         doc.backup_size = backup_size
         if is_manual:
