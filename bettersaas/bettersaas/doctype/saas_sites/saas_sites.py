@@ -172,6 +172,10 @@ def setupSite(*args, **kwargs):
             new_site, site_defaults.default_user_limit
         )
     )
+    # enable scheduler
+    commands.append(
+        "bench --site {} enable-scheduler".format(new_site)
+    )
     commands.append(
         "bench --site {} set-config customer_email {}".format(
             new_site, email
