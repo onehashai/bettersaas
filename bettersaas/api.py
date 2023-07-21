@@ -15,6 +15,8 @@ def get_bench_details_for_cloudwatch():
     """
     details = {}
     number_of_total_sites = frappe.db.count("SaaS sites")
+    
+    
 @frappe.whitelist(allow_guest=True)
 def delete_free_sites():
     config = frappe.get_doc("SaaS settings")
@@ -28,11 +30,11 @@ def delete_free_sites():
         except:
             pass
     for site in to_be_deleted:
-      #  print(site)
         # get last login of site from site config
         # if current date - last login date > 25 days and site has "has_subscription" as "no" then send warning mail
         # if current date - last login date >= 30 days and site has "has_subscription" as "no" then delete site
         config=frappe.get_site_config(site_path=site.site_name)
+        # print all conditions
         if site.is_deleted != 'Yes' and ("has_subscription" in config) and config["has_subscription"] == "no" and "last_active" in config:
             
             last_login_date=config["last_active"]

@@ -274,7 +274,7 @@ def getDecryptedPassword(*args, **kwargs):
 @frappe.whitelist(allow_guest=True)
 def take_backup_of_site(sitename,is_manual=0):
     command = (
-        "bench --site {} execute clientside.clientside.utils.take_backups_s3 --args {}".format(
+        "bench --site {} execute clientside.clientside.utils.take_backups_s3 ".format(
             sitename
         )
     )
@@ -332,7 +332,7 @@ def upgrade_user(*args, **kwargs):
     
 @frappe.whitelist(allow_guest=True)
 def get_site_backup_size(sitename):
-    docs = frappe.db.get_list("SaaS site backups",filters={"site":sitename},fields=["backup_size"],ignore_permissions=True)
+    docs = frappe.db.get_list("SaaS site backups",filters={"site":sitename,"created_by_user":1},fields=["backup_size"],ignore_permissions=True)
     return sum([float(doc.backup_size[:-1]) for doc in docs])
 
 @frappe.whitelist(allow_guest=True)
@@ -386,18 +386,23 @@ def create_new_site_from_backup(*args, **kwargs):
     
     
 @frappe.whitelist(allow_guest=True)
-def delete_old_backups(limit,site_name):
-    print()
+def delete_old_backups(limit,site_name,created_by_user=1):
+    print("deleting old backups",limit,site_name)
     limit = int(limit)
     # we delete the old backups and keep only the latest "limit" backups
-    records = frappe.get_list("SaaS site backups",filters={"site":site_name,"created_by_user":1},fields=["name","created_on"],order_by="created_on desc",ignore_permissions=True)
+    records = frappe.get_list("SaaS site backups",filters={"site":site_name,"created_by_user":created_by_user},fields=["name","created_on"],order_by="created_on desc",ignore_permissions=True)
     for i in range(limit,len(records)):
         print("deleting",records[i].name)
         frappe.delete_doc("SaaS site backups",records[i].name)
         frappe.db.commit()
     return "deletion done"
-    
-import boto3
+@frappe.whitelist()
+def getLimitsOfSite(site_name):
+    users =  frappe.get_site_config(site_path=site_name).get("max_users")
+    emails = frappe.get_site_config(site_path=site_name).get("max_email")
+    space = frappe.get_site_config(site_path=site_name).get("max_space")
+    plan  = frappe.get_site_config(site_path=site_name).get("plan")
+    return {"users":users,"emails":emails,"space":space,"plan":plan}
 
 
     
