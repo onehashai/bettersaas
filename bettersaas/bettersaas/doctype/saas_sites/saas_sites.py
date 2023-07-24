@@ -35,7 +35,7 @@ def executeCommands(commands):
 @frappe.whitelist(allow_guest=True)
 def check_subdomain():
     restricted_subdomains = frappe.get_doc("SaaS settings").restricted_subdomains.split(
-        ","
+        "\n"
     )
     site = frappe.get_all(
         "SaaS sites",
@@ -218,7 +218,7 @@ def setupSite(*args, **kwargs):
     enc_key = encrypt(admin_password, frappe.conf.enc_key)
     new_site_doc.encrypted_password = enc_key
     new_site_doc.linked_email = email
-    new_site_doc.site_name = new_site
+    new_site_doc.site_name = new_site.lower()
     new_site_doc.expiry_date = expiry_date
     subscription = StripeSubscriptionManager(kwargs["country"])
     customer = subscription.create_customer( new_site,email,fname,lname,phone)
@@ -235,6 +235,16 @@ def setupSite(*args, **kwargs):
         sub = target_site.subdomain
     from clientside.stripe import hasActiveSubscription
     hasActiveSubscription(invalidate_cache=True,site=new_site)
+    # create Lead on this site
+    lead_doc = frappe.new_doc("Lead")
+    lead_doc.lead_name = fname + " " + lname
+    lead_doc.email_id = email
+    lead_doc.mobile_no = phone
+    lead_doc.phone = phone
+    lead_doc.company_name = new_site
+    lead_doc.save(ignore_permissions=True)
+    lead_doc.website = "https://" + sub + "." + frappe.conf.domain
+    
     return {"subdomain": sub, "enc_password": enc_key}
 
 
@@ -337,7 +347,8 @@ def upgrade_user(*args, **kwargs):
 @frappe.whitelist(allow_guest=True)
 def get_site_backup_size(sitename):
     docs = frappe.db.get_list("SaaS site backups",filters={"site":sitename,"created_by_user":1},fields=["backup_size"],ignore_permissions=True)
-    return sum([float(doc.backup_size[:-1]) for doc in docs])
+    from clientside.clientside.utils import convertToB
+    return sum([float(convertToB(doc.backup_size)) for doc in docs])
 
 @frappe.whitelist(allow_guest=True)
 def download_backup(backupid,site_name):
