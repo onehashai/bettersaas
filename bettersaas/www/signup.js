@@ -163,6 +163,16 @@ window.Vue.createApp({
     },
 
     async onSubmit(values) {
+      grecaptcha.ready(function () {
+        grecaptcha
+          .execute("6LfnFUEnAAAAAFk_AVR5xxjbImAQlJz-kDa1bh6N", {
+            action: "submit",
+          })
+          .then(function (token) {
+            // Add your logic to submit to your backend server here.
+            console.log(token);
+          });
+      });
       this.fname = values["first-name"];
       this.lname = values["last-name"];
       this.email = values["email"];

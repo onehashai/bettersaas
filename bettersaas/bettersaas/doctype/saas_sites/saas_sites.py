@@ -235,6 +235,17 @@ def setupSite(*args, **kwargs):
         sub = target_site.subdomain
     from clientside.stripe import hasActiveSubscription
     hasActiveSubscription(invalidate_cache=True,site=new_site)
+    # create Lead on this site
+    lead_doc = frappe.new_doc("Lead")
+    lead_doc.lead_name = fname + " " + lname
+    lead_doc.email_id = email
+    lead_doc.mobile_no = phone
+    lead_doc.phone = phone
+    lead_doc.country = kwargs["country"]
+    lead_doc.company_name = new_site
+    lead_doc.save(ignore_permissions=True)
+    lead_doc.website = "https://" + sub + "." + frappe.conf.domain
+    
     return {"subdomain": sub, "enc_password": enc_key}
 
 
