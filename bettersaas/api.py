@@ -83,10 +83,12 @@ def testss():
     frappe.utils.execute_in_shell("bench execute")
 @frappe.whitelist()
 def reset_sites():
-    sites = frappe.get_all("SaaS sites",fields=["site_name"])
-    
+    sites = frappe.get_all("SaaS sites",fields=["site_name"],limit_page_length=300)
+    # delete record
     for site in sites :
+        frappe.delete_doc("SaaS sites",sites["name"])
         print("deleting",site )
         command = "bench drop-site {} --force".format(site["site_name"])
         frappe.utils.execute_in_shell(command)
+    frappe.db.commit()
     print("RESET")
