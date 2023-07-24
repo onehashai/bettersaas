@@ -110,15 +110,14 @@ def delete_all_sites():
         # ignore .json files
         if file.endswith(".json"):
             continue
-        doc = frappe.get_list("SaaS sites",filters={"site_name":file},fields=["site_name","name"])
-        if len(doc) == 0:
-            continue
-        # delete record
+        print("site name",file)
+        
         subdomain = file.split(".")[0]
         if subdomain == frappe.conf.get("admin_subdomain"):
             continue
-        print("site name",file)
-        frappe.delete_doc("SaaS sites",doc[0]["name"])
+        doc = frappe.get_list("SaaS sites",filters={"site_name":file},fields=["site_name","name"])
+        if len(doc) == 1:
+            frappe.delete_doc("SaaS sites",doc[0]["name"])
         # delete site
         config = frappe.get_doc("SaaS settings")
         frappe.utils.execute_in_shell("bench drop-site {} --force --no-backup --db-root-password {}".format(file,config.db_password))
