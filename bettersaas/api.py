@@ -81,7 +81,7 @@ def testss():
     print("hello")
     frappe.msgprint("hello")
     frappe.utils.execute_in_shell("bench execute")
-    
+@frappe.whitelist()
 def reset_sites():
     sites = frappe.get_all("SaaS sites",fields=["site_name"])
     for site in sites :
