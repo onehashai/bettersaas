@@ -65,7 +65,7 @@ def refreshStockSites(*args, **kwargs):
         number_of_sites_to_stock = int(config.stock_site_count) - len(currentStock)
         for _ in range(number_of_sites_to_stock):
             import uuid
-            subdomain = uuid.uuid4()
+            subdomain =str( uuid.uuid4())
             adminPassword = random_string(5)
             this_command = []
             this_command.append(
