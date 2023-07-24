@@ -16,7 +16,15 @@ def get_bench_details_for_cloudwatch():
     details = {}
     number_of_total_sites = frappe.db.count("SaaS sites")
     
-    
+@frappe.whitelist()
+def reset_email_limits():
+    site_defaults = frappe.get_doc("SaaS settings")
+    sites = frappe.get_all("SaaS sites",fields=["site_name"])
+    total = frappe.db.count("SaaS sites")
+    for i in range(0,total,20):
+        sites = frappe.get_all("SaaS sites",fields=["site_name"],limit_start=i,limit_page_length=20)
+        for site in sites:
+            frappe.utils.execute_in_shell("bench --site {} set-config max_email {}".format(site["site_name"],site_defaults.default_email_limit))
 @frappe.whitelist(allow_guest=True)
 def delete_free_sites():
     config = frappe.get_doc("SaaS settings")

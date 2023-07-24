@@ -115,7 +115,8 @@ app_license = "MIT"
 
 scheduler_events = {
 	"monthly": [
-		"bettersaas.api.delete_free_sites"
+		"bettersaas.api.delete_free_sites",
+  "bettersaas.api.reset_email_limits",
 	],
  "weekly": [
      "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
