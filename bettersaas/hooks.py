@@ -1,4 +1,5 @@
 from . import __version__ as app_version
+from frappe.utils.background_jobs import enqueue
 
 app_name = "bettersaas"
 app_title = "Bettersaas"
@@ -113,23 +114,32 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 
+# Import necessary modules
+
+
+
+
+
+
 scheduler_events = {
 	"monthly": [
-		"bettersaas.api.delete_free_sites",
-  "bettersaas.api.reset_email_limits",
+        "bettersaas.api.reset_email_limits",
 	],
- "weekly": [
-     "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
- ],
- "hourly": [
-     "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites",
-     "bettersaas.api.delete_free_sites"
- ],
-#  "cron":{
-#       "*/1 * * * *": [
-#      "bettersaas.api.delete_free_sites"
-#     ],
-#  }
+    "weekly": [
+        "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
+    ],
+    "hourly": [
+        "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites",
+        "bettersaas.api.delete_free_sites"
+    ],
+    'all': [
+        'bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.schedule_refresh_stock_sites'
+    ]
+    # "cron":{
+    #     "*/1 * * * *": [
+    #     "bettersaas.api.delete_free_sites"
+    #     ],
+    #  }
 
 }
 
