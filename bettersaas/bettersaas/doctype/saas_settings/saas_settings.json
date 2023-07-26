@@ -17,7 +17,6 @@
   "default_user_limit",
   "default_email_limit",
   "default_space_limit",
-  "stock_site_count",
   "column_break_ngw1o",
   "apps_to_install",
   "expiry_days",
@@ -31,7 +30,11 @@
   "column_break_fg8ow",
   "warning_days",
   "intermittent_warning_day",
-  "deletion_warning_template"
+  "deletion_warning_template",
+  "stock_site_configuration_tab",
+  "ssc_enabled",
+  "run_at_interval1",
+  "stock_site_count"
  ],
  "fields": [
   {
@@ -42,27 +45,27 @@
   {
    "fieldname": "restricted_subdomains",
    "fieldtype": "Long Text",
-   "label": "restricted subdomains"
+   "label": "Restricted Subdomains"
   },
   {
    "fieldname": "db_password",
    "fieldtype": "Data",
-   "label": "Database password"
+   "label": "Database Password"
   },
   {
    "fieldname": "root_password",
    "fieldtype": "Data",
-   "label": "Server root password"
+   "label": "Server Root Password"
   },
   {
    "fieldname": "default_user_limit",
    "fieldtype": "Data",
-   "label": "Default user limit"
+   "label": "Default User Limit"
   },
   {
    "fieldname": "default_email_limit",
    "fieldtype": "Data",
-   "label": "Default email limit"
+   "label": "Default Email Limit"
   },
   {
    "fieldname": "stock_site_count",
@@ -72,29 +75,30 @@
   {
    "fieldname": "apps_to_install",
    "fieldtype": "Table MultiSelect",
-   "label": "Apps to install on client",
+   "label": "Apps to install on Client",
    "options": "Available Apps CT"
   },
   {
    "fieldname": "expiry_days",
    "fieldtype": "Data",
-   "label": "default expiry days"
+   "label": "Default Expiry Days"
   },
   {
+   "description": "Default Storage Limit is in GB",
    "fieldname": "default_space_limit",
    "fieldtype": "Data",
-   "label": "Default storage limit in GB"
+   "label": "Default Storage Limit"
   },
   {
    "default": "frappe",
    "fieldname": "server_user_name",
    "fieldtype": "Data",
-   "label": "Server user name"
+   "label": "Server User Name"
   },
   {
    "fieldname": "saas_site_defaults_tab",
    "fieldtype": "Tab Break",
-   "label": "SaaS site defaults"
+   "label": "SaaS Site Defaults"
   },
   {
    "fieldname": "column_break_ngw1o",
@@ -103,7 +107,7 @@
   {
    "fieldname": "server_configuration_tab",
    "fieldtype": "Tab Break",
-   "label": "Server configuration"
+   "label": "Server Configuration"
   },
   {
    "fieldname": "column_break_idl9z",
@@ -112,7 +116,7 @@
   {
    "fieldname": "backup_settings_tab",
    "fieldtype": "Tab Break",
-   "label": "Backup settings"
+   "label": "Backup Settings"
   },
   {
    "fieldname": "backup_limit",
@@ -131,14 +135,16 @@
    "label": "Enabled"
   },
   {
+   "description": "The deletion task will run at this hours interval",
    "fieldname": "run_at_interval",
    "fieldtype": "Select",
    "label": "Run At Interval",
    "options": "\nHourly\nDaily\nWeekly"
   },
   {
+   "description": "Indicates the number of inactive days to be considered for site deletion",
    "fieldname": "inactive_for_days",
-   "fieldtype": "Float",
+   "fieldtype": "Int",
    "label": "Inactive for Days"
   },
   {
@@ -146,26 +152,47 @@
    "fieldtype": "Column Break"
   },
   {
+   "description": "Indicates the number of days after which site will be deleted",
    "fieldname": "warning_days",
-   "fieldtype": "Float",
+   "fieldtype": "Int",
    "label": "Warning Days"
   },
   {
+   "description": "Intermittent Warning Day",
    "fieldname": "intermittent_warning_day",
-   "fieldtype": "Float",
+   "fieldtype": "Int",
    "label": "Intermittent Warning Day"
   },
   {
+   "description": "This template is for deletion success warning only. All the rest of warnings are sent through Notification",
    "fieldname": "deletion_warning_template",
    "fieldtype": "Link",
    "label": "Deletion Warning Template",
    "options": "Email Template"
+  },
+  {
+   "fieldname": "stock_site_configuration_tab",
+   "fieldtype": "Tab Break",
+   "label": "Stock Site Configuration"
+  },
+  {
+   "default": "0",
+   "fieldname": "ssc_enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "description": "The deletion task will run at this hours interval",
+   "fieldname": "run_at_interval1",
+   "fieldtype": "Select",
+   "label": "Run At Interval",
+   "options": "\nHourly\nDaily\nWeekly"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-07-26 10:13:32.199941",
+ "modified": "2023-07-26 11:56:32.351124",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS settings",
