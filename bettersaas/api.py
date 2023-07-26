@@ -96,7 +96,8 @@ def drop_site_from_server(site_name):
     docs.is_deleted = "Yes"
     docs.save(ignore_permissions=True)
 def send_email(email, content,):
-    template = 'account_status_email'
+    config = frappe.get_doc("SaaS settings")
+    template = config.deletion_warning_template
     subject = 'Account Status'
     args = {
         "title": subject,
