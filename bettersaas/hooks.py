@@ -128,10 +128,6 @@ scheduler_events = {
     "weekly": [
         "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
     ],
-    "hourly": [
-        "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites",
-        "bettersaas.api.delete_free_sites"
-    ],
     'all': [
         'bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.schedule_refresh_stock_sites'
     ]
