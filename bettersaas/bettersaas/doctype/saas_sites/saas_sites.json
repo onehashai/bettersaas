@@ -22,7 +22,8 @@
   "expiry_date",
   "plan",
   "payment_details_tab",
-  "cus_id"
+  "cus_id",
+  "test"
  ],
  "fields": [
   {
@@ -105,11 +106,16 @@
    "fieldname": "plan",
    "fieldtype": "Read Only",
    "label": "plan"
+  },
+  {
+   "fieldname": "test",
+   "fieldtype": "Data",
+   "label": "test"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-21 10:42:26.662695",
+ "modified": "2023-07-25 15:01:05.492610",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS sites",

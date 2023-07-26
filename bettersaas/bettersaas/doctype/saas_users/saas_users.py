@@ -179,7 +179,13 @@ def check_user_name_and_password_for_a_site(site_name, email, password):
     return "OK"
 
 
-
+@frappe.whitelist()
+def get_all_users_of_a_site():
+    site = "Samsun.localhost"
+    a=  frappe.db.sql(
+        "select email from `tabSaaS users` where site = %s", site, as_dict=1
+    )
+    print(a)
 class SaaSusers(Document):
     pass
 
