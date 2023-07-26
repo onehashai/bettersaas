@@ -4,23 +4,8 @@ from frappe.utils import add_to_date,getdate
 import subprocess
 from frappe.commands.site import drop_site
 from frappe.utils import get_datetime, now, add_to_date
+from frappe.utils import nowdate, nowtime
 
-# def get_cron_interval():
-#     settings = frappe.get_doc("SaaS settings")
-#     interval = settings.run_at_interval
-
-#     if interval == "Hourly":
-#         return "0 * * * *"
-#     elif interval == "Daily":
-#         return "0 0 * * *"
-#     elif interval == "Weekly":
-#         return "0 0 * * 0"
-
-# cron_jobs = {
-#     get_cron_interval(): [
-#         "bettersaas.api.delete_free_sites"
-#     ]
-# }
 
 @frappe.whitelist()
 def check_stock_sites():
