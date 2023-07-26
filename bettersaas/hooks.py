@@ -122,16 +122,14 @@ scheduler_events = {
      "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
  ],
  "hourly": [
-     "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites"
- ],
- "cron":{
-      "*/1 * * * *": [
-     "erpnext.projects.doctype.project.project.hourly_reminder"
-    ],
-   "*/1 * * * *": [
+     "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites",
      "bettersaas.api.delete_free_sites"
-    ],
- }
+ ],
+#  "cron":{
+#       "*/1 * * * *": [
+#      "bettersaas.api.delete_free_sites"
+#     ],
+#  }
 
 }
 

@@ -134,7 +134,7 @@
    "fieldname": "run_at_interval",
    "fieldtype": "Select",
    "label": "Run At Interval",
-   "options": "\n01\n02\n03\n04\n05\n06\n07"
+   "options": "\nHourly\nDaily\nWeekly"
   },
   {
    "fieldname": "inactive_for_days",
@@ -165,7 +165,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-07-26 09:24:56.147218",
+ "modified": "2023-07-26 10:13:32.199941",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS settings",

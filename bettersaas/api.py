@@ -5,6 +5,23 @@ import subprocess
 from frappe.commands.site import drop_site
 from frappe.utils import get_datetime, now, add_to_date
 
+# def get_cron_interval():
+#     settings = frappe.get_doc("SaaS settings")
+#     interval = settings.run_at_interval
+
+#     if interval == "Hourly":
+#         return "0 * * * *"
+#     elif interval == "Daily":
+#         return "0 0 * * *"
+#     elif interval == "Weekly":
+#         return "0 0 * * 0"
+
+# cron_jobs = {
+#     get_cron_interval(): [
+#         "bettersaas.api.delete_free_sites"
+#     ]
+# }
+
 
 @frappe.whitelist()
 def get_bench_details_for_cloudwatch():
@@ -29,7 +46,6 @@ def reset_email_limits():
             frappe.utils.execute_in_shell("bench --site {} set-config max_email {}".format(site["site_name"],site_defaults.default_email_limit))
 @frappe.whitelist(allow_guest=True)
 def delete_free_sites():
-    frappe.msgprint('Executed')
     config = frappe.get_doc("SaaS settings")
     if config.enabled==1 :
         sites = frappe.get_list('SaaS sites', fields=['site_name'])
