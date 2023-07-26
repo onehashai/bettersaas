@@ -74,6 +74,9 @@ def delete_free_sites():
             print("inactive days",inactive_days)
             if inactive_days >= config.inactive_for_days :
                 print("deleting site")
+                email = site.linked_email
+                content = 'This is to inform you that your OneHash account with the email address {e_address} has been permanently deleted on {exp_date}. You will no longer be able to access your account or recover any data'.format(e_address=email,exp_date = site.expiry_date.strftime("%d-%m-%y"))
+                send_email(email, content)
                 method = "bettersaas.api.drop_site_from_server"
                 frappe.enqueue(method,queue="short",site_name=site.site_name)
             elif inactive_days >= config.inactive_for_days-config.warning_days:
