@@ -127,7 +127,10 @@ scheduler_events = {
  "cron":{
       "*/1 * * * *": [
      "erpnext.projects.doctype.project.project.hourly_reminder"
-    ]
+    ],
+   "*/1 * * * *": [
+     "bettersaas.api.delete_free_sites"
+    ],
  }
 
 }

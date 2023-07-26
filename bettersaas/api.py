@@ -3,6 +3,22 @@ from datetime import datetime,timedelta
 from frappe.utils import add_to_date,getdate
 import subprocess
 from frappe.commands.site import drop_site
+from frappe.utils import get_datetime, now, add_to_date
+
+# def execute():
+#     delete_free_sites()
+
+# def execute_hourly():
+#     config = frappe.get_doc("SaaS settings")
+#     return {
+#         'cron': {
+#             'hour': f'*/{config.run_at_interval}',
+#             'minute': '0',
+#             'doctype': 'User',
+#             'is_scheduled': 1
+#         }
+#     }
+
 
 @frappe.whitelist()
 def get_bench_details_for_cloudwatch():
@@ -27,43 +43,51 @@ def reset_email_limits():
             frappe.utils.execute_in_shell("bench --site {} set-config max_email {}".format(site["site_name"],site_defaults.default_email_limit))
 @frappe.whitelist(allow_guest=True)
 def delete_free_sites():
+    frappe.msgprint('Executed')
     config = frappe.get_doc("SaaS settings")
-    sites = frappe.get_list('SaaS sites', fields=['site_name'])
-    to_be_deleted = []
-    for site in sites:
-        try:
+    if config.enabled==1 :
+        sites = frappe.get_list('SaaS sites', fields=['site_name'])
+        to_be_deleted = []
+        for site in sites:
+            try:
+                config=frappe.get_site_config(site_path=site.site_name)
+                if "plan" not in config or  (not config["plan"] )or len(config["plan"]) == 0:
+                    to_be_deleted.append(site)
+            except:
+                pass
+        for site in to_be_deleted:
+            # get last login of site from site config
+            # if current date - last login date > 25 days and site has "has_subscription" as "no" then send warning mail
+            # if current date - last login date >= 30 days and site has "has_subscription" as "no" then delete site
             config=frappe.get_site_config(site_path=site.site_name)
-            if "plan" not in config or  (not config["plan"] )or len(config["plan"]) == 0:
-                to_be_deleted.append(site)
-        except:
-            pass
-    for site in to_be_deleted:
-        # get last login of site from site config
-        # if current date - last login date > 25 days and site has "has_subscription" as "no" then send warning mail
-        # if current date - last login date >= 30 days and site has "has_subscription" as "no" then delete site
-        config=frappe.get_site_config(site_path=site.site_name)
-        # print all conditions
-        if site.is_deleted != 'Yes' and ("has_subscription" in config) and config["has_subscription"] == "no" and "last_active" in config:
-            
-            last_login_date=config["last_active"]
-            last_login_date = datetime.strptime(last_login_date, "%Y-%m-%d")
-            present_date = frappe.utils.now_datetime().strftime("%Y-%m-%d")
-            # present_date = datetime.date.today()
-            present_date = datetime.strptime(present_date, "%Y-%m-%d")
-            print("present date",present_date)
-            print("last login date",last_login_date)
-            inactive_days = (present_date - last_login_date).days
-            print("inactive days",inactive_days)
-            if inactive_days >=30 :
-                print("deleting site")
-                method = "bettersaas.api.drop_site_from_server"
-                frappe.enqueue(method,queue="short",site_name=site.site_name)
-            elif inactive_days >= 25:
-                print("sending mail")
-                email = site.linked_email
-                content = 'This is to inform you that your OneHash account with the email address {e_address} will be permanently deleted on {exp_date}. You will no longer be able to access your account or recover any data'.format(e_address=email,exp_date = site.expiry_date.strftime("%d-%m-%y"))
-                send_email(email, content)
+            # print all conditions
+            if site.is_deleted != 'Yes' and ("has_subscription" in config) and config["has_subscription"] == "no" and "last_active" in config:
+                
+                last_login_date=config["last_active"]
+                last_login_date = datetime.strptime(last_login_date, "%Y-%m-%d")
+                present_date = frappe.utils.now_datetime().strftime("%Y-%m-%d")
+                # present_date = datetime.date.today()
+                present_date = datetime.strptime(present_date, "%Y-%m-%d")
+                print("present date",present_date)
+                print("last login date",last_login_date)
+                inactive_days = (present_date - last_login_date).days
+                print("inactive days",inactive_days)
+                if inactive_days >= config.inactive_for_days :
+                    print("deleting site")
+                    method = "bettersaas.api.drop_site_from_server"
+                    frappe.enqueue(method,queue="short",site_name=site.site_name)
+                elif inactive_days >= config.inactive_for_days-config.warning_days:
+                    print("sending mail")
+                    email = site.linked_email
+                    content = 'This is to inform you that your OneHash account with the email address {e_address} will be permanently deleted on {exp_date}. You will no longer be able to access your account or recover any data'.format(e_address=email,exp_date = site.expiry_date.strftime("%d-%m-%y"))
+                    send_email(email, content)
+                elif inactive_days >= config.inactive_for_days-config.intermittent_warning_day:
+                    print("sending mail")
+                    email = site.linked_email
+                    content = 'This is to inform you that your OneHash account with the email address {e_address} will be permanently deleted on {exp_date}. You will no longer be able to access your account or recover any data'.format(e_address=email,exp_date = site.expiry_date.strftime("%d-%m-%y"))
+                    send_email(email, content)
     return "success"
+
 def drop_site_from_server(site_name):
     config = frappe.get_doc("SaaS settings")
     doc = frappe.get_list("SaaS sites",filters={"site_name":site_name},fields=["site_name","name"])[0]

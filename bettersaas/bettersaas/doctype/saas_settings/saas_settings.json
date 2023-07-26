@@ -23,7 +23,15 @@
   "expiry_days",
   "server_user_name",
   "backup_settings_tab",
-  "backup_limit"
+  "backup_limit",
+  "site_delete_configuration_tab",
+  "enabled",
+  "run_at_interval",
+  "inactive_for_days",
+  "column_break_fg8ow",
+  "warning_days",
+  "intermittent_warning_day",
+  "deletion_warning_template"
  ],
  "fields": [
   {
@@ -110,12 +118,54 @@
    "fieldname": "backup_limit",
    "fieldtype": "Data",
    "label": "Backup Limit"
+  },
+  {
+   "fieldname": "site_delete_configuration_tab",
+   "fieldtype": "Tab Break",
+   "label": "Site Delete Configuration"
+  },
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "run_at_interval",
+   "fieldtype": "Select",
+   "label": "Run At Interval",
+   "options": "\n01\n02\n03\n04\n05\n06\n07"
+  },
+  {
+   "fieldname": "inactive_for_days",
+   "fieldtype": "Float",
+   "label": "Inactive for Days"
+  },
+  {
+   "fieldname": "column_break_fg8ow",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "warning_days",
+   "fieldtype": "Float",
+   "label": "Warning Days"
+  },
+  {
+   "fieldname": "intermittent_warning_day",
+   "fieldtype": "Float",
+   "label": "Intermittent Warning Day"
+  },
+  {
+   "fieldname": "deletion_warning_template",
+   "fieldtype": "Link",
+   "label": "Deletion Warning Template",
+   "options": "Email Template"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-07-21 10:43:06.698153",
+ "modified": "2023-07-26 09:24:56.147218",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS settings",
