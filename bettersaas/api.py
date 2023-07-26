@@ -5,20 +5,6 @@ import subprocess
 from frappe.commands.site import drop_site
 from frappe.utils import get_datetime, now, add_to_date
 
-# def execute():
-#     delete_free_sites()
-
-# def execute_hourly():
-#     config = frappe.get_doc("SaaS settings")
-#     return {
-#         'cron': {
-#             'hour': f'*/{config.run_at_interval}',
-#             'minute': '0',
-#             'doctype': 'User',
-#             'is_scheduled': 1
-#         }
-#     }
-
 
 @frappe.whitelist()
 def get_bench_details_for_cloudwatch():
@@ -110,10 +96,7 @@ def send_email(email, content,):
         args=args,
     )
     return 1
-def testss():
-    print("hello")
-    frappe.msgprint("hello")
-    frappe.utils.execute_in_shell("bench execute")
+
 @frappe.whitelist()
 def reset_sites():
     sites = frappe.get_all("SaaS sites",fields=["site_name"],limit_page_length=300)
