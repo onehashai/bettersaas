@@ -123,12 +123,12 @@ window.Vue.createApp({
       }
       this.otpVerificationStatus.reset();
     },
-    isTermsChecked(value) {
-      if (value && value === "no") {
-        return true;
-      }
-      return config.ERROR_MESSAGES.ACCEPT_TERMS;
-    },
+    // isTermsChecked(value) {
+    //   if (value && value === "no") {
+    //     return true;
+    //   }
+    //   return config.ERROR_MESSAGES.ACCEPT_TERMS;
+    // },
 
     isRequired(value) {
       if (value && value.length > 0) {
