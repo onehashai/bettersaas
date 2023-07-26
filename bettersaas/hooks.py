@@ -131,9 +131,9 @@ scheduler_events = {
         "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.check_stock_sites",
         "bettersaas.api.check_stock_sites"
     ],
-    # "daily": [
-    #     'bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.schedule_refresh_stock_sites'
-    # ],
+    "daily_long": [
+        'bettersaas.api.update_user_saas_sites'
+    ],
     # "cron": {
 	# "1-59 * * * *":[
 	# 			"bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites"

@@ -5,6 +5,56 @@ import subprocess
 from frappe.commands.site import drop_site
 from frappe.utils import get_datetime, now, add_to_date
 from frappe.utils import nowdate, nowtime
+from frappe import _
+from frappe.exceptions import DoesNotExistError
+from frappe.utils import today, nowtime, add_days
+from frappe.model.document import Document
+from werkzeug.exceptions import ExpectationFailed
+
+@frappe.whitelist()
+def update_user_saas_sites():
+    admin_site_name = frappe.conf.get("master_site_name") or "admin_onehash"
+    frappe.destroy()
+    frappe.init(site=admin_site_name)
+    frappe.connect()
+    try:
+        all_sites = frappe.get_all("SaaS sites")
+        for site in all_sites:
+            current_site_name = site.name
+            frappe.init(site=current_site_name)
+            frappe.connect()
+            enabled_system_users = frappe.get_all("User", fields=['name', 'email', 'last_active', 'user_type', 'enabled', 'first_name', 'last_name', 'creation'])
+
+            site_doc = frappe.get_doc('SaaS sites', current_site_name)
+            site_doc.user_details = []
+            enabled_users_count = 0
+            for user in enabled_system_users:
+                if user.name in ['Administrator', 'Guest']:
+                    continue
+
+                site_doc.append('user_details', {
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'user_type': user.user_type,
+                    'active': user.enabled,
+                    'email_id': user.email,
+                    'last_active': user.last_active
+                })
+
+                if user.enabled:
+                    enabled_users_count += 1
+
+            site_doc.number_of_users = len(enabled_system_users) - 2
+            site_doc.number_of_active_users = enabled_users_count
+
+            site_doc.save()
+
+        frappe.db.commit()
+
+    except Exception as e:
+        frappe.log_error(str(e))
+    finally:
+        frappe.destroy()
 
 
 @frappe.whitelist()

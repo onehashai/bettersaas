@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:site_name",
  "creation": "2023-06-13 14:50:38.726296",
  "default_view": "List",
  "doctype": "DocType",
@@ -9,9 +10,13 @@
  "field_order": [
   "site_name",
   "encrypted_password",
+  "number_of_users",
   "column_break_h9hvt",
   "linked_email",
   "linked_domains",
+  "number_of_active_users",
+  "user_details_section",
+  "user_details",
   "limits_tab",
   "user_limit",
   "email_limit",
@@ -29,7 +34,8 @@
    "fieldname": "site_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Site name"
+   "label": "Site name",
+   "unique": 1
   },
   {
    "fieldname": "encrypted_password",
@@ -105,14 +111,36 @@
    "fieldname": "plan",
    "fieldtype": "Read Only",
    "label": "plan"
+  },
+  {
+   "fieldname": "user_details",
+   "fieldtype": "Table",
+   "label": "User Details",
+   "options": "User Details"
+  },
+  {
+   "fieldname": "user_details_section",
+   "fieldtype": "Section Break",
+   "label": "User Details"
+  },
+  {
+   "fieldname": "number_of_users",
+   "fieldtype": "Int",
+   "label": "Number of Users"
+  },
+  {
+   "fieldname": "number_of_active_users",
+   "fieldtype": "Int",
+   "label": "Number of Active Users"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-21 10:42:26.662695",
+ "modified": "2023-07-26 22:35:53.707128",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS sites",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
