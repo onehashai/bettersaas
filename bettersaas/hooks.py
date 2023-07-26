@@ -1,5 +1,4 @@
 from . import __version__ as app_version
-from frappe.utils.background_jobs import enqueue
 
 app_name = "bettersaas"
 app_title = "Bettersaas"
@@ -128,9 +127,21 @@ scheduler_events = {
     "weekly": [
         "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
     ],
-    'all': [
-        'bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.schedule_refresh_stock_sites'
-    ]
+    "hourly": [
+        "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.check_stock_sites",
+        "bettersaas.api.check_stock_sites"
+    ],
+    # "daily": [
+    #     'bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.schedule_refresh_stock_sites'
+    # ],
+    # "cron": {
+	# "1-59 * * * *":[
+	# 			"bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites"
+	# 	]
+	# }
+    # 'all': [
+    #     'bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.schedule_refresh_stock_sites'
+    # ]
     # "cron":{
     #     "*/1 * * * *": [
     #     "bettersaas.api.delete_free_sites"
