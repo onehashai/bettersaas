@@ -27,7 +27,8 @@
   "expiry_date",
   "plan",
   "payment_details_tab",
-  "cus_id"
+  "cus_id",
+  "test"
  ],
  "fields": [
   {
@@ -136,7 +137,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-26 22:35:53.707128",
+ "modified": "2023-07-25 15:01:05.492610",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS sites",

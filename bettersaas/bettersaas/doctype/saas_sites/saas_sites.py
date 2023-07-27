@@ -12,6 +12,8 @@ from frappe.model.document import Document
 import re
 from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
+
+
 @frappe.whitelist(allow_guest=True)
 def markSiteAsUsed(site):
     print(site)
@@ -94,9 +96,8 @@ def setupSite(*args, **kwargs):
     if not subdomain:
         return "SUBDOMAIN_NOT_PROVIDED"
     if not admin_password:
-            return "ADMIN_PASSWORD_NOT_PROVIDED"
+        return "ADMIN_PASSWORD_NOT_PROVIDED"
     if True:
-        
         if not fname:
             return "FIRST_NAME_NOT_PROVIDED"
         if not lname:
@@ -113,17 +114,15 @@ def setupSite(*args, **kwargs):
         ):
             return "PASSWORD_NOT_STRONG"
     new_site = subdomain + "." + frappe.conf.domain
-    if(allow_creating_users == "yes"):
+    if allow_creating_users == "yes":
         create_user(
-        first_name=fname,
-        last_name=lname,
-        email=email,
-        site=subdomain + "." + frappe.conf.domain,
-        phone=phone,
-    )
-    
-        
-    
+            first_name=fname,
+            last_name=lname,
+            email=email,
+            site=subdomain + "." + frappe.conf.domain,
+            phone=phone,
+        )
+
     stock_sites = frappe.db.get_list(
         "SaaS stock sites", filters={"is_used": "no"}, ignore_permissions=True
     )
@@ -149,7 +148,9 @@ def setupSite(*args, **kwargs):
         )
     print("using ", target_site.subdomain, "to create ", subdomain)
     commands.append(
-        "bench --site {} clear-cache".format(target_site.subdomain + "." + frappe.conf.domain)
+        "bench --site {} clear-cache".format(
+            target_site.subdomain + "." + frappe.conf.domain
+        )
     )
     commands.append(
         "bench --site {} set-admin-password {}".format(
@@ -163,7 +164,7 @@ def setupSite(*args, **kwargs):
     )
     commands.append(
         "cd /home/{}/frappe-bench/sites & mv {}.{} {}".format(
-            config.server_user_name,target_site.subdomain, frappe.conf.domain, new_site
+            config.server_user_name, target_site.subdomain, frappe.conf.domain, new_site
         )
     )
     site_defaults = frappe.get_doc("SaaS settings")
@@ -173,13 +174,9 @@ def setupSite(*args, **kwargs):
         )
     )
     # enable scheduler
+    commands.append("bench --site {} enable-scheduler".format(new_site))
     commands.append(
-        "bench --site {} enable-scheduler".format(new_site)
-    )
-    commands.append(
-        "bench --site {} set-config customer_email {}".format(
-            new_site, email
-        )
+        "bench --site {} set-config customer_email {}".format(new_site, email)
     )
     commands.append(
         "bench --site {} set-config max_email {}".format(
@@ -200,19 +197,21 @@ def setupSite(*args, **kwargs):
         "bench --site {} set-config expiry_date {}".format(new_site, expiry_date)
     )
     commands.append(
-            "bench --site {} set-config country {}".format(new_site, kwargs["country"])
-        )
+        "bench --site {} set-config country {}".format(new_site, kwargs["country"])
+    )
     commands.append(
-        "bench --site {} set-config creation_date {}".format(new_site, frappe.utils.nowdate())
+        "bench --site {} set-config creation_date {}".format(
+            new_site, frappe.utils.nowdate()
+        )
     )
     commands.append("bench --site {} set-maintenance-mode off".format(new_site))
     commands.append(
         "bench --site {} execute bettersaas.bettersaas.doctype.saas_sites.saas_sites.markSiteAsUsed --args {}".format(
-            frappe.local.site , target_site.subdomain
+            frappe.local.site, target_site.subdomain
         )
     )
     commands.append("bench setup nginx --yes")
-    # enque long running tasks - executeCommands 
+    # enque long running tasks - executeCommands
     executeCommands(commands)
     new_site_doc = frappe.new_doc("SaaS sites")
     enc_key = encrypt(admin_password, frappe.conf.enc_key)
@@ -221,30 +220,38 @@ def setupSite(*args, **kwargs):
     new_site_doc.site_name = new_site.lower()
     new_site_doc.expiry_date = expiry_date
     subscription = StripeSubscriptionManager(kwargs["country"])
-    customer = subscription.create_customer( new_site,email,fname,lname,phone)
+    customer = subscription.create_customer(new_site, email, fname, lname, phone)
     new_site_doc.cus_id = customer.id
-    frappe.utils.execute_in_shell("bench --site {} set-config customer_id {}".format(new_site,customer.id))
-    frappe.utils.execute_in_shell("bench --site {} set-config has_subscription {}".format(new_site,"yes"))
+    frappe.utils.execute_in_shell(
+        "bench --site {} set-config customer_id {}".format(new_site, customer.id)
+    )
+    frappe.utils.execute_in_shell(
+        "bench --site {} set-config has_subscription {}".format(new_site, "yes")
+    )
     # create trial subscription
     subscription.start_free_trial_of_site(customer.id)
-    
+
     sub = subdomain
     new_site_doc.save(ignore_permissions=True)
-    
+
     if frappe.conf.subdomain == "localhost":
         sub = target_site.subdomain
     from clientside.stripe import hasActiveSubscription
-    hasActiveSubscription(invalidate_cache=True,site=new_site)
-    # create Lead on this site
-    # lead_doc = frappe.new_doc("Lead")
-    # lead_doc.lead_name = fname + " " + lname
-    # lead_doc.email_id = email
-    # lead_doc.mobile_no = phone
-    # lead_doc.phone = phone
-    # lead_doc.company_name = new_site
-    # lead_doc.save(ignore_permissions=True)
-    # lead_doc.website = "https://" + sub + "." + frappe.conf.domain
-    
+
+    hasActiveSubscription(invalidate_cache=True, site=new_site)
+
+    try:
+        lead_doc = frappe.new_doc("Lead")
+        lead_doc.lead_name = fname + " " + lname
+        lead_doc.mobile_no = phone
+        lead_doc.phone = phone
+        lead_doc.company_name = new_site
+        lead_doc.website = "https://" + sub + "." + frappe.conf.domain
+        lead_doc.save(ignore_permissions=True)
+    except Exception as e:
+        print("lead already exists")
+    print("here")
+    frappe.db.commit()
     return {"subdomain": sub, "enc_password": enc_key}
 
 
@@ -269,7 +276,7 @@ def updateLimitsOfSite(*args, **kwargs):
     print("updaing limits", kwargs)
     commands = []
     for key, value in kwargs.items():
-        if key in ["max_users", "max_email", "max_space","expiry_date"]:
+        if key in ["max_users", "max_email", "max_space", "expiry_date"]:
             commands.append(
                 "bench --site   {} set-config {} {}".format(
                     kwargs["sitename"], key, value
@@ -285,8 +292,9 @@ def getDecryptedPassword(*args, **kwargs):
     print(site, frappe.conf.enc_key)
     return decrypt(site.encrypted_password, frappe.conf.enc_key)
 
+
 @frappe.whitelist(allow_guest=True)
-def take_backup_of_site(sitename,is_manual=0):
+def take_backup_of_site(sitename, is_manual=0):
     command = (
         "bench --site {} execute clientside.clientside.utils.take_backups_s3 ".format(
             sitename
@@ -295,19 +303,27 @@ def take_backup_of_site(sitename,is_manual=0):
     frappe.utils.execute_in_shell(command)
     return "executing command: " + command
 
+
 @frappe.whitelist()
 def backup():
     sites = frappe.get_all("SaaS sites", filters={"do_backup": 1}, fields=["site_name"])
-    
+
     for site in sites:
         print("backing up site", site.site_name)
         if site.site_name == "dff.localhost":
             continue
-        frappe.enqueue("bettersaas.bettersaas.doctype.saas_sites.saas_sites.take_backup_of_site",sitename=site.site_name,at_front=1)
+        frappe.enqueue(
+            "bettersaas.bettersaas.doctype.saas_sites.saas_sites.take_backup_of_site",
+            sitename=site.site_name,
+            at_front=1,
+        )
     return "done"
-def insert_backup_record(site,backup_size,key,is_manual):
+
+
+def insert_backup_record(site, backup_size, key, is_manual):
     is_manual = int(is_manual)
     import datetime
+
     try:
         doc = frappe.new_doc("SaaS site backups")
         doc.site_name = site
@@ -322,16 +338,18 @@ def insert_backup_record(site,backup_size,key,is_manual):
     except Exception as e:
         print("hey", e)
 
+
 @frappe.whitelist(allow_guest=True)
 def delete_site(*args, **kwargs):
     print("DELETING SITE", kwargs)
     doc = frappe.get_doc("SaaS sites", {"site_name": kwargs["site_name"]})
-    doc.site_deleted  = 1
+    doc.site_deleted = 1
     doc.save(ignore_permissions=True)
     frappe.db.commit()
     return "done"
 
-@frappe.whitelist(allow_guest=True,methods=["POST"])
+
+@frappe.whitelist(allow_guest=True, methods=["POST"])
 def upgrade_user(*args, **kwargs):
     print("upgrading user")
     site = kwargs["site_name"]
@@ -342,85 +360,128 @@ def upgrade_user(*args, **kwargs):
     site_doc.user_limit = user_count
     site_doc.save(ignore_permissions=True)
     return "done"
-    
-    
-@frappe.whitelist(allow_guest=True)
-def get_site_backup_size(sitename):
-    docs = frappe.db.get_list("SaaS site backups",filters={"site":sitename,"created_by_user":1},fields=["backup_size"],ignore_permissions=True)
-    from clientside.clientside.utils import convertToB
-    return sum([float(convertToB(doc.backup_size)) for doc in docs])
+
 
 @frappe.whitelist(allow_guest=True)
-def download_backup(backupid,site_name):
+def get_site_backup_size(sitename):
+    docs = frappe.db.get_list(
+        "SaaS site backups",
+        filters={"site": sitename, "created_by_user": 1},
+        fields=["backup_size"],
+        ignore_permissions=True,
+    )
+    from clientside.clientside.utils import convertToB
+
+    return sum([float(convertToB(doc.backup_size)) for doc in docs])
+
+
+@frappe.whitelist(allow_guest=True)
+def download_backup(backupid, site_name):
     import boto3
-    
-    conn = boto3.client('s3',aws_access_key_id=frappe.conf.aws_access_key_id,aws_secret_access_key=frappe.conf.aws_secret_access_key)
-    backup_doc = frappe.get_doc("SaaS site backups",backupid)
-    files = [backup_doc.site_files,backup_doc.database_files,backup_doc.private_files]
+
+    conn = boto3.client(
+        "s3",
+        aws_access_key_id=frappe.conf.aws_access_key_id,
+        aws_secret_access_key=frappe.conf.aws_secret_access_key,
+    )
+    backup_doc = frappe.get_doc("SaaS site backups", backupid)
+    files = [backup_doc.site_files, backup_doc.database_files, backup_doc.private_files]
     file_names = [x.split("/")[-1] for x in files]
     for i in range(len(files)):
-      #  print("downloading file",files[i])
-        key = "site_backups/"+ site_name+"/"+files[i]
+        #  print("downloading file",files[i])
+        key = "site_backups/" + site_name + "/" + files[i]
         print(key)
-        conn.download_file(frappe.conf.aws_bucket_name,"site_backups/"+ site_name+"/"+files[i],file_names[i])
+        conn.download_file(
+            frappe.conf.aws_bucket_name,
+            "site_backups/" + site_name + "/" + files[i],
+            file_names[i],
+        )
     # run command to restore
     return file_names
+
+
 @frappe.whitelist(allow_guest=True)
 def restore_site(*args, **kwargs):
     config = frappe.get_doc("SaaS settings")
     print(kwargs)
     site_name = kwargs["site_name"]
-    file_names = download_backup(kwargs["backupid"],site_name)
-    command_to_restore = "bench --site {} --force restore {} --with-public-files {} --with-private-files {} --db-root-password {}".format(site_name,file_names[1],file_names[0],file_names[2],config.db_password)
-    frappe.enqueue("bettersaas.bettersaas.doctype.saas_sites.saas_sites.execute_command_async",command =command_to_restore,at_front=1,queue="short")
-  #  resp = frappe.utils.execute_in_shell(command_to_restore)
-  #  print(resp)
+    file_names = download_backup(kwargs["backupid"], site_name)
+    command_to_restore = "bench --site {} --force restore {} --with-public-files {} --with-private-files {} --db-root-password {}".format(
+        site_name, file_names[1], file_names[0], file_names[2], config.db_password
+    )
+    frappe.enqueue(
+        "bettersaas.bettersaas.doctype.saas_sites.saas_sites.execute_command_async",
+        command=command_to_restore,
+        at_front=1,
+        queue="short",
+    )
+    #  resp = frappe.utils.execute_in_shell(command_to_restore)
+    #  print(resp)
     # enque
     os.system(command_to_restore)
-    frappe.publish_realtime("site_restored",{"site_name":site_name},user=frappe.session.user)
+    frappe.publish_realtime(
+        "site_restored", {"site_name": site_name}, user=frappe.session.user
+    )
     return "restored"
-    
+
+
 def execute_command_async(command):
     frappe.utils.execute_in_shell(command)
+
+
 def create_new_site_from_backup(*args, **kwargs):
     ## to do rishabh
     backupid = kwargs["backupid"]
     old_site_name = kwargs["old_site_name"]
     new_site_name = kwargs["new_site_name"]
     admin_password = kwargs["admin_password"]
-    file_names = download_backup(backupid,old_site_name)
+    file_names = download_backup(backupid, old_site_name)
     config = frappe.get_doc("SaaS settings")
-    command_from_sql_source = "bench new-site {} --source_sql {} --install-app erpnext --admin-password {} --db-root-password {}".format(new_site_name,file_names[1],admin_password,config.db_password)
-    command_to_add_clientside = "bench --site {} install-app clientside".format(new_site_name)
-    command_to_add_files = "bench --site {} --force restore {} --with-public-files {} --with-private-files {}".format(new_site_name,file_names[1],file_names[0],file_names[2])
-    command_to_add_files = "bench --site {} --force restore {} --with-public-files {} --with-private-files {}".format(new_site_name,file_names[1],file_names[0],file_names[2])
+    command_from_sql_source = "bench new-site {} --source_sql {} --install-app erpnext --admin-password {} --db-root-password {}".format(
+        new_site_name, file_names[1], admin_password, config.db_password
+    )
+    command_to_add_clientside = "bench --site {} install-app clientside".format(
+        new_site_name
+    )
+    command_to_add_files = "bench --site {} --force restore {} --with-public-files {} --with-private-files {}".format(
+        new_site_name, file_names[1], file_names[0], file_names[2]
+    )
+    command_to_add_files = "bench --site {} --force restore {} --with-public-files {} --with-private-files {}".format(
+        new_site_name, file_names[1], file_names[0], file_names[2]
+    )
     resp = frappe.utils.execute_in_shell(command_from_sql_source)
     print(resp)
     resp = frappe.utils.execute_in_shell(command_to_add_files)
     print(resp)
-    
-    
+
+
 @frappe.whitelist(allow_guest=True)
-def delete_old_backups(limit,site_name,created_by_user=1):
-    print("deleting old backups",limit,site_name)
+def delete_old_backups(limit, site_name, created_by_user=1):
+    print("deleting old backups", limit, site_name)
     limit = int(limit)
     # we delete the old backups and keep only the latest "limit" backups
-    records = frappe.get_list("SaaS site backups",filters={"site":site_name,"created_by_user":created_by_user},fields=["name","created_on"],order_by="created_on desc",ignore_permissions=True)
-    for i in range(limit,len(records)):
-        print("deleting",records[i].name)
-        frappe.delete_doc("SaaS site backups",records[i].name)
+    records = frappe.get_list(
+        "SaaS site backups",
+        filters={"site": site_name, "created_by_user": created_by_user},
+        fields=["name", "created_on"],
+        order_by="created_on desc",
+        ignore_permissions=True,
+    )
+    for i in range(limit, len(records)):
+        print("deleting", records[i].name)
+        frappe.delete_doc("SaaS site backups", records[i].name)
         frappe.db.commit()
     return "deletion done"
+
+
 @frappe.whitelist()
 def getLimitsOfSite(site_name):
-    users =  frappe.get_site_config(site_path=site_name).get("max_users")
+    users = frappe.get_site_config(site_path=site_name).get("max_users")
     emails = frappe.get_site_config(site_path=site_name).get("max_email")
     space = frappe.get_site_config(site_path=site_name).get("max_space")
-    plan  = frappe.get_site_config(site_path=site_name).get("plan")
-    return {"users":users,"emails":emails,"space":space,"plan":plan}
+    plan = frappe.get_site_config(site_path=site_name).get("plan")
+    return {"users": users, "emails": emails, "space": space, "plan": plan}
 
 
-    
-   
 class SaaSsites(Document):
     pass
