@@ -117,26 +117,21 @@ app_license = "MIT"
 # Import necessary modules
 
 
-
-
-
-
 scheduler_events = {
-	"monthly": [
+    "monthly": [
         "bettersaas.api.reset_email_limits",
-	],
+    ],
     "weekly": [
         "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
     ],
-    'all': [
-        'bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.schedule_refresh_stock_sites'
+    "all": [
+        "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.schedule_refresh_stock_sites"
     ]
     # "cron":{
     #     "*/1 * * * *": [
     #     "bettersaas.api.delete_free_sites"
     #     ],
     #  }
-
 }
 
 # Testing

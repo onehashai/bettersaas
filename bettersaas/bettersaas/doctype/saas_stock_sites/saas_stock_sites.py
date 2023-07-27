@@ -8,13 +8,18 @@ log = open("some file.txt", "a")
 from frappe.utils import random_string
 from frappe.utils.background_jobs import enqueue
 
-def schedule_refresh_stock_sites():
-    
-    # Set your desired time interval in seconds
-    temp = 60  
 
-    enqueue('bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites', queue='long', interval=temp)
-    return 'started'
+def schedule_refresh_stock_sites():
+    # Set your desired time interval in seconds
+    print("scheduling refresh stock sites")
+    temp = 60
+
+    enqueue(
+        "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites",
+        queue="long",
+        interval=temp,
+    )
+    return "started"
 
 
 def getSiteConfig():
@@ -29,11 +34,9 @@ def insertSite(site_name, admin_password):
     site.insert()
 
 
-def create_multiple_sites_in_parallel(command,db_values):
+def create_multiple_sites_in_parallel(command, db_values):
     print("creating multiple sites in parallel")
     frappe.utils.execute_in_shell(command)
-    
-
 
 
 def deleteSite(sitename):
@@ -64,7 +67,7 @@ def deleteUsedSites():
 @frappe.whitelist()
 def refreshStockSites(*args, **kwargs):
     config = frappe.get_doc("SaaS settings")
-    if config.ssc_enabled==1 :
+    if config.ssc_enabled == 1:
         print("refreshing stock sites")
         config = getSiteConfig()
         commands = []
@@ -76,9 +79,10 @@ def refreshStockSites(*args, **kwargs):
             for _ in range(number_of_sites_to_stock):
                 import string
                 import random
+
                 letters = string.ascii_lowercase
                 random_string_util = "".join(random.choice(letters) for i in range(10))
-                subdomain =random_string_util
+                subdomain = random_string_util
                 adminPassword = random_string(5)
                 this_command = []
                 this_command.append(
@@ -124,8 +128,10 @@ def refreshStockSites(*args, **kwargs):
                 print("adding to queue,", this_command)
                 method = "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.create_multiple_sites_in_parallel"
                 db_values.append([subdomain, adminPassword])
-                frappe.enqueue(method, command=this_command, db_values=db_values,queue="short")
-    
+                frappe.enqueue(
+                    method, command=this_command, db_values=db_values, queue="short"
+                )
+
     return "Database will be updated soon with stock sites "
 
 

@@ -252,6 +252,7 @@ def setupSite(*args, **kwargs):
         print("lead already exists")
     print("here")
     frappe.db.commit()
+    # send mail to user
     return {"subdomain": sub, "enc_password": enc_key}
 
 
