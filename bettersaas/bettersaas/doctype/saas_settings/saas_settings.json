@@ -146,7 +146,7 @@
    "fieldname": "run_at_interval",
    "fieldtype": "Select",
    "label": "Run At Interval",
-   "options": "\nHourly\nDaily\nWeekly"
+   "options": "\n02\n04\n06\n08\n10\n12\n14\n16\n18\n20\n22\n24"
   },
   {
    "description": "Indicates the number of inactive days to be considered for site deletion",
@@ -193,13 +193,13 @@
    "fieldname": "run_at_interval1",
    "fieldtype": "Select",
    "label": "Run At Interval",
-   "options": "\nHourly\nDaily\nWeekly"
+   "options": "\n02\n04\n06\n08\n10\n12\n14\n16\n18\n20\n22\n24"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-07-26 13:49:23.677618",
+ "modified": "2023-07-26 20:06:44.575661",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS settings",
