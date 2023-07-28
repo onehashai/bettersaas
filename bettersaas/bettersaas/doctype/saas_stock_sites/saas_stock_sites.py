@@ -6,10 +6,12 @@ import os
 
 log = open("some file.txt", "a")
 from frappe.utils import random_string
+from frappe.utils import nowdate, nowtime
 
 
 def getSiteConfig():
     siteConfig = frappe.get_doc("SaaS settings")
+    siteConfig
     return siteConfig
 
 
@@ -20,11 +22,9 @@ def insertSite(site_name, admin_password):
     site.insert()
 
 
-def create_multiple_sites_in_parallel(command,db_values):
+def create_multiple_sites_in_parallel(command, db_values):
     print("creating multiple sites in parallel")
     frappe.utils.execute_in_shell(command)
-    
-
 
 
 def deleteSite(sitename):
@@ -53,8 +53,24 @@ def deleteUsedSites():
 
 
 @frappe.whitelist()
+def check_stock_sites():
+    config = frappe.get_doc("SaaS settings")
+    if not config.ssc_enabled:
+        return
+    if not config.run_at_interval1:
+        return
+    curtime = nowtime()
+    if curtime[:2] == "00":
+        curtime = "24" + curtime[2:]
+
+    if int(curtime[:2]) % int(config.run_at_interval1) != 0:
+        return
+
+    refreshStockSites()
+
+
+@frappe.whitelist()
 def refreshStockSites(*args, **kwargs):
-    # this function runs every day and maintains the stock site
     print("refreshing stock sites")
     config = getSiteConfig()
     commands = []
@@ -66,9 +82,10 @@ def refreshStockSites(*args, **kwargs):
         for _ in range(number_of_sites_to_stock):
             import string
             import random
+
             letters = string.ascii_lowercase
             random_string_util = "".join(random.choice(letters) for i in range(10))
-            subdomain =random_string_util
+            subdomain = random_string_util
             adminPassword = random_string(5)
             this_command = []
             this_command.append(
@@ -114,8 +131,10 @@ def refreshStockSites(*args, **kwargs):
             print("adding to queue,", this_command)
             method = "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.create_multiple_sites_in_parallel"
             db_values.append([subdomain, adminPassword])
-            frappe.enqueue(method, command=this_command, db_values=db_values,queue="short")
-    
+            frappe.enqueue(
+                method, command=this_command, db_values=db_values, queue="short"
+            )
+
     return "Database will be updated soon with stock sites "
 
 

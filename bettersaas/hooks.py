@@ -113,23 +113,34 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 
-scheduler_events = {
-	"monthly": [
-		"bettersaas.api.delete_free_sites",
-  "bettersaas.api.reset_email_limits",
-	],
- "weekly": [
-     "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
- ],
- "hourly": [
-     "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites"
- ],
- "cron":{
-      "*/1 * * * *": [
-     "erpnext.projects.doctype.project.project.hourly_reminder"
-    ]
- }
+# Import necessary modules
 
+
+scheduler_events = {
+    "monthly": [
+        "bettersaas.api.reset_email_limits",
+    ],
+    "weekly": [
+        "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
+    ],
+    "hourly": [
+        "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.check_stock_sites",
+        "bettersaas.api.check_stock_sites",
+    ],
+    "daily_long": ["bettersaas.api.update_user_saas_sites"],
+    # "cron": {
+    # "1-59 * * * *":[
+    # 			"bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites"
+    # 	]
+    # }
+    # 'all': [
+    #     'bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.schedule_refresh_stock_sites'
+    # ]
+    # "cron":{
+    #     "*/1 * * * *": [
+    #     "bettersaas.api.delete_free_sites"
+    #     ],
+    #  }
 }
 
 # Testing

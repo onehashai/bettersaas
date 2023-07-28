@@ -8,6 +8,7 @@ from frappe.core.doctype.sms_settings.sms_settings import send_sms
 from frappe.utils.password import decrypt, encrypt
 from clientside.stripe import StripeSubscriptionManager
 
+
 def generate_otp():
     # Declare a digits variable
     # which stores all digits
@@ -77,7 +78,7 @@ def send_otp(email, phone):
         < 10 * 60
     ):
         new_otp_doc.otp = doc[0].otp
-        
+
     else:
         print("GENERATING")
         new_otp_doc.otp = generate_otp()
@@ -126,12 +127,15 @@ def verify_account_request(unique_id, otp):
 @frappe.whitelist()
 def create_user(first_name, last_name, email, site, phone):
     user = frappe.new_doc("SaaS users")
+    print("creating user with", first_name, last_name, email, site, phone)
     user.email = email
     user.first_name = first_name
     user.last_name = last_name
     user.site = site
     user.phone = phone
     user.save(ignore_permissions=True)
+    frappe.db.commit()
+    # return user "name"
     return user
 
 
@@ -153,22 +157,22 @@ def check_user_name_and_password_for_a_site(site_name, email, password):
     site = frappe.db.get_all(
         "SaaS sites",
         filters={"site_name": site_name, "linked_email": email},
-        fields=["linked_email", "encrypted_password", "site_name","cus_id"],
+        fields=["linked_email", "encrypted_password", "site_name", "cus_id"],
     )
     if len(site) == 0:
         return "INVALID_SITE"
-    
+
     site = site[0]
-    
+
     dec_password = decrypt(site.encrypted_password, frappe.conf.enc_key)
     if site:
         if dec_password != password:
             return "INVALID_CREDENTIALS"
     # check for active subscription
-  #  print(frappe.conf)
+    #  print(frappe.conf)
     country = frappe.get_site_config(site_path=site.site_name)["country"]
-    stripe_subscription_manager = StripeSubscriptionManager(country = country )
-    has_sub =stripe_subscription_manager.has_valid_site_subscription(site.cus_id)
+    stripe_subscription_manager = StripeSubscriptionManager(country=country)
+    has_sub = stripe_subscription_manager.has_valid_site_subscription(site.cus_id)
     # find user and check if has role of Administator
     hasRoleAdmin = frappe.db.exists(
         "Has Role", {"parent": email, "role": "Administrator"}
@@ -178,6 +182,14 @@ def check_user_name_and_password_for_a_site(site_name, email, password):
         return "NO_SUBSCRIPTION"
     return "OK"
 
+
+@frappe.whitelist()
+def get_all_users_of_a_site():
+    site = "Samsun.localhost"
+    a = frappe.db.sql(
+        "select email from `tabSaaS users` where site = %s", site, as_dict=1
+    )
+    print(a)
 
 
 class SaaSusers(Document):

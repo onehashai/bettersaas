@@ -123,12 +123,12 @@ window.Vue.createApp({
       }
       this.otpVerificationStatus.reset();
     },
-    isTermsChecked(value) {
-      if (value && value === "no") {
-        return true;
-      }
-      return config.ERROR_MESSAGES.ACCEPT_TERMS;
-    },
+    // isTermsChecked(value) {
+    //   if (value && value === "no") {
+    //     return true;
+    //   }
+    //   return config.ERROR_MESSAGES.ACCEPT_TERMS;
+    // },
 
     isRequired(value) {
       if (value && value.length > 0) {
@@ -163,6 +163,7 @@ window.Vue.createApp({
     },
 
     async onSubmit(values) {
+      console.log(values);
       grecaptcha.ready(function () {
         grecaptcha
           .execute("6LfnFUEnAAAAAFk_AVR5xxjbImAQlJz-kDa1bh6N", {
@@ -378,6 +379,7 @@ window.Vue.createApp({
           last_name: this.lname,
           phone: this.phone,
           country: this.country,
+          allow_creating_users: "yes",
         },
         callback: (r) => {
           if (r.message.subdomain) {
