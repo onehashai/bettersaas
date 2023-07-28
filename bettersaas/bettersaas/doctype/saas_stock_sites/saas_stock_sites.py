@@ -11,7 +11,6 @@ from frappe.utils import nowdate, nowtime
 
 def getSiteConfig():
     siteConfig = frappe.get_doc("SaaS settings")
-    siteConfig
     return siteConfig
 
 
@@ -87,12 +86,16 @@ def refreshStockSites(*args, **kwargs):
             random_string_util = "".join(random.choice(letters) for i in range(10))
             subdomain = random_string_util
             adminPassword = random_string(5)
+            config.db_password = config.get_password("db_password")
             this_command = []
             this_command.append(
                 "bench new-site {} --install-app erpnext  --admin-password {} --db-root-password {}".format(
-                    subdomain + "." + domain, adminPassword, config.db_password
+                    subdomain + "." + domain,
+                    adminPassword,
+                    config.get_password("db_password"),
                 )
             )
+
             apps_to_install = [
                 frappe.get_doc("Available Apps", x.as_dict().app).app_name
                 for x in frappe.get_doc("SaaS settings").apps_to_install
