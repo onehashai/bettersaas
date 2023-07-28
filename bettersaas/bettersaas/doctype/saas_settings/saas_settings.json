@@ -51,13 +51,13 @@
   {
    "description": "Enter MariaDB Database Password",
    "fieldname": "db_password",
-   "fieldtype": "Data",
+   "fieldtype": "Password",
    "label": "Database Password"
   },
   {
    "description": "Enter Password of Server Root User",
    "fieldname": "root_password",
-   "fieldtype": "Data",
+   "fieldtype": "Password",
    "label": "Server Root Password"
   },
   {
@@ -192,14 +192,14 @@
    "description": "The deletion task will run at this hours interval",
    "fieldname": "run_at_interval1",
    "fieldtype": "Select",
-   "label": "Run At Interval",
+   "label": "Run At Interval ",
    "options": "\n02\n04\n06\n08\n10\n12\n14\n16\n18\n20\n22\n24"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-07-26 20:06:44.575661",
+ "modified": "2023-07-27 17:19:24.691817",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS settings",

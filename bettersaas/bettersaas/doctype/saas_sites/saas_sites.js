@@ -7,7 +7,6 @@ frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
       sitename: frm.doc.site_name,
       max_space: frm.doc.space_limit,
       max_email: frm.doc.email_limit,
-      expiry_date: frm.doc.expiry_date,
     },
     callback: function (r) {
       console.log("limits updated", r);
@@ -61,18 +60,55 @@ frappe.ui.form.on("SaaS sites", {
       console.log(resp);
     });
     // set limits
-    const { message } = await $.ajax({
-      url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.getLimitsOfSite",
-      type: "GET",
-      dataType: "json",
-      data: {
-        site_name: frm.doc.site_name,
-      },
-    });
-    console.log(message);
-    frm.set_value("user_limit", message.users);
-    frm.set_value("space_limit", message.space);
-    frm.set_value("email_limit", message.emails);
-    frm.set_value("plan", message.plan || "Free");
   },
+});
+
+frappe.ui.form.on("SaaS sites", "update_limits", function (frm) {
+  // create a frappe ui dialog with email limit, space limit, user limit, expiry date
+  frappe.prompt(
+    [
+      {
+        fieldname: "email_limit",
+        label: "Email Limit",
+        fieldtype: "Int",
+        default: frm.doc.email_limit,
+        reqd: 1,
+      },
+      {
+        fieldname: "space_limit",
+        label: "Space Limit",
+        fieldtype: "Int",
+        default: frm.doc.space_limit.replace("GB", ""),
+        description: "Enter in GB ( without the suffix GB )",
+        reqd: 1,
+      },
+      {
+        fieldname: "user_limit",
+        label: "User Limit",
+        fieldtype: "Int",
+        default: frm.doc.user_limit == "Unlimited" ? -1 : frm.doc.user_limit,
+        reqd: 1,
+        description: "Enter -1 for unlimited users",
+      },
+    ],
+    function (values) {
+      frappe.call({
+        method:
+          "bettersaas.bettersaas.doctype.saas_sites.saas_sites.updateLimitsOfSite",
+        args: {
+          max_users:
+            values.user_limit == -1 || values.user_limit == "-1"
+              ? 1000000
+              : values.user_limit,
+          sitename: frm.doc.site_name,
+          max_space: values.space_limit,
+          max_email: values.email_limit,
+          expiry_date: values.expiry_date,
+        },
+        callback: function (r) {
+          console.log("limits updated", r);
+        },
+      });
+    }
+  );
 });

@@ -123,21 +123,16 @@ scheduler_events = {
     "weekly": [
         "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
     ],
-    "all": [
-        "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.schedule_refresh_stock_sites"
-    ]
     "hourly": [
         "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.check_stock_sites",
-        "bettersaas.api.check_stock_sites"
+        "bettersaas.api.check_stock_sites",
     ],
-    "daily_long": [
-        'bettersaas.api.update_user_saas_sites'
-    ],
+    "daily_long": ["bettersaas.api.update_user_saas_sites"],
     # "cron": {
-	# "1-59 * * * *":[
-	# 			"bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites"
-	# 	]
-	# }
+    # "1-59 * * * *":[
+    # 			"bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites"
+    # 	]
+    # }
     # 'all': [
     #     'bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.schedule_refresh_stock_sites'
     # ]

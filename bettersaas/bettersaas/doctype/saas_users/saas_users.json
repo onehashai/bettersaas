@@ -46,8 +46,14 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2023-07-20 17:33:00.309052",
+ "links": [
+  {
+   "group": "SaaS sites",
+   "link_doctype": "SaaS sites",
+   "link_fieldname": "saas_user"
+  }
+ ],
+ "modified": "2023-07-27 17:08:23.096010",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS users",

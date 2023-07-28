@@ -11,6 +11,7 @@ from frappe.utils import nowdate, nowtime
 
 def getSiteConfig():
     siteConfig = frappe.get_doc("SaaS settings")
+    siteConfig
     return siteConfig
 
 

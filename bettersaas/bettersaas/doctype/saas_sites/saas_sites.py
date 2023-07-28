@@ -18,16 +18,18 @@ from bettersaas.bettersaas.api import upgrade_site
 def markSiteAsUsed(site):
     print(site)
     doc = frappe.get_last_doc("SaaS stock sites", filters={"subdomain": site})
-    doc.is_used = "yes"
-    doc.save(ignore_permissions=True)
+    # delete the doc
+    frappe.delete_doc("SaaS stock sites", doc.name)
 
 
 def executeCommands(commands):
     config = frappe.get_doc("SaaS settings")
+    config.db_password = config.get_password("db_password")
+    config.root_password = config.get_password("root_password")
     command = " ; ".join(commands)
-    print("executing ", command)
     process = sp.Popen(command, shell=True)
     process.wait()
+    config.root_password = config.get_password("root_password")
     if frappe.conf.domain != "localhost":
         os.system(
             "echo {} | sudo -S sudo service nginx reload".format(config.root_password)
@@ -114,8 +116,9 @@ def setupSite(*args, **kwargs):
         ):
             return "PASSWORD_NOT_STRONG"
     new_site = subdomain + "." + frappe.conf.domain
+    saas_user = None
     if allow_creating_users == "yes":
-        create_user(
+        saas_user = create_user(
             first_name=fname,
             last_name=lname,
             email=email,
@@ -128,7 +131,6 @@ def setupSite(*args, **kwargs):
     )
     target_site = None
     commands = []
-    print(len(stock_sites))
     if len(stock_sites) == 0:
         commands.append(
             "bench new-site {} --install-app erpnext  --admin-password {} --db-root-password {}".format(
@@ -219,6 +221,7 @@ def setupSite(*args, **kwargs):
     new_site_doc.linked_email = email
     new_site_doc.site_name = new_site.lower()
     new_site_doc.expiry_date = expiry_date
+    new_site_doc.saas_user = saas_user.name if saas_user else None
     subscription = StripeSubscriptionManager(kwargs["country"])
     customer = subscription.create_customer(new_site, email, fname, lname, phone)
     new_site_doc.cus_id = customer.id
@@ -229,29 +232,40 @@ def setupSite(*args, **kwargs):
         "bench --site {} set-config has_subscription {}".format(new_site, "yes")
     )
     # create trial subscription
-    subscription.start_free_trial_of_site(customer.id)
-
-    sub = subdomain
     new_site_doc.save(ignore_permissions=True)
 
-    if frappe.conf.subdomain == "localhost":
-        sub = target_site.subdomain
-    from clientside.stripe import hasActiveSubscription
-
-    hasActiveSubscription(invalidate_cache=True, site=new_site)
-
+    # link new site doc with stock site doc ( Linked documents)
+    sub = subdomain
     try:
         lead_doc = frappe.new_doc("Lead")
         lead_doc.lead_name = fname + " " + lname
         lead_doc.mobile_no = phone
         lead_doc.phone = phone
+        # find if lead email already exists
+        doc = frappe.db.get_list(
+            "Lead",
+            filters={"lead_email": email},
+            fields=["name"],
+            ignore_permissions=True,
+        )
+        if len(doc) == 0:
+            lead_doc.email = email
+
+        lead_doc.lead_email = email
         lead_doc.company_name = new_site
         lead_doc.website = "https://" + sub + "." + frappe.conf.domain
         lead_doc.save(ignore_permissions=True)
     except Exception as e:
         print("lead already exists")
-    print("here")
+    if frappe.conf.subdomain == "localhost":
+        sub = target_site.subdomain
     frappe.db.commit()
+    # create stripe subscription
+    subscription.start_free_trial_of_site(customer.id)
+    from clientside.stripe import hasActiveSubscription
+
+    hasActiveSubscription(invalidate_cache=True, site=new_site)
+
     # send mail to user
     return {"subdomain": sub, "enc_password": enc_key}
 
@@ -265,7 +279,6 @@ def checkSiteCreated(*args, **kwargs):
         filters={"site_name": sitename + "." + frappe.conf.domain},
         ignore_permissions=True,
     )
-    print(site)
     if len(site) > 0:
         return "yes"
     else:
@@ -274,7 +287,6 @@ def checkSiteCreated(*args, **kwargs):
 
 @frappe.whitelist()
 def updateLimitsOfSite(*args, **kwargs):
-    print("updaing limits", kwargs)
     commands = []
     for key, value in kwargs.items():
         if key in ["max_users", "max_email", "max_space", "expiry_date"]:
@@ -288,9 +300,7 @@ def updateLimitsOfSite(*args, **kwargs):
 
 @frappe.whitelist()
 def getDecryptedPassword(*args, **kwargs):
-    print(kwargs)
     site = frappe.db.get("SaaS sites", filters={"site_name": kwargs["site_name"]})
-    print(site, frappe.conf.enc_key)
     return decrypt(site.encrypted_password, frappe.conf.enc_key)
 
 
@@ -342,7 +352,6 @@ def insert_backup_record(site, backup_size, key, is_manual):
 
 @frappe.whitelist(allow_guest=True)
 def delete_site(*args, **kwargs):
-    print("DELETING SITE", kwargs)
     doc = frappe.get_doc("SaaS sites", {"site_name": kwargs["site_name"]})
     doc.site_deleted = 1
     doc.save(ignore_permissions=True)
@@ -352,7 +361,6 @@ def delete_site(*args, **kwargs):
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 def upgrade_user(*args, **kwargs):
-    print("upgrading user")
     site = kwargs["site_name"]
     user_count = kwargs["user_count"]
     product_id = kwargs["product_id"]
@@ -389,7 +397,6 @@ def download_backup(backupid, site_name):
     files = [backup_doc.site_files, backup_doc.database_files, backup_doc.private_files]
     file_names = [x.split("/")[-1] for x in files]
     for i in range(len(files)):
-        #  print("downloading file",files[i])
         key = "site_backups/" + site_name + "/" + files[i]
         print(key)
         conn.download_file(
@@ -404,7 +411,6 @@ def download_backup(backupid, site_name):
 @frappe.whitelist(allow_guest=True)
 def restore_site(*args, **kwargs):
     config = frappe.get_doc("SaaS settings")
-    print(kwargs)
     site_name = kwargs["site_name"]
     file_names = download_backup(kwargs["backupid"], site_name)
     command_to_restore = "bench --site {} --force restore {} --with-public-files {} --with-private-files {} --db-root-password {}".format(
@@ -416,9 +422,6 @@ def restore_site(*args, **kwargs):
         at_front=1,
         queue="short",
     )
-    #  resp = frappe.utils.execute_in_shell(command_to_restore)
-    #  print(resp)
-    # enque
     os.system(command_to_restore)
     frappe.publish_realtime(
         "site_restored", {"site_name": site_name}, user=frappe.session.user
@@ -451,9 +454,7 @@ def create_new_site_from_backup(*args, **kwargs):
         new_site_name, file_names[1], file_names[0], file_names[2]
     )
     resp = frappe.utils.execute_in_shell(command_from_sql_source)
-    print(resp)
     resp = frappe.utils.execute_in_shell(command_to_add_files)
-    print(resp)
 
 
 @frappe.whitelist(allow_guest=True)
@@ -469,7 +470,6 @@ def delete_old_backups(limit, site_name, created_by_user=1):
         ignore_permissions=True,
     )
     for i in range(limit, len(records)):
-        print("deleting", records[i].name)
         frappe.delete_doc("SaaS site backups", records[i].name)
         frappe.db.commit()
     return "deletion done"
@@ -485,4 +485,85 @@ def getLimitsOfSite(site_name):
 
 
 class SaaSsites(Document):
-    pass
+    def __init__(self, *args, **kwargs):
+        super(SaaSsites, self).__init__(*args, **kwargs)
+        self.site_config = frappe.get_site_config(site_path=self.site_name)
+        stripe = StripeSubscriptionManager(self.site_config.get("country"))
+        self.subcription = stripe.get_onehash_subscription(self.cus_id)
+
+    @property
+    def user_limit(self):
+        return (
+            "Unlimited"
+            if self.plan == "ONEHASH_PRO"
+            else frappe.get_site_config(site_path=self.site_name).get("max_users")
+        )
+
+    @property
+    def email_limit(self):
+        return frappe.get_site_config(site_path=self.site_name).get("max_email")
+
+    @property
+    def space_limit(self):
+        return (
+            str(frappe.get_site_config(site_path=self.site_name).get("max_space"))
+            + "GB"
+        )
+
+    @property
+    def current_period_start(self):
+        import datetime
+
+        sub = self.subcription
+        if sub == "NONE":
+            return ""
+        return datetime.datetime.fromtimestamp(sub["current_period_start"])
+
+    @property
+    def current_period_end(self):
+        import datetime
+
+        sub = self.subcription
+        if sub == "NONE":
+            return ""
+        return datetime.datetime.fromtimestamp(sub["current_period_end"])
+
+    @property
+    def days_left_in_current_period(self):
+        import datetime
+
+        if self.subcription == "NONE":
+            return ""
+        end_date = self.current_period_end
+        return (end_date - datetime.datetime.now()).days
+
+    @property
+    def subscription_id(self):
+        if self.subcription == "NONE":
+            return ""
+        return self.subcription["id"]
+
+    @property
+    def plan(self):
+        return self.site_config.get("plan") or "Free"
+
+    @property
+    def subscription_status(self):
+        if self.subcription == "NONE":
+            return "No subscription"
+        return self.subcription["status"].capitalize()
+
+    @property
+    def linked_domains(self):
+        domains = frappe.get_site_config(site_path=self.site_name).get("domains")
+        ret = []
+        for key in domains.keys():
+            if type(key) == dict:
+                ret.append(domains[key]["domain"])
+            else:
+                ret.append(key)
+        return "\n".join(ret)
+
+    def update_limits(self):
+        frappe.msgprint("updating limits")
+        return

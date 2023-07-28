@@ -32,7 +32,7 @@
             aria-hidden="true"
           />
           <div class="tagline">
-            <div class="tagline_main">Free 14 days trial on us</div>
+            <div class="tagline_main">14 Days Trial on Us</div>
             <div class="tagline_sub">No credit card required</div>
           </div>
         </div>
@@ -43,6 +43,8 @@
           autocomplete="off"
           novalidate="novalidate"
         >
+          <div class="feedback" v-if="!meta.valid ">Invalid</div>
+          <div class="feedback" v-if="meta.valid ">valid</div>
           <div class="row">
             <div class="col-12 col-md-6 mb-1">
               <v-field
@@ -185,7 +187,6 @@
             </div>
             <div class="col-12 col-md-6">
               <input
-                
                 type="text"
                 name="otp"
                 @input="verifyOTP"
@@ -206,10 +207,17 @@
               value="no"
             ></v-field> -->
             <div class="w-100 flex justify-content-center">
-            <p style="font-size: small; padding-top:2%;">
-            By submitting the OTP, I accept the <a href="https://onehash.ai/terms-of-use" target="_blank">Terms of Use</a> and <a href="https://onehash.ai/privacy" target="_blank">Privacy Policy</a>
-          </p>
-        </div>
+              <p style="font-size: small; padding-top: 2%">
+                By submitting the OTP, I accept the
+                <a href="https://onehash.ai/terms-of-use" target="_blank"
+                  >Terms of Use</a
+                >
+                and
+                <a href="https://onehash.ai/privacy" target="_blank"
+                  >Privacy Policy</a
+                >
+              </p>
+            </div>
             <!-- <error-message
               name="terms"
               as="div"
@@ -247,10 +255,10 @@
             </button>
           </div>
           <div class="w-100 flex justify-content-center">
-            <p style="font-size: small; padding-top:2%;">
-            <a href="./login" target="_self">Already Registered?</a>
-          </p>
-        </div>
+            <p style="font-size: small; padding-top: 2%">
+              <a href="./login" target="_self">Already Registered?</a>
+            </p>
+          </div>
         </v-form>
         <ol class="steps">
           <li
@@ -259,7 +267,7 @@
             id="step1"
             :class="{'is-complete':status.step1 == 'completed','is-active':status.step1 == 'active'}"
           >
-            Creating site
+            Creating Site
           </li>
           <li
             class="step"
@@ -267,7 +275,7 @@
             id="step2"
             :class="{'is-complete':status.step2 == 'completed','is-active':status.step2 == 'active'}"
           >
-            Creating user
+            Creating User
           </li>
           <li
             class="step"
