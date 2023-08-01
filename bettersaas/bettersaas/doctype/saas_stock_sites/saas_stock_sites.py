@@ -73,7 +73,9 @@ def refreshStockSites(*args, **kwargs):
     print("refreshing stock sites")
     config = getSiteConfig()
     commands = []
-    currentStock = frappe.db.get_list("SaaS stock sites", filters={"is_used": "no"})
+    currentStock = frappe.db.get_list(
+        "SaaS stock sites", filters={"is_used": "no"}, ignore_permissions=True
+    )
     print("In stock", len(currentStock))
     db_values = []
     if len(currentStock) < int(config.stock_site_count):
@@ -135,7 +137,11 @@ def refreshStockSites(*args, **kwargs):
             method = "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.create_multiple_sites_in_parallel"
             db_values.append([subdomain, adminPassword])
             frappe.enqueue(
-                method, command=this_command, db_values=db_values, queue="short"
+                method,
+                command=this_command,
+                db_values=db_values,
+                queue="short",
+                now=True,
             )
 
     return "Database will be updated soon with stock sites "

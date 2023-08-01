@@ -113,7 +113,10 @@ window.Vue.createApp({
       var s = remainingSeconds % 60;
       m = m < 10 ? "0" + m : m;
       s = s < 10 ? "0" + s : s;
-      document.getElementById("timer").innerText = "Wait for " + s + " seconds";
+      if (document.getElementById("timer")) {
+        document.getElementById("timer").innerText =
+          "Wait for " + s + " seconds";
+      }
       remainingSeconds -= 1;
       if (remainingSeconds >= 0) {
         setTimeout(() => {
@@ -164,16 +167,20 @@ window.Vue.createApp({
 
     async onSubmit(values) {
       console.log(values);
-      grecaptcha.ready(function () {
-        grecaptcha
-          .execute("6LfnFUEnAAAAAFk_AVR5xxjbImAQlJz-kDa1bh6N", {
-            action: "submit",
-          })
-          .then(function (token) {
-            // Add your logic to submit to your backend server here.
-            console.log(token);
-          });
-      });
+      // skip captcha for cypress tests
+      if (!window.Cypress) {
+        grecaptcha.ready(function () {
+          grecaptcha
+            .execute("6LfnFUEnAAAAAFk_AVR5xxjbImAQlJz-kDa1bh6N", {
+              action: "submit",
+            })
+            .then(function (token) {
+              // Add your logic to submit to your backend server here.
+              console.log(token);
+            });
+        });
+      }
+
       this.fname = values["first-name"];
       this.lname = values["last-name"];
       this.email = values["email"];
