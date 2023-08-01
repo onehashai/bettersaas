@@ -1,0 +1,7 @@
+"Chart of Accounts Template"
+"Column Labels : ","Account Name","Parent Account","Account Number","Is Group","Account Type","Root Type"
+"Start entering data from here : ", "Application of Funds (Assets)", "", "", "1", "Assets", "Asset"
+"", "Expenses", "", "", "1", "Expenses", "Expense"
+"", "Income", "", "", "1", "Income", "Income"
+"", "Liabilities", "", "", "1", "Liabilities", "Liability"
+"", "Equity", "", "", "1", "Equity", "Equity"

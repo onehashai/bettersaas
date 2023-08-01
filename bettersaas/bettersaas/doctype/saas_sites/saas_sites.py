@@ -16,7 +16,6 @@ from bettersaas.bettersaas.api import upgrade_site
 
 @frappe.whitelist(allow_guest=True)
 def markSiteAsUsed(site):
-    print(site)
     doc = frappe.get_last_doc("SaaS stock sites", filters={"subdomain": site})
     # delete the doc
     frappe.delete_doc("SaaS stock sites", doc.name)
@@ -132,6 +131,25 @@ def setupSite(*args, **kwargs):
     target_site = None
     commands = []
     if len(stock_sites) == 0:
+        # call refresh stock sites
+        # keep checking each second if we have at least one stock site
+        # if yes then continue the code
+        # else keep checking
+        import time
+
+        while True:
+            time.sleep(1)
+            stock_sites = frappe.db.get_list(
+                "SaaS stock sites", filters={"is_used": "no"}, ignore_permissions=True
+            )
+            if len(stock_sites) > 0:
+                break
+            from bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites import (
+                refreshStockSites,
+            )
+
+            refreshStockSites()
+
         commands.append(
             "bench new-site {} --install-app erpnext  --admin-password {} --db-root-password {}".format(
                 new_site, admin_password, config.db_password
@@ -237,24 +255,25 @@ def setupSite(*args, **kwargs):
     # link new site doc with stock site doc ( Linked documents)
     sub = subdomain
     try:
-        lead_doc = frappe.new_doc("Lead")
-        lead_doc.lead_name = fname + " " + lname
-        lead_doc.mobile_no = phone
-        lead_doc.phone = phone
-        # find if lead email already exists
-        doc = frappe.db.get_list(
-            "Lead",
-            filters={"lead_email": email},
-            fields=["name"],
-            ignore_permissions=True,
-        )
-        if len(doc) == 0:
-            lead_doc.email = email
+        # lead_doc = frappe.new_doc("Lead")
+        # lead_doc.lead_name = fname + " " + lname
+        # lead_doc.mobile_no = phone
+        # lead_doc.phone = phone
+        # # find if lead email already exists
+        # doc = frappe.db.get_list(
+        #     "Lead",
+        #     filters={"lead_email": email},
+        #     fields=["name"],
+        #     ignore_permissions=True,
+        # )
+        # if len(doc) == 0:
+        #     lead_doc.email = email
 
-        lead_doc.lead_email = email
-        lead_doc.company_name = new_site
-        lead_doc.website = "https://" + sub + "." + frappe.conf.domain
-        lead_doc.save(ignore_permissions=True)
+        # lead_doc.lead_email = email
+        # lead_doc.company_name = new_site
+        # lead_doc.website = "https://" + sub + "." + frappe.conf.domain
+        # lead_doc.save(ignore_permissions=True)
+        pass
     except Exception as e:
         print("lead already exists")
     if frappe.conf.subdomain == "localhost":
