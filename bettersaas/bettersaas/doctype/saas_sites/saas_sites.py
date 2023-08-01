@@ -255,24 +255,25 @@ def setupSite(*args, **kwargs):
     # link new site doc with stock site doc ( Linked documents)
     sub = subdomain
     try:
-        lead_doc = frappe.new_doc("Lead")
-        lead_doc.lead_name = fname + " " + lname
-        lead_doc.mobile_no = phone
-        lead_doc.phone = phone
-        # find if lead email already exists
-        doc = frappe.db.get_list(
-            "Lead",
-            filters={"lead_email": email},
-            fields=["name"],
-            ignore_permissions=True,
-        )
-        if len(doc) == 0:
-            lead_doc.email = email
+        # lead_doc = frappe.new_doc("Lead")
+        # lead_doc.lead_name = fname + " " + lname
+        # lead_doc.mobile_no = phone
+        # lead_doc.phone = phone
+        # # find if lead email already exists
+        # doc = frappe.db.get_list(
+        #     "Lead",
+        #     filters={"lead_email": email},
+        #     fields=["name"],
+        #     ignore_permissions=True,
+        # )
+        # if len(doc) == 0:
+        #     lead_doc.email = email
 
-        lead_doc.lead_email = email
-        lead_doc.company_name = new_site
-        lead_doc.website = "https://" + sub + "." + frappe.conf.domain
-        lead_doc.save(ignore_permissions=True)
+        # lead_doc.lead_email = email
+        # lead_doc.company_name = new_site
+        # lead_doc.website = "https://" + sub + "." + frappe.conf.domain
+        # lead_doc.save(ignore_permissions=True)
+        pass
     except Exception as e:
         print("lead already exists")
     if frappe.conf.subdomain == "localhost":
