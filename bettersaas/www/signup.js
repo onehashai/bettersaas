@@ -187,7 +187,7 @@ window.Vue.createApp({
       this.password = values["password"];
       this.phone = this.phoneInput.getNumber();
       this.company_name = values["company-name"];
-      this.sitename = values["site-name"];
+      this.sitename = values["site-name"].toLowerCase();
       this.otpVerificationStatus.setSendingOTP();
       this.sendOtp();
     },
