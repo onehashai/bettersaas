@@ -92,6 +92,35 @@ def send_otp(email, phone):
         new_otp_doc.phone = phone
         send_otp_sms(phone, new_otp_doc.otp)
     print(new_otp_doc.otp)
+
+    #MrAbhi----------------------------------------------
+    ws=frappe.get_doc('Wati Settings')
+    token=ws.access_token
+    if len(str(phone))==10:
+        mno='91'+str(phone)
+    else:
+        mno=str(phone)
+    url = f"https://live-server-5625.wati.io/api/v2/sendTemplateMessage?whatsappNumber={mno}"
+
+    payload = json.dumps({
+    "template_name": "otp_signup",
+    "broadcast_name": "Broadcast",
+    "parameters": [
+        {
+        "name": "signup_otp",
+        "value": new_otp_doc.otp
+        }
+    ]
+    })
+    headers = {
+    'Content-Type': 'application/json',
+    'Authorization': token,
+    'Cookie': 'affinity=1691606468.17.170.926313|e8158ed42d7caddb1c06a933867d41fb'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+#----------------------------------------------------------------------------------
+    
     send_otp_email(new_otp_doc.otp, email)
     new_otp_doc.save(ignore_permissions=True)
     print(new_otp_doc)
@@ -136,22 +165,6 @@ def create_user(first_name, last_name, email, site, phone):
     user.save(ignore_permissions=True)
     frappe.db.commit()
     # return user "name"
-
-            # OTP SaaS users Whatsapp
-    #----------------------------------------------------------------------------------------------
-    doc=frappe.db.get_list("SaaS users",fields=['name','otp','email'],filters={'email':email})
-    if doc:
-        for i in doc:
-            fdoc = frappe.get_doc('SaaS users', i.name)
-            odoc = frappe.db.get_all(
-                "OTP",
-                filters={"email": email},
-                fields=["otp", "modified"],
-                order_by="modified desc",
-            )
-            fdoc.otp = odoc[0].otp
-            fdoc.save()
-    #-----------------------------------------------------------------------------------------------
     
     return user
 
