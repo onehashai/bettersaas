@@ -136,21 +136,6 @@ def create_user(first_name, last_name, email, site, phone):
     user.save(ignore_permissions=True)
     frappe.db.commit()
     # return user "name"
-        # OTP SaaS users Whatsapp
-    #----------------------------------------------------------------------------------------------
-    doc=frappe.db.get_list("SaaS users",fields=['name','otp','email'],filters={'email':email})
-    if doc:
-        for i in doc:
-            fdoc = frappe.get_doc('SaaS users', i.name)
-            odoc = frappe.db.get_all(
-                "OTP",
-                filters={"email": email},
-                fields=["otp", "modified"],
-                order_by="modified desc",
-            )
-            fdoc.otp = odoc[0].otp
-            fdoc.save()
-    #-----------------------------------------------------------------------------------------------
 
     return user
 
