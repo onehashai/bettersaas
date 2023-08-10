@@ -1,9 +1,11 @@
 # Copyright (c) 2023, OneHash and contributors
-# For license information, please see license.txt
+# For license information, please see license.txt 
 
 import frappe
 import math
 import random
+import requests
+import json
 from frappe.core.doctype.sms_settings.sms_settings import send_sms
 from frappe.utils.password import decrypt, encrypt
 from clientside.stripe import StripeSubscriptionManager
@@ -92,6 +94,36 @@ def send_otp(email, phone):
         new_otp_doc.phone = phone
         send_otp_sms(phone, new_otp_doc.otp)
     print(new_otp_doc.otp)
+
+    #MrAbhi----------------------------------------------
+    ws=frappe.get_doc('Wati Settings')
+    token=ws.access_token
+    api_endpoint=ws.api_endpoint
+    if len(str(phone))==10:
+        mno='91'+str(phone)
+    else:
+        mno=str(phone)
+    url = f"{api_endpoint}/api/v2/sendTemplateMessage?whatsappNumber={mno}"
+
+    payload = json.dumps({
+    "template_name": "otp_signup",
+    "broadcast_name": "Broadcast",
+    "parameters": [
+        {
+        "name": "signup_otp",
+        "value": new_otp_doc.otp
+        }
+    ]
+    })
+    headers = {
+    'Content-Type': 'application/json',
+    'Authorization': token,
+    'Cookie': 'affinity=1691606468.17.170.926313|e8158ed42d7caddb1c06a933867d41fb'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+#----------------------------------------------------------------------------------
+    
     send_otp_email(new_otp_doc.otp, email)
     new_otp_doc.save(ignore_permissions=True)
     print(new_otp_doc)
@@ -135,8 +167,6 @@ def create_user(first_name, last_name, email, site, phone):
     user.phone = phone
     user.save(ignore_permissions=True)
     frappe.db.commit()
-    # return user "name"
-
     return user
 
 
