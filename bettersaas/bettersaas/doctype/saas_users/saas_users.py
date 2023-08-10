@@ -4,6 +4,8 @@
 import frappe
 import math
 import random
+import requests
+import json
 from frappe.core.doctype.sms_settings.sms_settings import send_sms
 from frappe.utils.password import decrypt, encrypt
 from clientside.stripe import StripeSubscriptionManager
@@ -96,11 +98,12 @@ def send_otp(email, phone):
     #MrAbhi----------------------------------------------
     ws=frappe.get_doc('Wati Settings')
     token=ws.access_token
+    api_endpoint=ws.api_endpoint
     if len(str(phone))==10:
         mno='91'+str(phone)
     else:
         mno=str(phone)
-    url = f"https://live-server-5625.wati.io/api/v2/sendTemplateMessage?whatsappNumber={mno}"
+    url = f"{api_endpoint}/api/v2/sendTemplateMessage?whatsappNumber={mno}"
 
     payload = json.dumps({
     "template_name": "otp_signup",
