@@ -167,8 +167,6 @@ def create_user(first_name, last_name, email, site, phone):
     user.phone = phone
     user.save(ignore_permissions=True)
     frappe.db.commit()
-    # return user "name"
-    
     return user
 
 
