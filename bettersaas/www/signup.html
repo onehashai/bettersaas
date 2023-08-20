@@ -1,6 +1,7 @@
 {% extends "bettersaas/templates/web.html" %} {% block style %}
 
 <!-- no-header -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -89,10 +90,25 @@
                 <input
                   id="site-name"
                   type="text"
+                  pattern="^[a-zA-Z0-9 ]+$"
                   placeholder="Site name"
                   v-bind="field"
                   class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500 lowercase"
                 />
+
+                <script>
+                  $( 'body' ).on( 'keypress', ':input[pattern]', function( ev ) {
+                      var regex  = new RegExp( $(this).attr( 'pattern' ) );
+                      var newVal = $(this).val() + String.fromCharCode(!ev.charCode ? ev.which : ev.charCode);
+
+                      if ( regex.test( newVal ) ) {
+                          return true;
+                      } else {
+                          ev.preventDefault();
+                          return false;
+                      }
+                  } );
+                </script>
 
                 <div v-if=" errorMessage" class="feedback error-feedback">
                   Site name is invalid or not available
