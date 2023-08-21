@@ -240,8 +240,6 @@ def create_lead(saas_user):
 			
 	if(existing_lead):
 		lead_doc = frappe.get_doc("Lead",existing_lead,ignore_permissions=True)
-		if(lead_doc.contact_date and lead_doc.contact_date.strftime("%Y-%m-%d %H:%M:%S.%f") < frappe.utils.now()):
-			lead_doc.contact_date = ""
 
 		lead_doc.email_id = saas_user.email
 		lead_doc.mobile_no = saas_user.mobile
