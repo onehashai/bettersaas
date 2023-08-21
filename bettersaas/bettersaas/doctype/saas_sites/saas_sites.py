@@ -358,6 +358,7 @@ def update_user_to_main_app():
     for site in all_sites:
         frappe.destroy()
         current_site_name = site.name
+        print(current_site_name)
         frappe.init(site=current_site_name)
         frappe.connect()
         enabled_system_users = frappe.get_all("User",fields=['name','email','last_active','user_type','enabled','first_name','last_name','creation'])
