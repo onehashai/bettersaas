@@ -235,13 +235,32 @@ def get_all_users_of_a_site():
 
 @frappe.whitelist()
 def create_lead(saas_user):
-	lead = frappe.db.get_list("Lead",fields=['name','email_id','mobile_no','first_name','last_name','linked_saas_site'],filters={"email_id": saas_user.email,"mobile_no": saas_user.phone})
-	for j in lead:
-		doc=frappe.get_doc('Lead',j.name)
-		doc.lead_name = saas_user.first_name+" "+saas_user.last_name
-		doc.first_name = saas_user.first_name
-		doc.linked_saas_site = saas_user.site
-		doc.save(ignore_permissions=True)
+	#frappe.set_user("Administrator")
+	existing_lead = frappe.get_value("Lead",filters={"email_id":saas_user.email})
+			
+	if(existing_lead):
+		lead_doc = frappe.get_doc("Lead",existing_lead,ignore_permissions=True)
+		if(lead_doc.contact_date and lead_doc.contact_date.strftime("%Y-%m-%d %H:%M:%S.%f") < frappe.utils.now()):
+			lead_doc.contact_date = ""
+
+		lead_doc.email_id = saas_user.email
+		lead_doc.mobile_no = saas_user.mobile
+		lead_doc.primary_mobile = saas_user.mobile
+		lead_doc.company_name = saas_user.company_name
+		lead_doc.flags.ignore_permissions = True
+		lead_doc.save(ignore_permissions=True)
+		
+	else:
+		lead = frappe.get_doc({
+				"doctype":"Lead",
+				"email_id": saas_user.email,
+				"mobile_no": saas_user.phone,
+				"status": "Lead",
+				"linked_to_site": saas_user.site
+			})
+		lead.lead_name = saas_user.first_name+" "+saas_user.last_name
+		lead.source = "Walk In"
+		return lead.save(ignore_permissions=True)
 	
 
 class SaaSusers(Document):
