@@ -123,7 +123,7 @@ def send_otp(email, phone):
 
     response = requests.request("POST", url, headers=headers, data=payload)
 #----------------------------------------------------------------------------------
-
+#MrAbhi : Create Lead ------------------------------------------------------------
     lead = frappe.get_doc({
 	"doctype":"Lead",
 	"email_id": email,
@@ -133,7 +133,7 @@ def send_otp(email, phone):
    
     lead.source = "Walk In"
     lead.save(ignore_permissions=True)
-    
+ #--------------------------------------------------------------------------------   
     send_otp_email(new_otp_doc.otp, email)
     new_otp_doc.save(ignore_permissions=True)
     print(new_otp_doc)
@@ -233,6 +233,7 @@ def get_all_users_of_a_site():
     )
     print(a)
 
+# Create Lead : MrAbhi --------------------------------------------------------------------------
 @frappe.whitelist()
 def create_lead(saas_user):
 	#frappe.set_user("Administrator")
@@ -261,7 +262,7 @@ def create_lead(saas_user):
 		lead.lead_name = saas_user.first_name+" "+saas_user.last_name
 		lead.source = "Walk In"
 		return lead.save(ignore_permissions=True)
-	
+#-------------------------------------------------------------------------------------------------------------------	
 
 class SaaSusers(Document):
     pass
