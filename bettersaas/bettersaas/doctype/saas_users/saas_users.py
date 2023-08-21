@@ -247,7 +247,7 @@ def create_lead(saas_user):
 			})
 		lead.lead_name = saas_user.first_name+" "+saas_user.last_name
 		lead.first_name = saas_user.first_name
-		lead.linked_saas_site = saas_user.linked_to_site
+		lead.linked_saas_site = saas_user.site
 		return lead.save(ignore_permissions=True)
 		
 	else:
@@ -259,7 +259,7 @@ def create_lead(saas_user):
 			})
 		lead.lead_name = saas_user.first_name+" "+saas_user.last_name
 		lead.first_name = saas_user.first_name
-		lead.linked_saas_site = saas_user.linked_to_site
+		lead.linked_saas_site = saas_user.site
 		lead.source = "Walk In"
 		return lead.save(ignore_permissions=True)
 
