@@ -242,8 +242,8 @@ def create_lead(saas_user):
 		lead_doc = frappe.get_doc("Lead",existing_lead,ignore_permissions=True)
 
 		lead_doc.email_id = saas_user.email
-		lead_doc.mobile_no = saas_user.mobile
-		lead_doc.primary_mobile = saas_user.mobile
+		lead_doc.mobile_no = saas_user.phone
+		lead_doc.primary_mobile = saas_user.phone
 		lead_doc.company_name = saas_user.company_name
 		lead_doc.flags.ignore_permissions = True
 		lead_doc.save(ignore_permissions=True)
