@@ -128,7 +128,7 @@ scheduler_events = {
         "bettersaas.api.check_stock_sites",
     ],
     "daily_long": [
- 		"better_saas.better_saas.doctype.saas_site.saas_site.update_user_to_main_app",
+ 		"bettersaas.bettersaas.doctype.saas_site.saas_site.update_user_to_main_app",
         "bettersaas.api.update_user_saas_sites"
  	],
     # "cron": {
