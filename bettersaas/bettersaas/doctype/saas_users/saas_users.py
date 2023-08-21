@@ -246,6 +246,7 @@ def create_lead(saas_user):
 		lead_doc.primary_mobile = saas_user.phone
 		lead.lead_name = saas_user.first_name+" "+saas_user.last_name
 		lead.first_name = saas_user.first_naame
+		lead.linked_saas_site = saas_user.site
 		lead_doc.flags.ignore_permissions = True
 		lead_doc.save(ignore_permissions=True)
 		
