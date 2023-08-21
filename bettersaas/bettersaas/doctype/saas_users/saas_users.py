@@ -235,7 +235,7 @@ def create_lead(saas_user):
 		lead = frappe.get_doc({
 				"doctype":"Lead",
 				"email_id": saas_user.email,
-				"mobile_no": saas_user.mobile,
+				"mobile_no": saas_user.phone,
 				"status": "Lead",
 			})
 		lead.lead_name = saas_user.first_name+" "+saas_user.last_name
