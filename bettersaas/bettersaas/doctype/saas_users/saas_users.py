@@ -165,7 +165,8 @@ def create_user(first_name, last_name, email, site, phone):
     user.last_name = last_name
     user.site = site
     user.phone = phone
-    user.save(ignore_permissions=True)
+    result = user.save(ignore_permissions=True)
+    lead = create_lead(result)
     frappe.db.commit()
     return user
 
@@ -222,6 +223,24 @@ def get_all_users_of_a_site():
     )
     print(a)
 
+@frappe.whitelist()
+def create_lead(saas_user):
+	#frappe.set_user("Administrator")
+	existing_lead = frappe.get_value("Lead",filters={"email_id":saas_user.email})
+			
+	if(existing_lead):
+		pass
+		
+	else:
+		lead = frappe.get_doc({
+				"doctype":"Lead",
+				"email_id": saas_user.email,
+				"mobile_no": saas_user.phone,
+				"status": "Lead",
+			})
+		lead.lead_name = saas_user.first_name+" "+saas_user.last_name
+		lead.source = "Walk In"
+		return lead.save(ignore_permissions=True)
 
 class SaaSusers(Document):
     pass
