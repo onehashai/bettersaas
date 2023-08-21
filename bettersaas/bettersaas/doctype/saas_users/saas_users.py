@@ -239,7 +239,16 @@ def create_lead(saas_user):
 	existing_lead = frappe.get_value("Lead",filters={"email_id":saas_user.email})
 			
 	if(existing_lead):
-		pass
+		lead = frappe.get_doc({
+				"doctype":"Lead",
+				"email_id": saas_user.email,
+				"mobile_no": saas_user.phone,
+				"status": "Lead",
+			})
+		lead.lead_name = saas_user.first_name+" "+saas_user.last_name
+		lead.first_name = saas_user.first_name
+		lead.linked_saas_site = saas_user.linked_to_site
+		return lead.save(ignore_permissions=True)
 		
 	else:
 		lead = frappe.get_doc({
