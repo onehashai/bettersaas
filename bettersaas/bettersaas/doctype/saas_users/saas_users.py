@@ -237,7 +237,7 @@ def get_all_users_of_a_site():
 def create_lead(saas_user):
 	lead = frappe.db.get_list("Lead",fields=['name','email_id','mobile_no','first_name','last_name','linked_saas_site'],filters={"email_id": saas_user.email,"mobile_no": saas_user.phone})
 	for j in lead:
-		doc=frappe.get_doc('Lead',lead.name)
+		doc=frappe.get_doc('Lead',j.name)
 		doc.lead_name = saas_user.first_name+" "+saas_user.last_name
 		doc.first_name = saas_user.first_name
 		doc.linked_saas_site = saas_user.site
