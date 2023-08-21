@@ -379,7 +379,7 @@ def update_user_to_main_app():
                     'last_name': user.last_name,
                     'user_type': user.user_type,
                     'active': user.enabled,
-                    'emai_id': user.email,
+                    'email_id': user.email,
                     'last_active':user.last_active
                 })
 
