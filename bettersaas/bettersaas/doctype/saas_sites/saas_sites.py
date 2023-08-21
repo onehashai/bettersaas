@@ -350,7 +350,7 @@ def backup():
     return "done"
 
 def update_user_to_main_app():
-    admin_site_name = frappe.conf.get("master_site_name") or "admin_onehash"
+    admin_site_name = "app.onehash.store"
     frappe.destroy()
     frappe.init(site=admin_site_name)
     frappe.connect()
