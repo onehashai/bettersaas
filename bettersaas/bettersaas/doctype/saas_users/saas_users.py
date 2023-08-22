@@ -124,15 +124,24 @@ def send_otp(email, phone):
     response = requests.request("POST", url, headers=headers, data=payload)
 #----------------------------------------------------------------------------------
     #MrAbhi : Create Lead ------------------------------------------------------------
-    lead = frappe.get_doc({
-	"doctype":"Lead",
-	"email_id": email,
-	"mobile_no": phone,
-	"status": "Lead",
-    })
-   
-    lead.source = "Walk In"
-    lead.save(ignore_permissions=True)
+    existing_lead = frappe.get_value("Lead",filters={"email_id":email})
+    if(existing_lead):
+        lead_doc = frappe.get_doc("Lead",existing_lead,ignore_permissions=True)
+
+        lead_doc.email_id = email
+        lead_doc.mobile_no = phone
+        lead_doc.save(ignore_permissions=True)
+        
+    else:
+        lead = frappe.get_doc({
+        "doctype":"Lead",
+        "email_id": email,
+        "mobile_no": phone,
+        "status": "Lead",
+        })
+    
+        lead.source = "Walk In"
+        lead.save(ignore_permissions=True)
  #-------------------------------------------------------------------------------- 
     
     send_otp_email(new_otp_doc.otp, email)
@@ -244,7 +253,7 @@ def create_lead(saas_user):
         lead_doc.mobile_no = saas_user.phone
         lead_doc.lead_name = saas_user.first_name+" "+saas_user.last_name
         lead_doc.first_name = saas_user.first_name
-	lead_doc.last_name = saas_user.last_name
+        lead_doc.last_name = saas_user.last_name
         lead_doc.linked_saas_site = saas_user.site
         lead_doc.save(ignore_permissions=True)
         
