@@ -245,8 +245,14 @@ def get_all_users_of_a_site():
 
 @frappe.whitelist()
 def create_lead(saas_user):	
+
     existing_lead = frappe.get_value("Lead",filters={"email_id":saas_user.email})
+    doc=frappe.get_doc("SaaS sites",saas_user.email)
+    doc.lead=existing_lead
+    doc.save(ignore_permissions=True)
+    
     if(existing_lead):
+
         lead_doc = frappe.get_doc("Lead",existing_lead,ignore_permissions=True)
 
         lead_doc.email_id = saas_user.email
