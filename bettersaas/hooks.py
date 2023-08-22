@@ -125,14 +125,9 @@ scheduler_events = {
     ],
     "hourly": [
         "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.check_stock_sites",
-        "bettersaas.bettersaas.doctype.saas_sites.saas_sites.update_user_to_main_app",
         "bettersaas.api.check_stock_sites",
     ],
-    # "daily_long": ["bettersaas.api.update_user_saas_sites"],
-    "daily_long": [
- 		"bettersaas.bettersaas.doctype.saas_sites.saas_sites.update_user_to_main_app",
-        "bettersaas.api.update_user_saas_sites"
- 	],
+    "daily_long": ["bettersaas.api.update_user_saas_sites"],
     # "cron": {
     # "1-59 * * * *":[
     # 			"bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites"
