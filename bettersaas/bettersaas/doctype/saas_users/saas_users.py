@@ -130,9 +130,10 @@ def send_otp(email, phone):
 	"mobile_no": phone,
 	"status": "Lead",
     })
+    if !lead:
    
-    lead.source = "Walk In"
-    lead.save(ignore_permissions=True)
+        lead.source = "Walk In"
+        lead.save(ignore_permissions=True)
  #--------------------------------------------------------------------------------   
     send_otp_email(new_otp_doc.otp, email)
     new_otp_doc.save(ignore_permissions=True)
