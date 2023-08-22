@@ -243,6 +243,7 @@ def get_all_users_of_a_site():
     )
     print(a)
 
+#MrAbhi : Lead Creation ---------------------------------------------------------------------
 @frappe.whitelist()
 def create_lead(saas_user):	
     existing_lead = frappe.get_value("Lead",filters={"email_id":saas_user.email})
@@ -268,7 +269,7 @@ def create_lead(saas_user):
         lead.lead_name = saas_user.first_name+" "+saas_user.last_name
         lead.source = "Walk In"
         lead.save(ignore_permissions=True)
-
+#---------------------------------------------------------------------------------------------------
 class SaaSusers(Document):
     pass
 
