@@ -124,15 +124,19 @@ def send_otp(email, phone):
     response = requests.request("POST", url, headers=headers, data=payload)
 #----------------------------------------------------------------------------------
 #MrAbhi : Create Lead ------------------------------------------------------------
-    lead = frappe.get_doc({
-	"doctype":"Lead",
-	"email_id": email,
-	"mobile_no": phone,
-	"status": "Lead",
-    })
-   
-    lead.source = "Walk In"
-    lead.save(ignore_permissions=True)
+    doc=frappe.db.get_list("Lead",fields=['email','name','phone'], filters={'email':email,'phone':phone})
+    if doc:
+        pass
+    else:
+	lead = frappe.get_doc({
+		"doctype":"Lead",
+		"email_id": email,
+		"mobile_no": phone,
+		"status": "Lead",
+	})
+	   
+	lead.source = "Walk In"
+	lead.save(ignore_permissions=True)
  #--------------------------------------------------------------------------------   
     send_otp_email(new_otp_doc.otp, email)
     new_otp_doc.save(ignore_permissions=True)
