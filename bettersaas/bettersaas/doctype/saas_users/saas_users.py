@@ -177,7 +177,9 @@ def create_user(first_name, last_name, email, site, phone):
     user.site = site
     user.phone = phone
     result = user.save(ignore_permissions=True)
-    lead = create_lead(result)
+    doc=frappe.db.get_list("Lead",fields=['name','email','phone'],filters={'email':email,'phone':phone})
+    if not doc:
+        lead = create_lead(result)
     frappe.db.commit()
     return user
 
