@@ -236,9 +236,7 @@ def check_user_name_and_password_for_a_site(site_name, email, password):
 
 @frappe.whitelist()
 def get_users_list(site_name):
-	saas_settings = frappe.get_doc("Saas Settings")
-	site = frappe.get_doc("SaaS users", {"site": site_name})
-	site_password = get_decrypted_password("SaaS users", site_name, "encrypted_password")
+	site_password = get_decrypted_password("SaaS sites", site_name, "encrypted_password")
 	domain = site_name
 	from better_saas.better_saas.doctype.saas_user.frappeclient import FrappeClient
 	conn = FrappeClient("https://"+domain, "Administrator", site_password)
