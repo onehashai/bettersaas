@@ -267,19 +267,19 @@ def create_lead(saas_user):
         lead_doc.linked_saas_site = saas_user.site
         lead_doc.save(ignore_permissions=True)
 
-        saassite= frappe.get_doc("SaaS sites",saas_user.site,ignore_permissions=True)
+        # saassite= frappe.get_doc("SaaS sites",saas_user.site,ignore_permissions=True)
 
-        saassite.append('user_details', {
-                    'first_name': saas_user.first_name,
-                    'last_name': saas_user.last_name,
-                    'user_type': 'System User',
-                    'active': 1,
-                    'email_id': saas_user.email,
-                    'last_active': ''
-                })
-        saassite.number_of_users = 1
-        saassite.number_of_active_users= 1
-        saassite.save()
+        # saassite.append('user_details', {
+        #             'first_name': saas_user.first_name,
+        #             'last_name': saas_user.last_name,
+        #             'user_type': 'System User',
+        #             'active': 1,
+        #             'email_id': saas_user.email,
+        #             'last_active': ''
+        #         })
+        # saassite.number_of_users = 1
+        # saassite.number_of_active_users= 1
+        # saassite.save()
         
     else:
         lead = frappe.get_doc({
