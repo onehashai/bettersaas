@@ -18,7 +18,6 @@ frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
 // frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_s3
 frappe.ui.form.on("SaaS sites", {
   refresh: async function (frm) {
-    frm.get_field("user_details").grid.cannot_add_rows = true;
 		frm.refresh_field("user_details");
 		if (!frm.doc.__islocal) {
 			frm.add_custom_button(__('Refresh User Count'), function(){
