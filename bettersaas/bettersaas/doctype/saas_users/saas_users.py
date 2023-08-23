@@ -234,6 +234,17 @@ def check_user_name_and_password_for_a_site(site_name, email, password):
         return "NO_SUBSCRIPTION"
     return "OK"
 
+@frappe.whitelist()
+def get_users_list(site_name):
+	saas_settings = frappe.get_doc("Saas Settings")
+	site = frappe.get_doc("SaaS users", {"site": site_name})
+	site_password = get_decrypted_password("SaaS users", site_name, "encrypted_password")
+	domain = site_name
+	from better_saas.better_saas.doctype.saas_user.frappeclient import FrappeClient
+	conn = FrappeClient("https://"+domain, "Administrator", site_password)
+	total_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name', 'enabled', 'last_active','user_type'],limit_page_length=10000)
+	active_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name','last_active','user_type'], filters = {'enabled':'1'},limit_page_length=10000)
+	return {"total_users":total_users, "active_users":active_users}
 
 @frappe.whitelist()
 def get_all_users_of_a_site():
