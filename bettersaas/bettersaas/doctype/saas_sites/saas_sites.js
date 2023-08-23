@@ -18,6 +18,7 @@ frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
 // frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_s3
 frappe.ui.form.on("SaaS sites", {
   refresh: async function (frm) {
+		
     frm.add_custom_button(__("Login as admin"), async function () {
       // When this button is clicked, do this
 
