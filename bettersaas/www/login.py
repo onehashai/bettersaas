@@ -51,7 +51,7 @@ def get_context(context):
     context["app_name"] = (
         frappe.get_website_settings("app_name")
         or frappe.get_system_settings("app_name")
-        or _("Frappe")
+        or _("OneHash")
     )
 
     signup_form_template = frappe.get_hooks("signup_form_template")
@@ -147,7 +147,7 @@ def send_login_link(email: str):
     app_name = (
         frappe.get_website_settings("app_name")
         or frappe.get_system_settings("app_name")
-        or _("Frappe")
+        or _("OneHash")
     )
 
     subject = _("Login To {0}").format(app_name)
