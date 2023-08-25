@@ -1,6 +1,51 @@
 {% extends "bettersaas/templates/web.html" %} {% block style %}
 
 <!-- no-header -->
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+  body {font-family: Arial, Helvetica, sans-serif;}
+  
+  /* The Modal (background) */
+  .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+  }
+  
+  /* The Close Button */
+  .close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  </style>
+  </head>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -44,7 +89,7 @@
           autocomplete="off"
           novalidate="novalidate"
         >
-          <div class="feedback" v-if="!meta.valid ">Invalid</div>
+        <div class="feedback" v-if="!meta.valid ">Invalid</div>
           <div class="feedback" v-if="meta.valid ">valid</div>
           <div class="row">
             <div class="col-12 col-md-6 mb-1">
@@ -93,9 +138,8 @@
                   pattern="^[a-zA-Z0-9 ]+$"
                   placeholder="Site name"
                   v-bind="field"
-                  class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500 lowercase"
+                  class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
                 />
-
                 <script>
                   $( 'body' ).on( 'keypress', ':input[pattern]', function( ev ) {
                       var regex  = new RegExp( $(this).attr( 'pattern' ) );
@@ -204,6 +248,7 @@
             </div>
             <div class="col-12 col-md-6">
               <input
+                
                 type="text"
                 name="otp"
                 @input="verifyOTP"
@@ -224,17 +269,10 @@
               value="no"
             ></v-field> -->
             <div class="w-100 flex justify-content-center">
-              <p style="font-size: small; padding-top: 2%">
-                By submitting the OTP, I accept the
-                <a href="https://onehash.ai/terms-of-use" target="_blank"
-                  >Terms of Use</a
-                >
-                and
-                <a href="https://onehash.ai/privacy" target="_blank"
-                  >Privacy Policy</a
-                >
-              </p>
-            </div>
+            <p style="font-size: small; padding-top:2%;">
+            By submitting the OTP, I accept the <a href="https://onehash.ai/terms-of-use" target="_blank">Terms of Use</a> and <a href="https://onehash.ai/privacy" target="_blank">Privacy Policy</a>
+          </p>
+        </div>
             <!-- <error-message
               name="terms"
               as="div"
@@ -267,42 +305,17 @@
               <span id="timer" v-if="!otpVerificationStatus.otpVerified"></span>
               <span v-if="otpVerificationStatus.sendingOTP">Sending OTP</span>
               <span v-if="otpVerificationStatus.otpVerified"
-                >Processing ....</span
+                >Processing .... </span
               >
             </button>
           </div>
           <div class="w-100 flex justify-content-center">
-            <p style="font-size: small; padding-top: 2%">
-              <a href="./login" target="_self">Already Registered?</a>
-            </p>
-          </div>
+            <p style="font-size: small; padding-top:2%;">
+            <a href="./login" target="_self">Already Registered?</a>
+          </p>
+        </div>
         </v-form>
-        <ol class="steps">
-          <li
-            class="step"
-            data-step="1"
-            id="step1"
-            :class="{'is-complete':status.step1 == 'completed','is-active':status.step1 == 'active'}"
-          >
-            Creating Site
-          </li>
-          <li
-            class="step"
-            data-step="2"
-            id="step2"
-            :class="{'is-complete':status.step2 == 'completed','is-active':status.step2 == 'active'}"
-          >
-            Creating User
-          </li>
-          <li
-            class="step"
-            data-step="3"
-            id="step3"
-            :class="{'is-complete':status.step3 == 'completed','is-active':status.step3 == 'active'}"
-          >
-            Redirecting
-          </li>
-        </ol>
+        
       </div>
     </div>
     <div class="right">
@@ -313,6 +326,40 @@
         </div>
         <img src="/assets/bettersaas/hero.svg" alt="" />
         <img src="/assets/bettersaas/hero3.svg" alt="" class="mt-4" />
+        <div class="create" v-if="otpVerificationStatus.otpVerified">
+          <img
+            class="image"
+            style="margin-top: 5%; width: 450px; height: 350px;"
+            src="https://cutewallpaper.org/24/animated-computer-gif/instapack-animation-by-guillaume-kurkdjian-via-behance-in-2021-motion-design-video-motion-design-animation-motion-graphics-design.gif"
+          />
+          
+          <ol class="steps">
+          <li
+            class="step"
+            data-step="1"
+            id="step1"
+            :class="{'is-complete':status.step1 == 'completed','is-active':status.step1 == 'active'}"
+          >
+            Creating site
+          </li>
+          <li
+            class="step"
+            data-step="2"
+            id="step2"
+            :class="{'is-complete':status.step2 == 'completed','is-active':status.step2 == 'active'}"
+          >
+            Creating user
+          </li>
+          <li
+            class="step"
+            data-step="3"
+            id="step3"
+            :class="{'is-complete':status.step3 == 'completed','is-active':status.step3 == 'active'}"
+          >
+            Redirecting
+          </li>
+        </ol>
+        </div>
       </div>
     </div>
   </main>
