@@ -138,7 +138,7 @@
                   pattern="^[a-zA-Z0-9 ]+$"
                   placeholder="Site name"
                   v-bind="field"
-                  class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                  class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500 lowercase"
                 />
                 <script>
                   $( 'body' ).on( 'keypress', ':input[pattern]', function( ev ) {
