@@ -42,6 +42,7 @@
   display: block;
   background: #e6e6e6;
   width: 100%;
+  opacity: 0;
   height: 0.125rem;
   top: 24px;
   left: 50%;
