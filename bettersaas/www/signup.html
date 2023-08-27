@@ -9,48 +9,37 @@
   body {font-family: Arial, Helvetica, sans-serif;}
 
   .container2 {
-    margin-top: 20%;
-    width: 80%;
-    text-align: center;
-  }
- 
-  .progress2 {
-    padding: 2px;
-    border-radius: 20px;
-    background: rgba(0, 0, 0, 0.25);  
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(255, 255, 255, 0.08);
-  }
-
-  .progress-bar2 {
-    height: 3px;
-    border-radius: 20px;
-    background-image: 
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.911), rgba(255, 255, 255, 0.05));
-    transition: 0.4s linear;  
-    transition-property: width, background-color;    
-  }
-
-  .progress-moved .progress-bar2 {
-    width: 98%; 
-    background-color: rgba(110, 204, 91, 1);  
-    animation: progressAnimation 30s;
-  }
-  @keyframes progressAnimation {
-    0%, 25% {
-        width: 0%;
-    }
-    45% {
-        width: 45%;
-        animation-timing-function: steps(1, end);
-        animation-duration: 40000s;
-        
-    }
-    75%, 95% {
-        width: 95%;
-        
-    }
-   
+  margin-top: 20%;
+  width: 80%;
+  text-align: center;
 }
+
+.progress2 {
+  padding: 2px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.25);  
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.progress-bar2 {
+  height: 3px;
+  border-radius: 20px;
+  background-image: 
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.911), rgba(255, 255, 255, 0.05));
+  transition: 1.5s linear;  
+  transition-property: width, background-color;    
+}
+
+.progress-moved .progress-bar2 {
+  animation: progressAnimation 50s forwards;
+}
+
+@keyframes progressAnimation {
+  0% { width: 0%; background-color: rgba(110, 204, 91, 1); }
+  48% { width: 48%; background-color: rgba(110, 204, 91, 1); }
+  100% { width: 98%; background-color: rgba(110, 204, 91, 1); }
+}
+
   
     .loader-container {
       text-align: center;
@@ -368,7 +357,7 @@
         
       </div>
     </div>
-    <div class="create" v-if="otpVerificationStatus.otpVerified">
+    <div class="create" >
       
     <div class="left">
       <center>
