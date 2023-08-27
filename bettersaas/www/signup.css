@@ -44,12 +44,6 @@ main {
   flex-wrap: wrap ;
   z-index: 10;
 }
-.steps{
-  margin-right: 8%;
-  margin-top: -100px;
-  margin-left: 45%;
-  margin-bottom: 20%;
-}
 .right {
   display: none;
   height: 100vh;
