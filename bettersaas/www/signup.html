@@ -9,9 +9,8 @@
   body {font-family: Arial, Helvetica, sans-serif;}
 
   .container2 {
-    margin-top: -4.8%;
-    margin-left: 37%;
-    width: 500px;
+    margin-top: 20%;
+    width: 80%;
     text-align: center;
   }
  
@@ -46,17 +45,14 @@
         animation-duration: 40000s;
         
     }
-    75%, 100% {
-        width: 100%;
+    75%, 95% {
+        width: 95%;
         
     }
    
 }
   
     .loader-container {
-      margin-top: 30%;
-      margin-left: -10%;
-      margin-right: -65px;
       text-align: center;
       justify-content: center;
       animation: fadeIn 2s ease-in-out, moveUp 4s infinite alternate;
@@ -374,32 +370,23 @@
     </div>
     <div class="create" v-if="otpVerificationStatus.otpVerified">
       
-      <div class="left">
-        
-        <img
-        class="image"
-        style="margin-top: 30%; margin-left: 10%; width: 450px; height: 350px;"
-        src="https://www.radical.co.in/wp-content/uploads/2020/06/How-Long-Does-PPC-Take-to-Work.gif"
-        />
-
-      </div>
-      
-      <div class="right">
-
+    <div class="left">
+      <center>
+      <img src="/assets/bettersaas/loader.gif" alt="" class="mt-4" />
       <div class="loader-container fade-in-animation"> 
         <div class="loading-text animate__animated animate__fadeIn" >
-          Hey <b>{{_(firstname)}}</b> , <br>Seat back and relax while we creating your site : <b>{{_(sitename)}}.onehash.is</b>
+          Hey <b>{{_(firstname)}}</b> , <br>Seat back and relax while we creating your site <br><b>{{_(sitename)}}.onehash.is</b>
         </div>
       </div>
     
-    </div>
-    <div class="container2">    
-      <div class="progress2 progress-moved">
-        <div class="progress-bar2" >
-        </div>                       
-      </div> 
-    </div>
-
+   
+    
+      <div class="container2">    
+        <div class="progress2 progress-moved">
+          <div class="progress-bar2" >
+          </div>                       
+        </div> 
+      </div>
       <ol class="steps">
        
       <li
@@ -427,7 +414,21 @@
         Redirecting
       </li>
       </ol>
-
+      
+    </center>
+  </div>
+  <div class="right">
+    <div class="ad">
+      <img src="https://www.radical.co.in/wp-content/uploads/2020/06/How-Long-Does-PPC-Take-to-Work.gif" style="height: 30%; width: 30%;" alt="" />
+      <div class="ad-title mb-3">
+        <div>Get started with the</div>
+        <div class="text-black">Most powerfull all in one software</div>
+      </div>
+      
+      <img src="/assets/bettersaas/hero3.svg" alt="" class="mt-4" />
+      
+    </div>
+  </div>
     </div>
   </main>
 </div>
