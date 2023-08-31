@@ -240,7 +240,7 @@ def setupSite(*args, **kwargs):
     new_site_doc.site_name = new_site.lower()
     new_site_doc.expiry_date = expiry_date
     new_site_doc.site_user=email
-    doc=frappe.db.get_list("SaaS users",fields=['name','first_name','last_name'],filters={'name':email})
+    doc=frappe.db.get_list("SaaS users",fields=['name','first_name','last_name'],filters={'name':email}, ignore_permissions=True)
     if doc:
         for d in  doc :        
             new_site_doc.user_details = []
