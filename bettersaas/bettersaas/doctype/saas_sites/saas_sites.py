@@ -241,7 +241,8 @@ def setupSite(*args, **kwargs):
     new_site_doc.expiry_date = expiry_date
 
     # new_site_doc.site_user=email
-    
+    number_of_active_users=1
+    number_of_users=1
     new_site_doc.user_details = []
     new_site_doc.append('user_details', {
         'first_name': fname,
