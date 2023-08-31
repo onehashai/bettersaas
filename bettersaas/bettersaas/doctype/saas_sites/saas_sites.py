@@ -239,6 +239,19 @@ def setupSite(*args, **kwargs):
     new_site_doc.linked_email = email
     new_site_doc.site_name = new_site.lower()
     new_site_doc.expiry_date = expiry_date
+    new_site_doc.site_user=email
+    doc=frappe.db.get_list("SaaS users",fields=['name','first_name','last_name'],filters={'name':email})
+    if doc:
+        for d in  doc :        
+            new_site_doc.user_details = []
+            new_site_doc.append('user_details', {
+                'first_name': d.first_name,
+                'last_name': d.last_name,
+                'user_type': 'System User',
+                'active': 1,
+                'email_id': email,
+                'last_active': '',
+            })
     new_site_doc.saas_user = saas_user.name if saas_user else None
     subscription = StripeSubscriptionManager(kwargs["country"])
     customer = subscription.create_customer(new_site, email, fname, lname, phone)
