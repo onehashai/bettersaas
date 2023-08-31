@@ -239,6 +239,20 @@ def setupSite(*args, **kwargs):
     new_site_doc.linked_email = email
     new_site_doc.site_name = new_site.lower()
     new_site_doc.expiry_date = expiry_date
+
+    # new_site_doc.site_user=email
+    new_site_doc.number_of_active_users=1
+    new_site_doc.number_of_users=1
+    new_site_doc.user_details = []
+    new_site_doc.append('user_details', {
+        'first_name': fname,
+        'last_name': lname,
+        'user_type': 'System User',
+        'active': 1,
+        'email_id': email,
+        'last_active': ''
+    })
+    
     new_site_doc.saas_user = saas_user.name if saas_user else None
     subscription = StripeSubscriptionManager(kwargs["country"])
     customer = subscription.create_customer(new_site, email, fname, lname, phone)

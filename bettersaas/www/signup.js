@@ -184,7 +184,7 @@ window.Vue.createApp({
 
       this.fname = values["first-name"];
       this.lname = values["last-name"];
-      this.email = values["email"];
+      this.email = values["email"].toLowerCase();
       this.password = values["password"];
       this.phone = this.phoneInput.getNumber();
       this.company_name = values["company-name"];
