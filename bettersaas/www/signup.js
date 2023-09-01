@@ -172,7 +172,7 @@ window.Vue.createApp({
       if (!window.Cypress) {
         grecaptcha.ready(function () {
           grecaptcha
-            .execute("6LeP2esnAAAAAEYxmv3RteO1BTQnQQGf5YASo-qx", {
+            .execute("6LfnFUEnAAAAAFk_AVR5xxjbImAQlJz-kDa1bh6N", {
               action: "submit",
             })
             .then(function (token) {
