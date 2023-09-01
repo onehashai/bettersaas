@@ -166,21 +166,21 @@ window.Vue.createApp({
       return config.ERROR_MESSAGES.REQUIRED;
     },
 
-    async onSubmit(values) {
-      console.log(values);
-      // skip captcha for cypress tests
-      if (!window.Cypress) {
-        grecaptcha.ready(function () {
-          grecaptcha
-            .execute("6LfnFUEnAAAAAFk_AVR5xxjbImAQlJz-kDa1bh6N", {
-              action: "submit",
-            })
-            .then(function (token) {
-              // Add your logic to submit to your backend server here.
-              console.log(token);
-            });
-        });
-      }
+    // async onSubmit(values) {
+    //   console.log(values);
+    //   // skip captcha for cypress tests
+    //   if (!window.Cypress) {
+    //     grecaptcha.ready(function () {
+    //       grecaptcha
+    //         .execute("6LfnFUEnAAAAAFk_AVR5xxjbImAQlJz-kDa1bh6N", {
+    //           action: "submit",
+    //         })
+    //         .then(function (token) {
+    //           // Add your logic to submit to your backend server here.
+    //           console.log(token);
+    //         });
+    //     });
+    //   }
 
       this.fname = values["first-name"];
       this.lname = values["last-name"];
