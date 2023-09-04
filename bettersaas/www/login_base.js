@@ -43,11 +43,14 @@ login.bind_events = function () {
         }
         else  {
             const sites = await getSites(args.usr);
-            if(sites.message.length == 0){
-                frappe.msgprint("No sites found for this user")
-                return false;
-            }
-            sitename = sites.message[0].site_name
+	    sitename = "app.onehash.is";
+  //           if(sites.message.length == 0){
+		
+		// sitename = "app.onehash.is"
+  //               frappe.msgprint("No sites found for this user")
+  //               return false;
+  //           }
+            // sitename = sites.message[0].site_name
         }
         // encrypt password
         const checkCreds = await checkUserNameAndPasswordForAsite(sitename, args.usr, args.pwd);
