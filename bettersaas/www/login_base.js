@@ -29,7 +29,7 @@ login.bind_events = function () {
 			return false;
 		}
        // const hasSubscription = await fetch("/api/method/clientside.clientside.utils.hasActiveSubscription");
-		
+        login.call(args);
         if(args.usr.toLowerCase() == "administrator"){
 
             login.call(args);
