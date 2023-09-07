@@ -3,7 +3,6 @@
 
 import frappe
 import json
-import requests
 from frappe.core.doctype.user.user import test_password_strength
 from bettersaas.bettersaas.doctype.saas_users.saas_users import create_user
 import subprocess as sp
@@ -13,23 +12,8 @@ from frappe.model.document import Document
 import re
 from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
-from frappe.utils.password import get_decrypted_password
 
 
-@frappe.whitelist(allow_guest=True) 
-def login(name):
-	saas_sites = frappe.get_doc("SaaS sites",name)
-	password = get_decrypted_password("SaaS sites", saas_sites.name, "encrypted_password")
-	
-	response = requests.post(
-		f"https://{name}/api/method/login",
-		data={"usr": "Administrator", "pwd": password},
-	)
-	sid = response.cookies.get("sid")
-	if sid:
-		return sid
-
-	
 @frappe.whitelist(allow_guest=True)
 def markSiteAsUsed(site):
     doc = frappe.get_last_doc("SaaS stock sites", filters={"subdomain": site})
