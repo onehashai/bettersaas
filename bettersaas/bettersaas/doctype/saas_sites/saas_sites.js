@@ -43,9 +43,33 @@ frappe.ui.form.on("SaaS sites", {
 	//     loginWindow.close();
 	//     window.open(mainsite, "_blank");
 	// }, 1500);
-	const response = requests.post(`https://${site_name}/api/method/login`,data={"usr": "Administrator", "pwd": dec_db_password},);
-      	const sid = response.cookies.get("sid");
-      	window.open(`https://${site_name}/app?sid=${sid}`, '_blank');
+	const postData = {
+  usr: "Administrator",
+  pwd: dec_db_password,
+};
+
+fetch(`https://${siteName}/api/method/login`, {
+  method: "POST",
+  body: new URLSearchParams(postData),
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
+  },
+})
+  .then((response) => response.headers.get("set-cookie"))
+  .then((cookie) => {
+    const sid = cookie.match(/sid=([^;]*)/);
+    if (sid) {
+      console.log("SID:", sid[1]);
+      // Open a new window with the SID
+      window.open(`https://${siteName}/app?sid=${sid[1]}`, '_blank');
+    } else {
+      console.error("SID not found in the response.");
+    }
+  })
+  .catch((error) => {
+    console.error("Error:", error);
+  });
+
 	    //------------------------------------------------------------------------------------------------------
       // let enc_password = CryptoJS.enc.Base64.stringify(
       //   CryptoJS.enc.Utf8.parse(dec_db_password)
