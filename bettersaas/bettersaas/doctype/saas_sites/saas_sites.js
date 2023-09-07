@@ -48,7 +48,7 @@ frappe.ui.form.on("SaaS sites", {
   pwd: dec_db_password,
 };
 
-fetch(`https://${siteName}/api/method/login`, {
+fetch(`https://${site_name}/api/method/login`, {
   method: "POST",
   body: new URLSearchParams(postData),
   headers: {
@@ -61,7 +61,7 @@ fetch(`https://${siteName}/api/method/login`, {
     if (sid) {
       console.log("SID:", sid[1]);
       // Open a new window with the SID
-      window.open(`https://${siteName}/app?sid=${sid[1]}`, '_blank');
+      window.open(`https://${site_name}/app?sid=${sid[1]}`, '_blank');
     } else {
       console.error("SID not found in the response.");
     }
