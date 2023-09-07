@@ -43,39 +43,14 @@ frappe.ui.form.on("SaaS sites", {
 	//     loginWindow.close();
 	//     window.open(mainsite, "_blank");
 	// }, 1500);
-	      const postData = {
-        usr: "Administrator",
-        pwd: dec_db_password,
-      };
-      
-      fetch(`https://${site_name}/api/method/login`, {
-        method: "POST",
-        body: new URLSearchParams(postData),
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      })
-        .then((response) => {
-          const setCookieHeader = response.headers.get("set-cookie");
-          if (setCookieHeader) {
-            return setCookieHeader.match(/sid=([^;]*)/);
-          } else {
-            throw new Error("set-cookie header not found in the response.");
-          }
-        })
-        .then((sid) => {
-          if (sid) {
-            console.log("SID:", sid[1]);
-            // Open a new window with the SID
-            window.open(`https://${site_name}/app?sid=${sid[1]}`, '_blank');
-          } else {
-            console.error("SID not found in the response.");
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-
+	      frappe.call('bettersaas.bettersaas.doctype.saas_sites.saas_sites.login',{}).then((r)=>{
+					if(r.message){
+						window.open(`https://${site_name}/app?sid=${r.message}`, '_blank');
+					} else{
+						console.log(r);
+						frappe.msgprint(__("Sorry, Could not login."));
+					}
+				});
 	    //------------------------------------------------------------------------------------------------------
       // let enc_password = CryptoJS.enc.Base64.stringify(
       //   CryptoJS.enc.Utf8.parse(dec_db_password)
