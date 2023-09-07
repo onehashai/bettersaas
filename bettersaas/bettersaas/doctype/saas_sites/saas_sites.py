@@ -16,7 +16,7 @@ from bettersaas.bettersaas.api import upgrade_site
 
 
 @frappe.whitelist(allow_guest=True) 
-def get_login_sid(self):
+def login(self):
 	password = getDecryptedPassword("SaaS sites", self.name, "encrypted_password")
 	response = requests.post(
 		f"https://{self.name}/api/method/login",
@@ -25,9 +25,7 @@ def get_login_sid(self):
 	sid = response.cookies.get("sid")
 	if sid:
 		return sid
-@frappe.whitelist()
-def login(name,reason=None):
-	return frappe.get_doc("SaaS sites",name).get_login_sid()
+
 	
 @frappe.whitelist(allow_guest=True)
 def markSiteAsUsed(site):
