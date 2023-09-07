@@ -17,7 +17,7 @@ from bettersaas.bettersaas.api import upgrade_site
 
 @frappe.whitelist(allow_guest=True) 
 def login(name):
-	password = getDecryptedPassword("SaaS sites", self.name, "encrypted_password")
+	password = getDecryptedPassword("SaaS sites", name, "encrypted_password")
 	response = requests.post(
 		f"https://{name}/api/method/login",
 		data={"usr": "Administrator", "pwd": password},
