@@ -13,11 +13,13 @@ from frappe.model.document import Document
 import re
 from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
+from frappe.utils.password import get_decrypted_password
 
 
 @frappe.whitelist(allow_guest=True) 
 def login(name):
-	password = getDecryptedPassword("SaaS sites", name, "encrypted_password")
+	password = get_decrypted_password("SaaS sites", name, "encrypted_password")
+	
 	response = requests.post(
 		f"https://{name}/api/method/login",
 		data={"usr": "Administrator", "pwd": password},
