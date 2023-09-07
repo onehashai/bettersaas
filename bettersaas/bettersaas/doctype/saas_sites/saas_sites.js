@@ -33,21 +33,26 @@ frappe.ui.form.on("SaaS sites", {
         })
       ).message;
       console.log(dec_db_password);
-      let enc_password = CryptoJS.enc.Base64.stringify(
-        CryptoJS.enc.Utf8.parse(dec_db_password)
-      );
-      const query = `?domain=${frm.doc.site_name}&email=Administrator&utm_id=${enc_password}`;
-
-      // do something with these values, like an ajax request
-      // or call a server side frappe function using frappe.call
-      console.log(query);
       let site_name = frm.doc.site_name;
-      if (window.location.port == 8000) {
-        site_name += ":8000";
-      }
-      const urlToRedirect = `http://${site_name}/redirect` + query;
-      console.log(urlToRedirect);
-      window.open(urlToRedirect, "_blank");
+      const loginurl=`https://${site_name}/api/method/login?usr=Administrator&pwd=${dec_db_password}`;
+      const mainsite=`https://${site_name}/app`;
+      window.open(loginurl, "_blank");
+      window.open(mainsite,"_self");
+      // let enc_password = CryptoJS.enc.Base64.stringify(
+      //   CryptoJS.enc.Utf8.parse(dec_db_password)
+      // );
+      // const query = `?domain=${frm.doc.site_name}&email=Administrator&utm_id=${enc_password}`;
+
+      // // do something with these values, like an ajax request
+      // // or call a server side frappe function using frappe.call
+      // console.log(query);
+      // let site_name = frm.doc.site_name;
+      // if (window.location.port == 8000) {
+      //   site_name += ":8000";
+      // }
+      // const urlToRedirect = `http://${site_name}/redirect` + query;
+      // console.log(urlToRedirect);
+      // window.open(urlToRedirect, "_blank");
     });
     frm.add_custom_button(__("create backup"), async function () {
       const { resp } = $.ajax({
