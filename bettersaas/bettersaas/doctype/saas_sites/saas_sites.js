@@ -19,7 +19,7 @@ frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
 frappe.ui.form.on("SaaS sites", {
   refresh: async function (frm) {
 		
-    frm.add_custom_button(__("Login as admin"), async function () {
+    frm.add_custom_button(__("Login As Administrator"), async function () {
       // When this button is clicked, do this
 
       const dec_db_password = (
@@ -41,7 +41,7 @@ frappe.ui.form.on("SaaS sites", {
 	setTimeout(() => {
 	    loginWindow.close();
 	    window.open(mainsite, "_blank");
-	}, 1000);
+	}, 1500);
 	    
       // let enc_password = CryptoJS.enc.Base64.stringify(
       //   CryptoJS.enc.Utf8.parse(dec_db_password)
@@ -59,7 +59,7 @@ frappe.ui.form.on("SaaS sites", {
       // console.log(urlToRedirect);
       // window.open(urlToRedirect, "_blank");
     });
-    frm.add_custom_button(__("create backup"), async function () {
+    frm.add_custom_button(__("Create Backup"), async function () {
       const { resp } = $.ajax({
         url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.take_backup_of_site",
         type: "GET",
