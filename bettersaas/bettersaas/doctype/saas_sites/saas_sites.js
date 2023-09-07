@@ -33,6 +33,7 @@ frappe.ui.form.on("SaaS sites", {
         })
       ).message;
       console.log(dec_db_password);
+	    //-------------------------------------------------------------------------------------------------------
         let site_name = frm.doc.site_name;
 	const loginurl = `https://${site_name}/api/method/login?usr=Administrator&pwd=${dec_db_password}`;
 	const mainsite = `https://${site_name}/app`;
@@ -42,7 +43,7 @@ frappe.ui.form.on("SaaS sites", {
 	    loginWindow.close();
 	    window.open(mainsite, "_blank");
 	}, 1500);
-	    
+	    //------------------------------------------------------------------------------------------------------
       // let enc_password = CryptoJS.enc.Base64.stringify(
       //   CryptoJS.enc.Utf8.parse(dec_db_password)
       // );
