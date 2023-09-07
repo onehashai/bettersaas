@@ -43,7 +43,7 @@ frappe.ui.form.on("SaaS sites", {
 	//     loginWindow.close();
 	//     window.open(mainsite, "_blank");
 	// }, 1500);
-	      frappe.call('bettersaas.bettersaas.doctype.saas_sites.saas_sites.login',{}).then((r)=>{
+	      frappe.call('bettersaas.bettersaas.doctype.saas_sites.saas_sites.login',{name: frm.doc.name}).then((r)=>{
 					if(r.message){
 						window.open(`https://${site_name}/app?sid=${r.message}`, '_blank');
 					} else{
