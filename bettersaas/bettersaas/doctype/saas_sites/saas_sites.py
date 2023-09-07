@@ -18,7 +18,8 @@ from frappe.utils.password import get_decrypted_password
 
 @frappe.whitelist(allow_guest=True) 
 def login(name):
-	password = get_decrypted_password("SaaS sites", name, "encrypted_password")
+	saas_sites = frappe.get_doc("SaaS sites",name)
+	password = get_decrypted_password("SaaS sites", saas_sites.name, "encrypted_password")
 	
 	response = requests.post(
 		f"https://{name}/api/method/login",
