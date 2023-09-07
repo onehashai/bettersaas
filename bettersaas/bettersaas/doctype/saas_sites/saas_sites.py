@@ -27,7 +27,7 @@ def get_login_sid(self):
 		return sid
 @frappe.whitelist()
 def login(name,reason=None):
-	return frappe.get_doc("Saas User",name).get_login_sid()
+	return frappe.get_doc("SaaS sites",name).get_login_sid()
 	
 @frappe.whitelist(allow_guest=True)
 def markSiteAsUsed(site):
