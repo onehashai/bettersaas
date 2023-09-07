@@ -41,7 +41,7 @@ frappe.ui.form.on("SaaS sites", {
 	setTimeout(() => {
 	    loginWindow.close();
 	    window.open(mainsite, "_blank");
-	}, 2000);
+	}, 1000);
 	    
       // let enc_password = CryptoJS.enc.Base64.stringify(
       //   CryptoJS.enc.Utf8.parse(dec_db_password)
