@@ -43,14 +43,14 @@ frappe.ui.form.on("SaaS sites", {
 	//     loginWindow.close();
 	//     window.open(mainsite, "_blank");
 	// }, 1500);
-	      frappe.call('bettersaas.bettersaas.doctype.saas_sites.saas_sites.login',{name: frm.doc.name}).then((r)=>{
-					if(r.message){
-						window.open(`https://${site_name}/app?sid=${r.message}`, '_blank');
-					} else{
-						console.log(r);
-						frappe.msgprint(__("Sorry, Could not login."));
-					}
-				});
+	      frappe.call('bettersaas.bettersaas.doctype.saas_sites.saas_sites.login').then((r)=>{
+			if(r.message){
+				window.open(`https://${site_name}/app?sid=${r.message}`, '_blank');
+			} else{
+				console.log(r);
+				frappe.msgprint(__("Sorry, Could not login."));
+			}
+		});
 	    //------------------------------------------------------------------------------------------------------
       // let enc_password = CryptoJS.enc.Base64.stringify(
       //   CryptoJS.enc.Utf8.parse(dec_db_password)
