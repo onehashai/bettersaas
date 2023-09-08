@@ -13,7 +13,22 @@ import re
 from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
 
+@frappe.whitelist()
+def disable_enable_site(site_name, status):
+	bench_path = get_bench_path(site_name)
+	if status == "Active":
+		commands = ["bench --site {site_name} set-maintenance-mode on".format(site_name=site_name)]
+	else:
+		commands = ["bench --site {site_name} set-maintenance-mode off".format(site_name=site_name)]
 
+	frappe.enqueue('bench_manager.bench_manager.utils.run_command',
+		commands=commands,
+		doctype="Bench Settings",
+		key=today() + " " + nowtime(),
+		now = True,
+		cwd = bench_path
+	)
+    
 @frappe.whitelist(allow_guest=True)
 def markSiteAsUsed(site):
     doc = frappe.get_last_doc("SaaS stock sites", filters={"subdomain": site})
