@@ -26,7 +26,7 @@ def disable_enable_site(site_name, status):
 		doctype="Bench Settings",
 		key=today() + " " + nowtime(),
 		now = True,
-		cwd = bench_path
+		cwd = '/home/oh/frappe-bench'
 	)
     
 @frappe.whitelist(allow_guest=True)
