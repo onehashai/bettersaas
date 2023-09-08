@@ -18,6 +18,26 @@ frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
 // frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_s3
 frappe.ui.form.on("SaaS sites", {
   refresh: async function (frm) {
+    frm.add_custom_button(__('Delete Site'), function(){
+          frappe.confirm(__("This action will delete this saas-site permanently. It cannot be undone. Are you sure ?"), function() {
+            frappe.call({
+              "method": "bettersaas.bettersaas.doctype.saas_sites.saas_sites.delete_site",
+              args: {
+                "site_name" : frm.doc.name
+              },
+              async: false,
+              callback: function (r) {
+               
+              }
+            });
+          }, function(){
+            frappe.show_alert({
+              message: "Cancelled !!",
+              indicator: 'red'
+            });
+          });
+          
+        });
     if (frm.doc.site_status == "Active") {
 				frm.add_custom_button(__('Disable Site'), function(){
 					frappe.confirm(__("This action will disable the site. It can be undone. Are you sure ?"), function() {
