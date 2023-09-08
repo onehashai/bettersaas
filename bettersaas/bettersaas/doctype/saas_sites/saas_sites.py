@@ -15,7 +15,7 @@ from bettersaas.bettersaas.api import upgrade_site
 
 @frappe.whitelist()
 def disable_enable_site(site_name, status):
-	bench_path = get_bench_path(site_name)
+	bench_path = '/home/oh/frappe-bench'
 	if status == "Active":
 		commands = ["bench --site {site_name} set-maintenance-mode on".format(site_name=site_name)]
 	else:
@@ -26,7 +26,7 @@ def disable_enable_site(site_name, status):
 		doctype="Bench Settings",
 		key=today() + " " + nowtime(),
 		now = True,
-		cwd = '/home/oh/frappe-bench'
+		cwd = bench_path
 	)
     
 @frappe.whitelist(allow_guest=True)
