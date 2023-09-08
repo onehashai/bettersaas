@@ -10,25 +10,32 @@ import os
 from frappe.utils.password import decrypt, encrypt
 from frappe.model.document import Document
 import re
+import subprocess as sp
 from frappe.utils import today, nowtime, add_days, get_formatted_email
 from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
 
+def executeCommands(commands):
+    config = frappe.get_doc("SaaS settings")
+    command = " ; ".join(commands)
+    print("executing ", command)
+    process = sp.Popen(command, shell=True)
+    process.wait()
+    if frappe.conf.domain != "localhost":
+        os.system(
+            "echo {} | sudo -S sudo service nginx reload".format(config.root_password)
+        )
+	    
 @frappe.whitelist()
 def disable_enable_site(site_name, status):
 	bench_path = '/home/oh/frappe-bench'
+	commands=[]
 	if status == "Active":
-		commands = ["bench --site {site_name} set-maintenance-mode on".format(site_name=site_name)]
+		commands.append("bench --site {site_name} set-maintenance-mode on".format(site_name=site_name))
 	else:
-		commands = ["bench --site {site_name} set-maintenance-mode off".format(site_name=site_name)]
+		commands.append("bench --site {site_name} set-maintenance-mode off".format(site_name=site_name))
 
-	frappe.enqueue('bench_manager.bench_manager.utils.run_command',
-		commands=commands,
-		doctype="Bench Settings",
-		key=today() + " " + nowtime(),
-		now = True,
-		cwd = bench_path
-	)
+    	executeCommands(commands)
     
 @frappe.whitelist(allow_guest=True)
 def markSiteAsUsed(site):
