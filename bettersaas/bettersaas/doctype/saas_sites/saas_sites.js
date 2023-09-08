@@ -18,7 +18,54 @@ frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
 // frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_s3
 frappe.ui.form.on("SaaS sites", {
   refresh: async function (frm) {
-		
+    if (frm.doc.site_status == "Active") {
+				frm.add_custom_button(__('Disable Site'), function(){
+					frappe.confirm(__("This action will disable the site. It can be undone. Are you sure ?"), function() {
+						frappe.call({
+							"method": "bettersaas.bettersaas.doctype.saas_sites.saas_sites.disable_enable_site",
+							args: {
+								"site_name" : frm.doc.name,
+								"status": frm.doc.site_status
+							},
+							async: false,
+							callback: function (r) {
+								frm.set_value("site_status", "In-Active");
+								frm.save();
+								frappe.msgprint("Site Disabled Sucessfully !!!");
+							}
+						});
+					}, function(){
+						frappe.show_alert({
+							message: "Cancelled !!",
+							indicator: 'red'
+						});
+					});
+				});
+			} 
+			else if (frm.doc.site_status == "In-Active"){
+				frm.add_custom_button(__('Enable Site'), function(){
+					frappe.confirm(__("This action will enable the site. It can be undone. Are you sure ?"), function() {
+						frappe.call({
+							"method": "bettersaas.bettersaas.doctype.saas_sites.saas_sites.disable_enable_site",
+							args: {
+								"site_name" : frm.doc.name,
+								"status": frm.doc.site_status
+							},
+							async: false,
+							callback: function (r) {
+								frm.set_value("site_status", "Active");
+								frm.save();
+								frappe.msgprint("Site Enabled Sucessfully !!!");
+							}
+						});
+					}, function(){
+						frappe.show_alert({
+							message: "Cancelled !!",
+							indicator: 'red'
+						});
+					});
+				});
+			}	
     frm.add_custom_button(__("Login As Administrator"), async function () {
       // When this button is clicked, do this
 
