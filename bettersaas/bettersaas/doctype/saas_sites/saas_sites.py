@@ -10,10 +10,23 @@ import os
 from frappe.utils.password import decrypt, encrypt
 from frappe.model.document import Document
 import re
+import subprocess as sp
+from frappe.utils import today, nowtime, add_days, get_formatted_email
 from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
 
+	    
+@frappe.whitelist()
+def disable_enable_site(site_name, status):
+    commands=[]
+    if status == "Active":
+        commands.append("bench --site {site_name} set-maintenance-mode on".format(site_name=site_name))
+    else:
+        commands.append("bench --site {site_name} set-maintenance-mode off".format(site_name=site_name))
+    executeCommands(commands)
 
+    
+    
 @frappe.whitelist(allow_guest=True)
 def markSiteAsUsed(site):
     doc = frappe.get_last_doc("SaaS stock sites", filters={"subdomain": site})
