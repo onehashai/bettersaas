@@ -18,7 +18,7 @@ from bettersaas.bettersaas.api import upgrade_site
 @frappe.whitelist(allow_guest=True)
 def delete_site(site_name):
     commands = []
-    commands.append("bench drop-site {site_name} --root-password {mysql_password}".format(site_name=kwargs["site_name"], mysql_password='admin'))
+    commands.append("bench drop-site {site_name} --root-password {mysql_password}".format(site_name=site_name, mysql_password='XrXi4Gop5KAI2ka'))
     commands.append("bench setup nginx --yes")
     commands.append("bench setup reload-nginx")
     executeCommands(commands)
