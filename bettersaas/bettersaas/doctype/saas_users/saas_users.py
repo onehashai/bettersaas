@@ -45,7 +45,7 @@ def send_otp_email(otp, email):
         recipients=email,
         sender=sender,
         subject=subject,
-        bcc=["anand@onehash.ai"],
+        bcc=[""],
         template=template,
         args=args,
         header=[subject, "green"],
