@@ -17,17 +17,11 @@ from bettersaas.bettersaas.api import upgrade_site
 
 @frappe.whitelist(allow_guest=True)
 def delete_site(site_name):
-    frappe.msgprint('t1')
     commands = []
-    frappe.msgprint('t2')
-    commands.append("bench drop-site {site_name} --root-password {mysql_password}".format(site_name=site_name, mysql_password='XrXi4Gop5KAI2ka'))
-    frappe.msgprint('t3')
+    commands.append("bench drop-site {site} --db-root-password {dbrootpass}".format(site=site_name, dbrootpass='XrXi4Gop5KAI2ka'))
     commands.append("bench setup nginx --yes")
-    frappe.msgprint('t4')
     commands.append("bench setup reload-nginx")
-    frappe.msgprint('t5')
     executeCommands(commands)
-    frappe.msgprint('t6')
     frappe.msgprint('Site Deleted !')
 
 
