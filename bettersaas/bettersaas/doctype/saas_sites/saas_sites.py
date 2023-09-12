@@ -17,7 +17,6 @@ from bettersaas.bettersaas.api import upgrade_site
 
 @frappe.whitelist()
 def delete_site(site_name):
-    frappe.msgprint(str(site_name))
     commands = []
     config = frappe.get_doc("SaaS settings")
     dbpass=config.get_password("db_password")
@@ -25,6 +24,73 @@ def delete_site(site_name):
     executeCommands(commands)
     frappe.msgprint('Site Deleted !')
 
+@frappe.whitelist()
+def restore_site(site_name):
+    new_site = site_name
+    target_site = frappe.get_doc(
+            "SaaS stock sites", stock_sites[0]["name"], ignore_permissions=True
+        )
+    config = frappe.get_doc("SaaS settings")
+    commands.append(
+        "bench setup add-domain {} --site {} ".format(
+            new_site, target_site.subdomain + "." + frappe.conf.domain
+        )
+    )
+    commands.append(
+        "cd /home/{}/frappe-bench/sites & mv {}.{} {}".format(
+            config.server_user_name,target_site.subdomain, frappe.conf.domain, new_site
+        )
+    )
+    site_defaults = frappe.get_doc("SaaS settings")
+    commands.append(
+        "bench --site {} set-config max_users {}".format(
+            new_site, site_defaults.default_user_limit
+        )
+    )
+    
+    commands.append(
+        "bench --site {} enable-scheduler".format(new_site)
+    )
+    commands.append(
+        "bench --site {} set-config customer_email {}".format(
+            new_site, email
+        )
+    )
+    commands.append(
+        "bench --site {} set-config max_email {}".format(
+            new_site, site_defaults.default_email_limit
+        )
+    )
+    commands.append(
+        "bench --site {} set-config max_space {}".format(
+            new_site, site_defaults.default_space_limit
+        )
+    )
+    commands.append(
+        "bench --site {} set-config site_name {}".format(new_site, new_site)
+    )
+    expiry_days = int(config.expiry_days)
+    expiry_date = frappe.utils.add_days(frappe.utils.nowdate(), expiry_days)
+    commands.append(
+        "bench --site {} set-config expiry_date {}".format(new_site, expiry_date)
+    )
+    commands.append(
+            "bench --site {} set-config country {}".format(new_site, kwargs["country"])
+        )
+    commands.append(
+        "bench --site {} set-config creation_date {}".format(new_site, frappe.utils.nowdate())
+    )
+    commands.append("bench --site {} set-maintenance-mode off".format(new_site))
+    commands.append(
+        "bench --site {} execute bettersaas.bettersaas.doctype.saas_sites.saas_sites.markSiteAsUsed --args {}".format(
+            frappe.local.site , target_site.subdomain
+        )
+    )
+    commands.append("bench setup nginx --yes")
+    
+    executeCommands(commands)
+   
+    frappe.msgprint('Site Restored!')
 
 @frappe.whitelist()
 def disable_enable_site(site_name, status):
