@@ -19,26 +19,6 @@ frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
 frappe.ui.form.on("SaaS sites", {
   refresh: async function (frm) {
     frm.add_custom_button(__('Delete Site'), function(){
-	   //  frappe.warn(
-    //   "Are you sure you want to proceed?",
-    //   " This action is not reversible.",
-    //   () => {
-    //     // action to perform if Continue is selected
-    //     frappe.call({
-    //       method: "clientside.clientside.utils.delete_site_from_server",
-
-    //       freeze_message: __("Deleting site"),
-    //       freeze: true,
-    //       error: function () {
-    //         frappe.msgprint("Site has been deleted successfully");
-    //         // refresh page
-    //         window.location.reload();
-    //       },
-    //     });
-    //   },
-    //   "Continue",
-    //   true
-    // );
           frappe.confirm(__("This action will delete this saas-site permanently. It cannot be undone. Are you sure ?"), function() {
             frappe.call({
               "method": "bettersaas.bettersaas.doctype.saas_sites.saas_sites.delete_site",
