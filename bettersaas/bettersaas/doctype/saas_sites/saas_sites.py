@@ -16,7 +16,7 @@ from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
 
 @frappe.whitelist()
-def delete_site(site_name):
+def delete_thesite(site_name):
     commands = []
     config = frappe.get_doc("SaaS settings")
     dbpass=config.get_password("db_password")
@@ -25,7 +25,7 @@ def delete_site(site_name):
     frappe.msgprint('Site Deleted !')
 
 @frappe.whitelist()
-def restore_site(site_name):
+def restore_thesite(site_name):
     commands = []
     commands.append("mv archived/{site} sites/".format(site=site_name))
     commands.append("bench --site {site} restore sites/{site}/private/backups/onehash_backup.sql.gz".format(site=site_name))
