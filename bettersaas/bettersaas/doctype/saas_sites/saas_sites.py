@@ -503,7 +503,7 @@ def download_backup(backupid, site_name):
         aws_secret_access_key=frappe.conf.aws_secret_access_key,
     )
     backup_doc = frappe.get_doc("SaaS site backups", backupid)
-    files = [backup_doc.site_files, backup_doc.database_files, backup_doc.private_files]
+    files = [backup_doc.site_files, backup_doc.site_files, backup_doc.private_files]
     file_names = [x.split("/")[-1] for x in files]
     for i in range(len(files)):
         key = "site_backups/" + site_name + "/" + files[i]
