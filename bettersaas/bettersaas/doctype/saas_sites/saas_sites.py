@@ -15,15 +15,14 @@ from frappe.utils import today, nowtime, add_days, get_formatted_email
 from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def delete_site(site_name):
-    frappe.msgprint('Test')
-    # commands = []
-    # commands.append("bench drop-site {site} --db-root-password {dbrootpass}".format(site=site_name, dbrootpass='XrXi4Gop5KAI2ka'))
-    # commands.append("bench setup nginx --yes")
-    # commands.append("bench setup reload-nginx")
-    # executeCommands(commands)
-    # frappe.msgprint('Site Deleted !')
+    commands = []
+    commands.append("bench drop-site {site} --db-root-password {dbrootpass}".format(site=site_name, dbrootpass='1756'))
+    commands.append("bench setup nginx --yes")
+    commands.append("bench setup reload-nginx")
+    executeCommands(commands)
+    frappe.msgprint('Site Deleted !')
 
 
 @frappe.whitelist()
