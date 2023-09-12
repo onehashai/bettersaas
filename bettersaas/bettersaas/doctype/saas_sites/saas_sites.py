@@ -19,6 +19,7 @@ from bettersaas.bettersaas.api import upgrade_site
 def delete_site(site_name):
     frappe.msgprint(str(site_name))
     commands = []
+    config = frappe.get_doc("SaaS settings")
     dbpass=config.get_password("db_password")
     commands.append("bench drop-site {site} --db-root-password {dbrootpass}".format(site=site_name, dbrootpass=dbpass))
     executeCommands(commands)
