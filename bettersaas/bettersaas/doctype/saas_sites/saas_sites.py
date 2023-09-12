@@ -24,6 +24,13 @@ def delete_site(site_name):
     executeCommands(commands)
     frappe.msgprint('Site Deleted !')
 
+@frappe.whitelist()
+def restore_site(site_name):
+    commands = []
+    commands.append("mv archived/{site} sites/".format(site=site_name))
+    commands.append("bench --site {site} restore sites/{site}/private/backups/onehash_backup.sql.gz".format(site=site_name))
+    executeCommands(commands)
+    frappe.msgprint('Site Restored !')
 
 @frappe.whitelist()
 def disable_enable_site(site_name, status):
