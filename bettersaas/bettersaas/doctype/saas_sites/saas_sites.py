@@ -14,33 +14,6 @@ import subprocess as sp
 from frappe.utils import today, nowtime, add_days, get_formatted_email
 from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
-import subprocess
-
-def move_site_directory(site_name):
-    source_path = f"archived/sites/{site_name}"
-    destination_path = "sites/"
-    try:
-        subprocess.run(["mv", source_path, destination_path], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error moving site directory: {e}")
-        raise
-
-def restore_site(site_name):
-    backup_path = f"sites/{site_name}/private/backups/onehash_backup.sql.gz"
-    try:
-        subprocess.run(["bench", "--site", site_name, "restore", backup_path], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error restoring site: {e}")
-        raise
-
-@frappe.whitelist()
-def restore_thesite(site_name):
-    try:
-        move_site_directory(site_name)
-        restore_site(site_name)
-        frappe.msgprint('Site Restored !')
-    except Exception as e:
-        frappe.msgprint(f'Error: {str(e)}')
 
 @frappe.whitelist()
 def delete_thesite(site_name):
@@ -51,13 +24,13 @@ def delete_thesite(site_name):
     executeCommands(commands)
     frappe.msgprint('Site Deleted !')
 
-# @frappe.whitelist()
-# def restore_thesite(site_name):
-#     commands = []
-#     commands.append("mv archived/sites/{site} sites/".format(site=site_name))
-#     commands.append("bench --site {site} restore sites/{site}/private/backups/onehash_backup.sql.gz".format(site=site_name))
-#     executeCommands(commands)
-#     frappe.msgprint('Site Restored !')
+@frappe.whitelist()
+def restore_thesite(site_name):
+    commands = []
+    commands.append("sudo mv archived/sites/{site} sites/".format(site=site_name))
+    commands.append("sudo bench --site {site} restore sites/{site}/private/backups/onehash_backup.sql.gz".format(site=site_name))
+    executeCommands(commands)
+    frappe.msgprint('Site Restored !')
 
 @frappe.whitelist()
 def disable_enable_site(site_name, status):
