@@ -21,7 +21,7 @@ frappe.ui.form.on("SaaS sites", {
     frm.add_custom_button(__('Delete Site'), function(){
           frappe.confirm(__("This action will delete this saas-site permanently. It cannot be undone. Are you sure ?"), function() {
             frappe.call({
-              "method": "bettersaas.bettersaas.doctype.saas_sites.saas_sites.delete_site",
+              "method": "bettersaas.bettersaas.doctype.saas_sites.saas_sites.delete_thesite",
               args: {
                 "site_name" : frm.doc.name
               },
