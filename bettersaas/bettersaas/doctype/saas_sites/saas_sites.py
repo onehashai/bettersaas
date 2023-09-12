@@ -466,13 +466,13 @@ def insert_backup_record(site, backup_size, key, is_manual):
         print("hey", e)
 
 
-# @frappe.whitelist(allow_guest=True)
-# def delete_site(*args, **kwargs):
-#     doc = frappe.get_doc("SaaS sites", {"site_name": kwargs["site_name"]})
-#     doc.site_deleted = 1
-#     doc.save(ignore_permissions=True)
-#     frappe.db.commit()
-#     return "done"
+@frappe.whitelist(allow_guest=True)
+def delete_site(*args, **kwargs):
+    doc = frappe.get_doc("SaaS sites", {"site_name": kwargs["site_name"]})
+    doc.site_deleted = 1
+    doc.save(ignore_permissions=True)
+    frappe.db.commit()
+    return "done"
 
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
