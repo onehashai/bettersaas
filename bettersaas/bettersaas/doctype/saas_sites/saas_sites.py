@@ -584,25 +584,25 @@ def download_backup(backupid, site_name):
     return file_names
 
 
-@frappe.whitelist(allow_guest=True)
-def restore_site(*args, **kwargs):
-    config = frappe.get_doc("SaaS settings")
-    site_name = kwargs["site_name"]
-    file_names = download_backup(kwargs["backupid"], site_name)
-    command_to_restore = "bench --site {} --force restore {} --with-public-files {} --with-private-files {} --db-root-password {}".format(
-        site_name, file_names[1], file_names[0], file_names[2], config.db_password
-    )
-    frappe.enqueue(
-        "bettersaas.bettersaas.doctype.saas_sites.saas_sites.execute_command_async",
-        command=command_to_restore,
-        at_front=1,
-        queue="short",
-    )
-    os.system(command_to_restore)
-    frappe.publish_realtime(
-        "site_restored", {"site_name": site_name}, user=frappe.session.user
-    )
-    return "restored"
+# @frappe.whitelist(allow_guest=True)
+# def restore_site(*args, **kwargs):
+#     config = frappe.get_doc("SaaS settings")
+#     site_name = kwargs["site_name"]
+#     file_names = download_backup(kwargs["backupid"], site_name)
+#     command_to_restore = "bench --site {} --force restore {} --with-public-files {} --with-private-files {} --db-root-password {}".format(
+#         site_name, file_names[1], file_names[0], file_names[2], config.db_password
+#     )
+#     frappe.enqueue(
+#         "bettersaas.bettersaas.doctype.saas_sites.saas_sites.execute_command_async",
+#         command=command_to_restore,
+#         at_front=1,
+#         queue="short",
+#     )
+#     os.system(command_to_restore)
+#     frappe.publish_realtime(
+#         "site_restored", {"site_name": site_name}, user=frappe.session.user
+#     )
+#     return "restored"
 
 
 def execute_command_async(command):
