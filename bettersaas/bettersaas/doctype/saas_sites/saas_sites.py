@@ -503,7 +503,7 @@ def download_backup(backupid, site_name):
         aws_secret_access_key=frappe.conf.aws_secret_access_key,
     )
     backup_doc = frappe.get_doc("SaaS site backups", backupid)
-    files = [backup_doc.site_files, backup_doc.site_files]
+    files = [backup_doc.site_files, backup_doc.database_files, backup_doc.private_files]
     file_names = [x.split("/")[-1] for x in files]
     for i in range(len(files)):
         key = "site_backups/" + site_name + "/" + files[i]
@@ -522,8 +522,8 @@ def restore_site(*args, **kwargs):
     config = frappe.get_doc("SaaS settings")
     site_name = kwargs["site_name"]
     file_names = download_backup(kwargs["backupid"], site_name)
-    command_to_restore = "bench --site {} --force restore {} --db-root-password {}".format(
-        site_name, file_names[1], config.db_password
+    command_to_restore = "bench --site {} --force restore {} --with-public-files {} --with-private-files {} --db-root-password {}".format(
+        site_name, file_names[1], file_names[0], file_names[2], config.db_password
     )
     frappe.enqueue(
         "bettersaas.bettersaas.doctype.saas_sites.saas_sites.execute_command_async",
