@@ -16,6 +16,21 @@ from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
 
 @frappe.whitelist()
+def get_login_sid(site_name):
+		# password = get_decrypted_password("Saas User", self.name, "password")
+		response = requests.post(
+			f"https://{site_name}/api/method/login",
+			data={"usr": "Administrator", "pwd": 'Vaish@1804'},
+		)
+		sid = response.cookies.get("sid")
+		if sid:
+			return sid
+            
+@frappe.whitelist()
+def login(name,reason=None):
+	return frappe.get_doc("SaaS sites",name).get_login_sid(name)
+    
+@frappe.whitelist()
 def delete_thesite(site_name):
     commands = []
     config = frappe.get_doc("SaaS settings")
