@@ -11,10 +11,16 @@ from frappe.utils.password import decrypt, encrypt
 from frappe.model.document import Document
 import re
 import subprocess as sp
+import requests
 from frappe.utils import today, nowtime, add_days, get_formatted_email
 from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
 
+            
+@frappe.whitelist()
+def login(name,reason=None):
+	return frappe.get_doc("SaaS sites",name).get_login_sid()
+    
 @frappe.whitelist()
 def delete_thesite(site_name):
     commands = []
@@ -671,7 +677,19 @@ class SaaSsites(Document):
             else:
                 ret.append(key)
         return "\n".join(ret)
-
+    
+    @frappe.whitelist()
+    def get_login_sid(self):
+        site = frappe.db.get("SaaS sites", filters={"site_name": self.name})
+        password = decrypt(site.encrypted_password, frappe.conf.enc_key)
+        response = requests.post(
+            f"https://{self.name}/api/method/login",
+            data={"usr": "Administrator", "pwd": password},
+        )
+        sid = response.cookies.get("sid")
+        if sid:
+            return sid
+            
     def update_limits(self):
         frappe.msgprint("updating limits")
         return
