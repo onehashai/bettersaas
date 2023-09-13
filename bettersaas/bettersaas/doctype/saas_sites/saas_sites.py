@@ -630,11 +630,8 @@ class SaaSsites(Document):
 
     @property
     def space_limit(self):
-        return (
-            str(frappe.get_site_config(site_path=self.site_name).get("max_space"))
-            + "GB"
-        )
-
+        return frappe.get_site_config(site_path=self.site_name).get("max_space")
+        
     @property
     def current_period_start(self):
         import datetime
