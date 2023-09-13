@@ -44,7 +44,7 @@ frappe.ui.form.on("SaaS sites", {
 						}
 						frm.refresh_fields("user_details");
 						frappe.show_alert({
-							message: "User Count Refreshed !!",
+							message: "User Count Refreshed !",
 							indicator: 'green'
 						});
 						frm.save();
@@ -77,7 +77,7 @@ frappe.ui.form.on("SaaS sites", {
 						}
 						frm.refresh_fields("user_details");
 						frappe.show_alert({
-							message: "User Count Refreshed !!",
+							message: "User Count Refreshed !",
 							indicator: 'green'
 						});
 						frm.save();
