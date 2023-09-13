@@ -18,15 +18,15 @@ from bettersaas.bettersaas.api import upgrade_site
 
 @frappe.whitelist()
 def get_users_list(site_name):
-	saas_settings = frappe.get_doc("SaaS settings")
-	site = frappe.db.get("SaaS sites", filters={"site_name": site_name})
-        site_password = decrypt(site.encrypted_password, frappe.conf.enc_key)
-	domain = site_name
-	from bettersaas.bettersaas.doctype.saas_sites.frappeclient import FrappeClient
-	conn = FrappeClient("https://"+domain, "Administrator", site_password)
-	total_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name', 'enabled', 'last_active','user_type'],limit_page_length=10000)
-	active_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name','last_active','user_type'], filters = {'enabled':'1'},limit_page_length=10000)
-	return {"total_users":total_users, "active_users":active_users}
+    saas_settings = frappe.get_doc("SaaS settings")
+    site = frappe.db.get("SaaS sites", filters={"site_name": site_name})
+    site_password = decrypt(site.encrypted_password, frappe.conf.enc_key)
+    domain = site_name
+    from bettersaas.bettersaas.doctype.saas_sites.frappeclient import FrappeClient
+    conn = FrappeClient("https://"+domain, "Administrator", site_password)
+    total_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name', 'enabled', 'last_active','user_type'],limit_page_length=10000)
+    active_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name','last_active','user_type'], filters = {'enabled':'1'},limit_page_length=10000)
+    return {"total_users":total_users, "active_users":active_users}
 
 @frappe.whitelist()
 def login(name,reason=None):
