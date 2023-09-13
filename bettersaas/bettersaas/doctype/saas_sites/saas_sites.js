@@ -87,7 +87,7 @@ frappe.ui.form.on("SaaS sites", {
 				});
 			}	
 
-    frm.add_custom_button(__('Login As Admin'), 
+    frm.add_custom_button(__('Login As Administrator'), 
 			 () => {
 				frappe.call('bettersaas.bettersaas.doctype.saas_sites.saas_sites.login', { name: frm.doc.name }).then((r)=>{
 					if(r.message){
@@ -99,47 +99,6 @@ frappe.ui.form.on("SaaS sites", {
 				});
 			}
 		);
-    frm.add_custom_button(__("Login As Administrator"), async function () {
-  const dec_db_password = (
-    await $.ajax({
-      url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.getDecryptedPassword",
-      type: "GET",
-      dataType: "json",
-      data: {
-        site_name: frm.doc.site_name,
-      },
-    })
-  ).message;
-
-  console.log(dec_db_password);
-
-  let site_name = frm.doc.site_name;
-  const loginurl = `https://${site_name}/api/method/login?usr=Administrator&pwd=${dec_db_password}`;
-  const mainsite = `https://${site_name}/app`;
-
-  const loginWindow = window.open(loginurl, "_blank");
-
-  // Poll for the response from the loginurl website.
-  const checkLoggedIn = setInterval(async () => {
-    try {
-      const response = await $.ajax({
-        url: "/api/method/frappe.auth.get_logged_user",
-        type: "GET",
-        dataType: "json",
-      });
-
-      if (response.message === "Administrator") {
-        // The user is logged in, so open mainsite and close the login window.
-        window.open(mainsite, "_blank");
-        loginWindow.close();
-        clearInterval(checkLoggedIn); // Stop polling.
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }, 1500); // Poll every second.
-});
-
 
     frm.add_custom_button(__("Create Backup"), async function () {
       const { resp } = $.ajax({
