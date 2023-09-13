@@ -19,6 +19,14 @@ frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
 frappe.ui.form.on("SaaS sites", {
   refresh: async function (frm) {
 
+    frm.call({
+		method:'get_users_list',
+		doc: frm.doc,
+		args: {
+			"site_name" : frm.doc.name
+		},
+	});
+	  
     frm.add_custom_button(__('Refresh User Count'), function(){
 				frappe.call({
 					"method": "bettersaas.bettersaas.doctype.saas_sites.saas_sites.get_users_list",
