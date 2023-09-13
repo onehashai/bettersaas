@@ -86,6 +86,7 @@ frappe.ui.form.on("SaaS sites", {
 					});
 				});
 			}	
+
     frm.add_custom_button(__("Login As Administrator"), async function () {
   const dec_db_password = (
     await $.ajax({
@@ -106,12 +107,27 @@ frappe.ui.form.on("SaaS sites", {
 
   const loginWindow = window.open(loginurl, "_blank");
 
-  loginWindow.addEventListener("load", () => {
-    // The loginurl website has fully loaded, so open mainsite now.
-    window.open(mainsite, "_blank");
-    loginWindow.close();
-  });
+  // Poll for the response from the loginurl website.
+  const checkLoggedIn = setInterval(async () => {
+    try {
+      const response = await $.ajax({
+        url: "/api/method/frappe.auth.get_logged_user",
+        type: "GET",
+        dataType: "json",
+      });
+
+      if (response.message === "Administrator") {
+        // The user is logged in, so open mainsite and close the login window.
+        window.open(mainsite, "_blank");
+        loginWindow.close();
+        clearInterval(checkLoggedIn); // Stop polling.
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, 1000); // Poll every second.
 });
+
 
     frm.add_custom_button(__("Create Backup"), async function () {
       const { resp } = $.ajax({
