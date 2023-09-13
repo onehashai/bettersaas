@@ -682,7 +682,6 @@ class SaaSsites(Document):
     def get_login_sid(self):
         site = frappe.db.get("SaaS sites", filters={"site_name": self.name})
         password = decrypt(site.encrypted_password, frappe.conf.enc_key)
-        frappe.msgprint(str(password))
         response = requests.post(
             f"https://{self.name}/api/method/login",
             data={"usr": "Administrator", "pwd": password},
