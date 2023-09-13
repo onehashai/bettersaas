@@ -87,7 +87,18 @@ frappe.ui.form.on("SaaS sites", {
 				});
 			}	
 
-    
+    frm.add_custom_button(__('Login As Admin'), 
+			 () => {
+				frappe.call('bettersaas.bettersaas.doctype.saas_sites.saas_sites.login', { name: frm.doc.name }).then((r)=>{
+					if(r.message){
+						window.open(`https://${frm.doc.name}/app?sid=${r.message}`, '_blank');
+					} else{
+						console.log(r);
+						frappe.msgprint(__("Sorry, Could not login."));
+					}
+				});
+			}
+		);
     frm.add_custom_button(__("Login As Administrator"), async function () {
   const dec_db_password = (
     await $.ajax({
