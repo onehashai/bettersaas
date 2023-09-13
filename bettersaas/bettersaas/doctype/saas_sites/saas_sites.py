@@ -17,6 +17,55 @@ from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
 
 @frappe.whitelist()
+def update_user_to_main_app():
+    admin_site_name = frappe.conf.get("admin_url") or "app.onehash.is"
+    frappe.destroy()
+    frappe.init(site=admin_site_name)
+    frappe.connect()
+    all_sites = frappe.get_all("SaaS sites")
+    for site in all_sites:
+        frappe.destroy()
+        current_site_name = site.name
+        frappe.init(site=current_site_name)
+        frappe.connect()
+        enabled_system_users = frappe.get_all("User",fields=['name','email','last_active','user_type','enabled','first_name','last_name','creation'])
+        frappe.destroy()
+        frappe.init(site=admin_site_name)
+        frappe.connect()        
+        try:        
+            site_doc = frappe.get_doc('SaaS sites',current_site_name)
+            site_doc.user_details = {}        
+            enabled_users_count = 0
+            for user in enabled_system_users:                       
+                if(user.name in ['Administrator','Guest']):
+                    continue
+
+                site_doc.append('user_details', {
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'user_type': user.user_type,
+                    'active': user.enabled,
+                    'email_id': user.email,
+                    'last_active':user.last_active
+                })
+
+                if(user.enabled):
+                    enabled_users_count = enabled_users_count + 1
+
+                if(user.last_active==None):
+                    continue
+
+            site_doc.number_of_users =   (len(enabled_system_users)-2)
+            site_doc.number_of_active_users= enabled_users_count
+            
+            site_doc.save()
+            frappe.db.commit()            
+        except Exception as e:
+            frappe.log_error(str(e))
+        finally:
+            frappe.destroy()
+		
+@frappe.whitelist()
 def get_users_list(site_name):
     saas_settings = frappe.get_doc("SaaS settings")
     site = frappe.db.get("SaaS sites", filters={"site_name": site_name})
