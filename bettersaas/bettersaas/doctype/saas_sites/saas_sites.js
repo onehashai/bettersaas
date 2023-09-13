@@ -87,6 +87,7 @@ frappe.ui.form.on("SaaS sites", {
 				});
 			}	
 
+    
     frm.add_custom_button(__("Login As Administrator"), async function () {
   const dec_db_password = (
     await $.ajax({
@@ -107,15 +108,26 @@ frappe.ui.form.on("SaaS sites", {
 
   const loginWindow = window.open(loginurl, "_blank");
 
-  // Define a callback function to open mainsite once the loginurl window is fully loaded.
-  const openMainsite = () => {
-    window.open(mainsite, "_blank");
-  };
+  // Poll for the response from the loginurl website.
+  const checkLoggedIn = setInterval(async () => {
+    try {
+      const response = await $.ajax({
+        url: "/api/method/frappe.auth.get_logged_user",
+        type: "GET",
+        dataType: "json",
+      });
 
-  // Set a timeout to open mainsite after a delay (adjust the delay as needed).
-  setTimeout(openMainsite, 3000); // Open mainsite after 5 seconds (5000 milliseconds).
+      if (response.message === "Administrator") {
+        // The user is logged in, so open mainsite and close the login window.
+        window.open(mainsite, "_blank");
+        loginWindow.close();
+        clearInterval(checkLoggedIn); // Stop polling.
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, 1500); // Poll every second.
 });
-
 
 
     frm.add_custom_button(__("Create Backup"), async function () {
