@@ -15,8 +15,19 @@ import requests
 from frappe.utils import today, nowtime, add_days, get_formatted_email
 from clientside.stripe import StripeSubscriptionManager
 from bettersaas.bettersaas.api import upgrade_site
+		
+@frappe.whitelist()
+def get_users_list(site_name):
+    saas_settings = frappe.get_doc("SaaS settings")
+    site = frappe.db.get("SaaS sites", filters={"site_name": site_name})
+    site_password = decrypt(site.encrypted_password, frappe.conf.enc_key)
+    domain = site_name
+    from bettersaas.bettersaas.doctype.saas_sites.frappeclient import FrappeClient
+    conn = FrappeClient("https://"+domain, "Administrator", site_password)
+    total_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name', 'enabled', 'last_active','user_type'],limit_page_length=10000)
+    active_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name','last_active','user_type'], filters = {'enabled':'1'},limit_page_length=10000)
+    return {"total_users":total_users, "active_users":active_users}
 
-            
 @frappe.whitelist()
 def login(name,reason=None):
 	return frappe.get_doc("SaaS sites",name).get_login_sid()
@@ -390,60 +401,60 @@ def backup():
         )
     return "done"
 
-def update_user_to_main_app():
-    admin_site_name = "app.onehash.store"
-    frappe.destroy()
-    frappe.init(site=admin_site_name)
-    frappe.connect()
-    all_sites = frappe.get_all("SaaS sites")
-    for site in all_sites:
-        frappe.destroy()
-        current_site_name = site.name
-        print(current_site_name)
-        frappe.init(site=current_site_name)
-        frappe.connect()
-        enabled_system_users = frappe.get_all("User",fields=['name','email','last_active','user_type','enabled','first_name','last_name','creation'])
+# def update_user_to_main_app():
+#     admin_site_name = "app.onehash.store"
+#     frappe.destroy()
+#     frappe.init(site=admin_site_name)
+#     frappe.connect()
+#     all_sites = frappe.get_all("SaaS sites")
+#     for site in all_sites:
+#         frappe.destroy()
+#         current_site_name = site.name
+#         print(current_site_name)
+#         frappe.init(site=current_site_name)
+#         frappe.connect()
+#         enabled_system_users = frappe.get_all("User",fields=['name','email','last_active','user_type','enabled','first_name','last_name','creation'])
         
-        frappe.destroy()
-        frappe.init(site=admin_site_name)
-        frappe.connect()        
-        try:        
-            site_doc = frappe.get_doc('SaaS sites',current_site_name)
-            site_doc.user_details = {}        
-            enabled_users_count = 0
-            max_last_active = None
-            for user in enabled_system_users:                       
-                if(user.name in ['Administrator','Guest']):
-                    continue
+#         frappe.destroy()
+#         frappe.init(site=admin_site_name)
+#         frappe.connect()        
+#         try:        
+#             site_doc = frappe.get_doc('SaaS sites',current_site_name)
+#             site_doc.user_details = {}        
+#             enabled_users_count = 0
+#             max_last_active = None
+#             for user in enabled_system_users:                       
+#                 if(user.name in ['Administrator','Guest']):
+#                     continue
 
-                site_doc.append('user_details', {
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'user_type': user.user_type,
-                    'active': user.enabled,
-                    'email_id': user.email,
-                    'last_active':user.last_active
-                })
+#                 site_doc.append('user_details', {
+#                     'first_name': user.first_name,
+#                     'last_name': user.last_name,
+#                     'user_type': user.user_type,
+#                     'active': user.enabled,
+#                     'email_id': user.email,
+#                     'last_active':user.last_active
+#                 })
 
-                if(user.enabled):
-                    enabled_users_count = enabled_users_count + 1
+#                 if(user.enabled):
+#                     enabled_users_count = enabled_users_count + 1
 
-                if(user.last_active==None):
-                    continue
+#                 if(user.last_active==None):
+#                     continue
 
-                if(max_last_active==None):
-                    max_last_active = user.last_active
-                elif(max_last_active<user.last_active):
-                    max_last_active = user.last_active
+#                 if(max_last_active==None):
+#                     max_last_active = user.last_active
+#                 elif(max_last_active<user.last_active):
+#                     max_last_active = user.last_active
 
-            site_doc.number_of_users =   (len(enabled_system_users)-2)
-            site_doc.number_of_active_users= enabled_users_count
-            site_doc.save()
-            frappe.db.commit()            
-        except Exception as e:
-            frappe.log_error(str(e))
-        finally:
-            frappe.destroy()
+#             site_doc.number_of_users =   (len(enabled_system_users)-2)
+#             site_doc.number_of_active_users= enabled_users_count
+#             site_doc.save()
+#             frappe.db.commit()            
+#         except Exception as e:
+#             frappe.log_error(str(e))
+#         finally:
+#             frappe.destroy()
 
 def insert_backup_record(site, backup_size, key, is_manual):
     is_manual = int(is_manual)

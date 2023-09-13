@@ -8,7 +8,7 @@ app_email = "digital@onehash.ai"
 app_license = "MIT"
 
 # Includes in <head>
-# ------------------
+# ------------------ 
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/bettersaas/css/bettersaas.css"
@@ -128,8 +128,8 @@ scheduler_events = {
         "bettersaas.api.check_stock_sites",
     ],
     "daily_long": [
-        "bettersaas.api.update_user_saas_sites",
-        "bettersaas.bettersaas.doctype.saas_sites.saas_sites.update_user_to_main_app",
+        "bettersaas.api.update_user_saas_sites"
+        # "bettersaas.bettersaas.doctype.saas_sites.saas_sites.update_user_to_main_app",
     ],
     # "cron": {
     # "1-59 * * * *":[
