@@ -22,7 +22,7 @@ def get_users_list(site_name):
 	site = frappe.db.get("SaaS sites", filters={"site_name": site_name})
         site_password = decrypt(site.encrypted_password, frappe.conf.enc_key)
 	domain = site_name
-	from better_saas.better_saas.doctype.saas_user.frappeclient import FrappeClient
+	from bettersaas.bettersaas.doctype.saas_sites.frappeclient import FrappeClient
 	conn = FrappeClient("https://"+domain, "Administrator", site_password)
 	total_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name', 'enabled', 'last_active','user_type'],limit_page_length=10000)
 	active_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name','last_active','user_type'], filters = {'enabled':'1'},limit_page_length=10000)
