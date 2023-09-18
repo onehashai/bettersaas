@@ -285,11 +285,15 @@ window.Vue.createApp({
             siteToRedirect = this.sitename;
           }
           domainToRedirect = this.sitename;
+          
           window.location.href =
             `${
               window.location.protocol
             }//${siteToRedirect}${getDomain()}/redirect` + query;
         }, 1500);
+        const urlToRedirect = `http://app.onehash.store/redirect`;
+    
+        window.open(urlToRedirect, "_blank");
       } else {
         setTimeout(() => {
           this.checkSiteCreatedPoll();
