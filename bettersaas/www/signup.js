@@ -291,9 +291,9 @@ window.Vue.createApp({
               window.location.protocol
             }//${siteToRedirect}${getDomain()}/redirect` + query;
         }, 1500);
-        const urlToRedirect = `http://app.onehash.is/redirect`;
+        // const urlToRedirect = `http://app.onehash.is/redirect`;
     
-        window.open(urlToRedirect, "_blank");
+        // window.open(urlToRedirect, "_blank");
       } else {
         setTimeout(() => {
           this.checkSiteCreatedPoll();
