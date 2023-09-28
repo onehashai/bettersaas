@@ -139,6 +139,7 @@ def send_otp(email, phone, fname, company_name):
         lead_doc.email_id = email
         lead_doc.mobile_no = phone
         lead_doc.company_name = company_name
+        lead_doc.first_name = fname
         lead_doc.save(ignore_permissions=True)
         
     else:
