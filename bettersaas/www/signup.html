@@ -188,7 +188,7 @@
             <div class="col-12 mb-1 relative">
               <v-field
                 v-slot="{meta,field,errorMessage}"
-                
+                :rules="checkSubdomain"
                 :validateOnInput="true"
                 name="site-name"
                 v-model="sitename"
