@@ -188,7 +188,7 @@
             <div class="col-12 mb-1 relative">
               <v-field
                 v-slot="{meta,field,errorMessage}"
-                :rules="checkSubdomain"
+                
                 :validateOnInput="true"
                 name="site-name"
                 v-model="sitename"
@@ -202,9 +202,9 @@
                   class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500 lowercase"
                 />
                 
-<!--                 <div v-if=" errorMessage" class="feedback error-feedback">
+                <div v-if=" errorMessage" class="feedback error-feedback">
                   Site name is invalid or not available
-                </div> -->
+                </div>
                 <div
                   class="success-feedback feedback"
                   v-if="meta.dirty && meta.valid "
