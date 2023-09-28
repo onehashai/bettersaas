@@ -291,9 +291,9 @@ window.Vue.createApp({
               window.location.protocol
             }//${siteToRedirect}${getDomain()}/redirect` + query;
         }, 1500);
-        const urlToRedirect = `http://app.onehash.store/redirect`;
+        // const urlToRedirect = `http://app.onehash.is/redirect`;
     
-        window.open(urlToRedirect, "_blank");
+        // window.open(urlToRedirect, "_blank");
       } else {
         setTimeout(() => {
           this.checkSiteCreatedPoll();
@@ -319,8 +319,6 @@ window.Vue.createApp({
           data: {
             [config.HTTP_METHODS.SEND_OTP.DATA.EMAIl]: this.email,
             [config.HTTP_METHODS.SEND_OTP.DATA.PHONE]: t_phone.replace("+", ""),
-            [config.HTTP_METHODS.SEND_OTP.DATA.FNAME]: this.fname,
-            [config.HTTP_METHODS.SEND_OTP.DATA.CNAME]: this.company_name,
           },
         });
         message = resp.message;
