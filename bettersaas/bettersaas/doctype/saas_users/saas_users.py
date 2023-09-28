@@ -63,7 +63,7 @@ def verifyPhoneAndEmailDuplicacy(email, phone):
 
 
 @frappe.whitelist(allow_guest=True)
-def send_otp(email, phone):
+def send_otp(email, phone, fname, company_name):
     # generate random string
     doc = frappe.db.get_all(
         "OTP",
@@ -112,6 +112,14 @@ def send_otp(email, phone):
         {
         "name": "signup_otp",
         "value": new_otp_doc.otp
+        },    
+        {
+        "name": "name",
+        "value": fname
+        },
+        {
+        "name": "doc",
+        "value": company_name
         }
     ]
     })
