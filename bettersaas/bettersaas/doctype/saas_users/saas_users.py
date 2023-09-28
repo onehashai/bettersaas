@@ -63,7 +63,7 @@ def verifyPhoneAndEmailDuplicacy(email, phone):
 
 
 @frappe.whitelist(allow_guest=True)
-def send_otp(email, phone, fname, company_name):
+def send_otp(email, phone, fname, company_name, lname):
     # generate random string
     doc = frappe.db.get_all(
         "OTP",
@@ -115,7 +115,7 @@ def send_otp(email, phone, fname, company_name):
         },    
         {
         "name": "name",
-        "value": fname
+        "value": fname+' '+lname
         },
         {
         "name": "doc",
@@ -140,6 +140,7 @@ def send_otp(email, phone, fname, company_name):
         lead_doc.mobile_no = phone
         lead_doc.company_name = company_name
         lead_doc.first_name = fname
+        lead_doc.last_name = lname
         lead_doc.product = "OneHash CRM"
         lead_doc.save(ignore_permissions=True)
         
