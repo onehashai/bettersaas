@@ -57,6 +57,7 @@ const config = {
         EMAIl: "email",
         FNAME: "fname",
         CNAME: "company_name",
+        LNAME: "lname",
       },
     },
     VERIFY_OTP: {
