@@ -55,6 +55,8 @@ const config = {
       DATA: {
         PHONE: "phone",
         EMAIl: "email",
+        FNAME: "fname",
+        CNAME: "company_name",
       },
     },
     VERIFY_OTP: {
