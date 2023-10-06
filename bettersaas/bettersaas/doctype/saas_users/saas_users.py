@@ -99,10 +99,10 @@ def send_otp(email, phone, fname, company_name, lname):
     ws=frappe.get_doc('Wati Settings')
     token=ws.access_token
     api_endpoint=ws.api_endpoint
-    if len(str(phone))==10:
-        mno='91'+str(phone)
-    else:
-        mno=str(phone)
+    # if len(str(phone))==10:
+    #     mno='91'+str(phone)
+    # else:
+    mno=str(phone)
     url = f"{api_endpoint}/api/v2/sendTemplateMessage?whatsappNumber={mno}"
 
     payload = json.dumps({
