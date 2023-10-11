@@ -38,7 +38,7 @@
   {
    "fieldname": "phone",
    "fieldtype": "Data",
-   "label": "phone"
+   "label": "phone",
    "options": "Phone"
   },
   {
