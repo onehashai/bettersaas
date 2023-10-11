@@ -39,6 +39,7 @@
    "fieldname": "phone",
    "fieldtype": "Data",
    "label": "phone"
+   "options": "Phone"
   },
   {
    "fieldname": "column_break_7cbup",
