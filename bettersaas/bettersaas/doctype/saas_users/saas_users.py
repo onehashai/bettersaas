@@ -149,6 +149,7 @@ def send_otp(email, phone, fname, company_name, lname):
         "doctype":"Lead",
         "email_id": email,
         "mobile_no": phone,
+        "company_name": company_name,
         "status": "Lead",
         })
     
