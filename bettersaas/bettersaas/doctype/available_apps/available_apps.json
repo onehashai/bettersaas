@@ -8,6 +8,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "enabled",
   "app_name",
   "icon",
   "description"
@@ -27,11 +28,17 @@
    "fieldname": "app_name",
    "fieldtype": "Data",
    "label": "App Name"
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-07-02 15:31:42.156672",
+ "modified": "2023-10-26 15:46:21.145607",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "Available Apps",
