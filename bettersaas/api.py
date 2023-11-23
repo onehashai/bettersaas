@@ -14,7 +14,7 @@ from werkzeug.exceptions import ExpectationFailed
 
 @frappe.whitelist()
 def update_user_saas_sites():
-    admin_site_name = "app.onehash.store"
+    admin_site_name = "app.onehash.is"
     frappe.destroy()
     frappe.init(site=admin_site_name)
     frappe.connect()

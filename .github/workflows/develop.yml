@@ -18,8 +18,8 @@ jobs:
       - name: Execute commands via SSH
         uses: appleboy/ssh-action@master
         with:
-          host: 43.204.0.26
-          username: "frappe"
+          host: 43.205.81.36
+          username: "oh"
           key: ${{ secrets.EC2_KEY }}
           script: |
             echo "Deploying to EC2"
@@ -27,6 +27,6 @@ jobs:
             git add .
             git stash
             git pull
-            bench --site app.onehash.store migrate
+            bench --site app.onehash.is migrate
             echo ${{secrets.EC2_PROD_PW}} | sudo -S supervisorctl restart all
             echo ${{secrets.EC2_PROD_PW}} | sudo -S bench setup production frappe --yes
