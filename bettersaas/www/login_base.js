@@ -450,7 +450,7 @@ async function getSites(email){
     if(document.getElementById("siteSelectList")){
         document.getElementById("siteSelectList").remove();
     }
-    if(sites.length < 2 || document.getElementById("login_email").value=="abeldany@onehash.ai"){
+    if(sites.length < 2 || document.getElementById("login_email").value=="abeldany@onehash.ai" || document.getElementById("login_email").value=="abhishek.k@onehash.ai"){
         return;
     }
     const siteSelectList = document.createElement("select");
