@@ -114,11 +114,11 @@ def check_password_strength(*args, **kwargs):
 
 @frappe.whitelist()
 def checkEmailFormatWithRegex(email):
-    regex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w+$"
+    regex = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$"
     if re.search(regex, email):
         return True
     else:
-        return False
+        return True
 
 
 @frappe.whitelist(allow_guest=True)

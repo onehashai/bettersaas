@@ -196,6 +196,9 @@
                 <input
                   id="site-name"
                   type="text"
+                  onpaste="return false;"
+                  oninput="restrictInput(event)"
+                  autocomplete="off"
                   pattern="^[a-zA-Z0-9 ]+$"
                   placeholder="Site name"
                   v-bind="field"
@@ -427,6 +430,16 @@
 </div>
 {% endblock %} {% block script %}
 <script>
+  function restrictInput(event) {
+            const inputField = event.target;
+            const currentValue = inputField.value;
+
+            // Remove special characters and spaces
+            const sanitizedValue = currentValue.replace(/[^a-zA-Z0-9]/g, '');
+
+            // Update the input field with the sanitized value
+            inputField.value = sanitizedValue;
+        }
                    document.addEventListener("contextmenu", function (event) {
                      event.preventDefault();
                    });

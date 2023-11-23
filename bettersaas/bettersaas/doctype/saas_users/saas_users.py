@@ -63,7 +63,7 @@ def verifyPhoneAndEmailDuplicacy(email, phone):
 
 
 @frappe.whitelist(allow_guest=True)
-def send_otp(email, phone, fname, company_name):
+def send_otp(email, phone, fname, company_name, lname):
     # generate random string
     doc = frappe.db.get_all(
         "OTP",
@@ -99,10 +99,10 @@ def send_otp(email, phone, fname, company_name):
     ws=frappe.get_doc('Wati Settings')
     token=ws.access_token
     api_endpoint=ws.api_endpoint
-    if len(str(phone))==10:
-        mno='91'+str(phone)
-    else:
-        mno=str(phone)
+    # if len(str(phone))==10:
+    #     mno='91'+str(phone)
+    # else:
+    mno=str(phone)
     url = f"{api_endpoint}/api/v2/sendTemplateMessage?whatsappNumber={mno}"
 
     payload = json.dumps({
@@ -115,7 +115,7 @@ def send_otp(email, phone, fname, company_name):
         },    
         {
         "name": "name",
-        "value": fname
+        "value": fname+' '+lname
         },
         {
         "name": "doc",
@@ -140,6 +140,8 @@ def send_otp(email, phone, fname, company_name):
         lead_doc.mobile_no = phone
         lead_doc.company_name = company_name
         lead_doc.first_name = fname
+        lead_doc.last_name = lname
+        lead_doc.product = "OneHash CRM"
         lead_doc.save(ignore_permissions=True)
         
     else:
@@ -147,6 +149,7 @@ def send_otp(email, phone, fname, company_name):
         "doctype":"Lead",
         "email_id": email,
         "mobile_no": phone,
+        "company_name": company_name,
         "status": "Lead",
         })
     

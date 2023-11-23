@@ -38,7 +38,8 @@
   {
    "fieldname": "phone",
    "fieldtype": "Data",
-   "label": "phone"
+   "label": "phone",
+   "options": "Phone"
   },
   {
    "fieldname": "column_break_7cbup",
@@ -53,7 +54,7 @@
    "link_fieldname": "saas_user"
   }
  ],
- "modified": "2023-07-27 17:08:23.096010",
+ "modified": "2023-10-15 21:05:50.132638",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS users",
