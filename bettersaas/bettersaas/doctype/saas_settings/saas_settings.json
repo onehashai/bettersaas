@@ -31,6 +31,11 @@
   "warning_days",
   "intermittent_warning_day",
   "deletion_warning_template",
+  "delete_stock_sites_section",
+  "threshold_days",
+  "delete_limit",
+  "path",
+  "delete_archived_sites",
   "stock_site_configuration_tab",
   "ssc_enabled",
   "run_at_interval1",
@@ -194,12 +199,39 @@
    "fieldtype": "Select",
    "label": "Run At Interval ",
    "options": "\n02\n04\n06\n08\n10\n12\n14\n16\n18\n20\n22\n24"
+  },
+  {
+   "fieldname": "delete_stock_sites_section",
+   "fieldtype": "Section Break",
+   "label": "Delete Stock Sites"
+  },
+  {
+   "fieldname": "threshold_days",
+   "fieldtype": "Int",
+   "label": "Threshold Days"
+  },
+  {
+   "fieldname": "delete_limit",
+   "fieldtype": "Int",
+   "label": "Delete Limit"
+  },
+  {
+   "default": "/home/oh/frappe-bench/archived/sites/",
+   "fieldname": "path",
+   "fieldtype": "Data",
+   "label": "Path",
+   "read_only": 1
+  },
+  {
+   "fieldname": "delete_archived_sites",
+   "fieldtype": "Button",
+   "label": "Delete Archived Sites"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-07-27 17:19:24.691817",
+ "modified": "2023-11-28 15:33:58.358023",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS settings",

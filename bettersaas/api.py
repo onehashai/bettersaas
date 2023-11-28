@@ -10,6 +10,50 @@ from frappe.exceptions import DoesNotExistError
 from frappe.utils import today, nowtime, add_days
 from frappe.model.document import Document
 from werkzeug.exceptions import ExpectationFailed
+import os
+import datetime
+import shutil
+
+@frappe.whitelist()
+def get_days_since_creation(folder_path):
+    try:
+        creation_time = os.path.getctime(folder_path)
+        creation_date = datetime.datetime.fromtimestamp(creation_time)
+        days_since_creation = (datetime.datetime.now() - creation_date).days
+        return days_since_creation
+    except Exception as e:
+        return f"An error occurred: {e}"
+
+@frappe.whitelist()
+def remove_folders_created_more_than_x_days(directory_path, threshold_days, folders_to_delete_limit):
+    folders_to_delete_count = 0
+    
+    try:
+        for folder_name in os.listdir(directory_path):
+            if folders_to_delete_count >= folders_to_delete_limit:
+                break
+            
+            folder_path = os.path.join(directory_path, folder_name)
+            
+            if os.path.isdir(folder_path):
+                days_since_creation = get_days_since_creation(folder_path)
+                
+                if isinstance(days_since_creation, int) and days_since_creation > threshold_days:
+                    shutil.rmtree(folder_path)
+                    folders_to_delete_count += 1
+    except Exception as e:
+        frappe.msgprint(f"An error occurred: {e}")
+
+@frappe.whitelist()
+def delarchived():
+    ss=frappe.get_doc('SaaS settings')
+
+    directory_path = ss.path
+    
+    threshold_days = ss.threshold_days
+    folders_to_delete_limit =ss.delete_limit
+    frappe.msgprint(str(folders_to_delete_limit)+' Archived Sites Deleted Older than '+str(threshold_days)+' Days.')
+    remove_folders_created_more_than_x_days(directory_path, threshold_days, folders_to_delete_limit)
 
 
 @frappe.whitelist()

@@ -210,9 +210,17 @@ def setupSite(*args, **kwargs):
             target_site.subdomain + "." + frappe.conf.domain
         )
     )
+    import re
+
+    def escape_dollar_sign(input_string):
+        return re.sub(r'\$', r'\\$', input_string) if '$' in input_string else input_string
+
+    pass_value = str(admin_password)
+    escaped_pass = escape_dollar_sign(pass_value)
+
     commands.append(
         "bench --site {} set-admin-password {}".format(
-            target_site.subdomain + "." + frappe.conf.domain, admin_password
+            target_site.subdomain + "." + frappe.conf.domain, escaped_pass
         )
     )
     commands.append(

@@ -129,6 +129,7 @@ scheduler_events = {
     ],
     "daily_long": [
         "bettersaas.api.update_user_saas_sites"
+        # "bettersaas.api.delarchived",
         # "bettersaas.bettersaas.doctype.saas_sites.saas_sites.update_user_to_main_app",
     ],
     # "cron": {
