@@ -1,5 +1,5 @@
 context("Signup", () => {
-  // open /signup
+  // open /signup 
   // check if the page is signup
   it("greets with signup screen", () => {
     cy.visit("/signup");
