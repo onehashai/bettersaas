@@ -299,7 +299,7 @@ window.Vue.createApp({
           this.checkSiteCreatedPoll();
         }, config.SITE_CREATION_POLL_TIME);
       }
-    },
+    }, 
     async sendOtp() {
       if (!this.isEmailRegex(this.email)) {
         return;
