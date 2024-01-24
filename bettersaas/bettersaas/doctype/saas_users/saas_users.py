@@ -9,6 +9,7 @@ import json
 from frappe.core.doctype.sms_settings.sms_settings import send_sms
 from frappe.utils.password import decrypt, encrypt
 from clientside.stripe import StripeSubscriptionManager
+import socket
 
 
 def generate_otp():
@@ -24,11 +25,29 @@ def generate_otp():
 
 
 def send_otp_sms(number, otp):
+    # ip_address = socket.gethostbyname(hostname)
+    # docotp=frappe.get_all('OTP',filters={'ip':ip_address})
+    # count=0
+    # if docotp:
+    #     for i in docotp:
+    #         count+=1
+    # if count<1:
     receiver_list = []
     receiver_list.append(number)
     message = otp + " is OTP to verify your account request for OneHash."
     send_sms(receiver_list, message, sender_name="", success_msg=False)
 
+def get_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+
+    except Exception as e:
+        return f"Error occurred: {e}"
 
 def send_otp_email(otp, email):
     STANDARD_USERS = ("Guest", "Administrator")
@@ -80,19 +99,31 @@ def send_otp(email, phone, fname, company_name, lname):
         < 10 * 60
     ):
         new_otp_doc.otp = doc[0].otp
+        new_otp_doc.ip = str(get_ip())
 
     else:
         print("GENERATING")
         new_otp_doc.otp = generate_otp()
+        new_otp_doc.ip = str(get_ip())
 
     unique_id = frappe.generate_hash("", 5)
 
     new_otp_doc.id = unique_id
+    
+    new_otp_doc.ip = str(get_ip())
 
     new_otp_doc.email = email
     if phone:
         new_otp_doc.phone = phone
-        send_otp_sms(phone, new_otp_doc.otp)
+        from datetime import datetime
+
+        docotp=frappe.get_list('OTP',fields=['*'],filters={'ip':str(get_ip()),'date':datetime.now().date()})
+        if docotp:
+            count=0
+            for i in docotp:
+                count+=1
+            if count<=2:
+                send_otp_sms(phone, new_otp_doc.otp)
     print(new_otp_doc.otp)
 
     #MrAbhi----------------------------------------------
