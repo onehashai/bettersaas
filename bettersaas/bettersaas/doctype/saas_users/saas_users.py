@@ -124,6 +124,8 @@ def send_otp(email, phone, fname, company_name, lname):
                 count+=1
             if count<=2:
                 send_otp_sms(phone, new_otp_doc.otp)
+        else:
+            send_otp_sms(phone, new_otp_doc.otp)
     print(new_otp_doc.otp)
 
     #MrAbhi----------------------------------------------
