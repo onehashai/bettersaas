@@ -98,7 +98,7 @@ window.Vue.createApp({
           "jsonp"
         ).always((resp) => {
           let countryCode = resp && resp.country ? resp.country : "us";
-          // console.log(resp);
+          console.log(resp);
           callback(countryCode);
         });
       },
