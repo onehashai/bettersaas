@@ -1,4 +1,5 @@
 {
+ "_comments": "[{\"comment\": \"Action Failed<br><br>Document Links Row #1: Invalid doctype or fieldname.<br>('DocType', 'SaaS Us...\", \"by\": \"Administrator\", \"name\": \"i35rs6cheb\"}]",
  "actions": [],
  "allow_rename": 1,
  "creation": "2023-06-13 21:43:51.197517",
@@ -33,12 +34,12 @@
   {
    "fieldname": "site",
    "fieldtype": "Data",
-   "label": "Linked to site"
+   "label": "Linked To Site"
   },
   {
    "fieldname": "phone",
    "fieldtype": "Data",
-   "label": "phone",
+   "label": "Phone",
    "options": "Phone"
   },
   {
@@ -54,10 +55,10 @@
    "link_fieldname": "saas_user"
   }
  ],
- "modified": "2023-10-15 21:05:50.132638",
+ "modified": "2024-11-18 11:28:59.385274",
  "modified_by": "Administrator",
  "module": "Bettersaas",
- "name": "SaaS users",
+ "name": "SaaS Users",
  "owner": "Administrator",
  "permissions": [
   {

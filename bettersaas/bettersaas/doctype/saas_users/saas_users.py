@@ -8,7 +8,7 @@ import requests
 import json
 from frappe.core.doctype.sms_settings.sms_settings import send_sms
 from frappe.utils.password import decrypt, encrypt
-from clientside.stripe import StripeSubscriptionManager
+# from clientside.stripe import StripeSubscriptionManager
 import socket
 
 
@@ -269,8 +269,9 @@ def check_user_name_and_password_for_a_site(site_name, email, password):
     # check for active subscription
     #  print(frappe.conf)
     country = frappe.get_site_config(site_path=site.site_name)["country"]
-    stripe_subscription_manager = StripeSubscriptionManager(country=country)
-    has_sub = stripe_subscription_manager.has_valid_site_subscription(site.cus_id)
+    # stripe_subscription_manager = StripeSubscriptionManager(country=country)
+    # has_sub = stripe_subscription_manager.has_valid_site_subscription(site.cus_id)
+    has_sub = True
     # find user and check if has role of Administator
     hasRoleAdmin = frappe.db.exists(
         "Has Role", {"parent": email, "role": "Administrator"}
@@ -279,16 +280,6 @@ def check_user_name_and_password_for_a_site(site_name, email, password):
     if not has_sub:
         return "NO_SUBSCRIPTION"
     return "OK"
-
-@frappe.whitelist()
-def get_users_list(site_name):
-	site_password = get_decrypted_password("SaaS sites", site_name, "encrypted_password")
-	domain = site_name
-	from better_saas.better_saas.doctype.saas_user.frappeclient import FrappeClient
-	conn = FrappeClient("https://"+domain, "Administrator", site_password)
-	total_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name', 'enabled', 'last_active','user_type'],limit_page_length=10000)
-	active_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name','last_active','user_type'], filters = {'enabled':'1'},limit_page_length=10000)
-	return {"total_users":total_users, "active_users":active_users}
 
 @frappe.whitelist()
 def get_all_users_of_a_site():
@@ -339,7 +330,7 @@ def create_lead(saas_user):
         lead.source = "Walk In"
         lead.save(ignore_permissions=True)
 #---------------------------------------------------------------------------------------------------
-class SaaSusers(Document):
+class SaaSUsers(Document):
     pass
 
 

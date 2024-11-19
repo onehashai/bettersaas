@@ -16,27 +16,27 @@
   {
    "fieldname": "phone",
    "fieldtype": "Data",
-   "label": "phone"
+   "label": "Phone"
   },
   {
    "fieldname": "email",
    "fieldtype": "Data",
-   "label": "email"
+   "label": "Email"
   },
   {
    "fieldname": "otp",
    "fieldtype": "Data",
-   "label": "otp"
+   "label": "Otp"
   },
   {
    "fieldname": "id",
    "fieldtype": "Data",
-   "label": "id"
+   "label": "Id"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-21 16:39:04.196835",
+ "modified": "2024-11-18 11:27:59.565309",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "OTP",

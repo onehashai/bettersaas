@@ -10,22 +10,16 @@
   "domain",
   "server_configuration_tab",
   "restricted_subdomains",
-  "db_password",
   "column_break_idl9z",
-  "root_password",
   "saas_site_defaults_tab",
-  "default_user_limit",
   "default_email_limit",
-  "default_space_limit",
+  "default_storage_limit",
+  "default_site_expiry_days",
   "column_break_ngw1o",
-  "apps_to_install",
-  "expiry_days",
-  "server_user_name",
   "backup_settings_tab",
   "backup_limit",
   "site_delete_configuration_tab",
-  "enabled",
-  "run_at_interval",
+  "site_delete_conf_enabled",
   "inactive_for_days",
   "column_break_fg8ow",
   "warning_days",
@@ -37,13 +31,11 @@
   "path",
   "delete_archived_sites",
   "stock_site_configuration_tab",
-  "ssc_enabled",
-  "run_at_interval1",
-  "stock_site_count"
+  "stock_site_conf_enabled",
+  "stock_sites_count"
  ],
  "fields": [
   {
-   "description": "Enter Domain Name",
    "fieldname": "domain",
    "fieldtype": "Data",
    "label": "Domain"
@@ -54,58 +46,10 @@
    "label": "Restricted Subdomains"
   },
   {
-   "description": "Enter MariaDB Database Password",
-   "fieldname": "db_password",
-   "fieldtype": "Password",
-   "label": "Database Password"
-  },
-  {
-   "description": "Enter Password of Server Root User",
-   "fieldname": "root_password",
-   "fieldtype": "Password",
-   "label": "Server Root Password"
-  },
-  {
-   "default": "5",
-   "description": "Limited to number of Users you Entered",
-   "fieldname": "default_user_limit",
-   "fieldtype": "Data",
-   "hidden": 1,
-   "label": "Default User Limit"
-  },
-  {
    "description": "Limited to number of Emails",
    "fieldname": "default_email_limit",
    "fieldtype": "Data",
    "label": "Default Email Limit"
-  },
-  {
-   "fieldname": "stock_site_count",
-   "fieldtype": "Data",
-   "label": "Stock sites count"
-  },
-  {
-   "fieldname": "apps_to_install",
-   "fieldtype": "Table MultiSelect",
-   "label": "Apps to install on Client",
-   "options": "Available Apps CT"
-  },
-  {
-   "fieldname": "expiry_days",
-   "fieldtype": "Data",
-   "label": "Default Expiry Days"
-  },
-  {
-   "description": "Default Storage Limit is in GB",
-   "fieldname": "default_space_limit",
-   "fieldtype": "Data",
-   "label": "Default Storage Limit"
-  },
-  {
-   "default": "frappe",
-   "fieldname": "server_user_name",
-   "fieldtype": "Data",
-   "label": "Server User Name"
   },
   {
    "fieldname": "saas_site_defaults_tab",
@@ -141,23 +85,10 @@
    "label": "Site Delete Configuration"
   },
   {
-   "default": "0",
-   "fieldname": "enabled",
-   "fieldtype": "Check",
-   "label": "Enabled"
-  },
-  {
-   "description": "The deletion task will run at this hours interval",
-   "fieldname": "run_at_interval",
-   "fieldtype": "Select",
-   "label": "Run At Interval",
-   "options": "\n02\n04\n06\n08\n10\n12\n14\n16\n18\n20\n22\n24"
-  },
-  {
    "description": "Indicates the number of inactive days to be considered for site deletion",
    "fieldname": "inactive_for_days",
    "fieldtype": "Int",
-   "label": "Inactive for Days"
+   "label": "Inactive For Days"
   },
   {
    "fieldname": "column_break_fg8ow",
@@ -188,22 +119,9 @@
    "label": "Stock Site Configuration"
   },
   {
-   "default": "0",
-   "fieldname": "ssc_enabled",
-   "fieldtype": "Check",
-   "label": "Enabled"
-  },
-  {
-   "description": "The deletion task will run at this hours interval",
-   "fieldname": "run_at_interval1",
-   "fieldtype": "Select",
-   "label": "Run At Interval ",
-   "options": "\n02\n04\n06\n08\n10\n12\n14\n16\n18\n20\n22\n24"
-  },
-  {
    "fieldname": "delete_stock_sites_section",
    "fieldtype": "Section Break",
-   "label": "Delete Stock Sites"
+   "label": "Delete Archived Sites"
   },
   {
    "fieldname": "threshold_days",
@@ -216,25 +134,52 @@
    "label": "Delete Limit"
   },
   {
-   "default": "/home/oh/frappe-bench/archived/sites/",
+   "default": "/home/rishabh/OneHash/onehash-crm-v15/frappe-bench/archived/sites/",
    "fieldname": "path",
    "fieldtype": "Data",
-   "label": "Path",
-   "read_only": 1
+   "label": "Path"
   },
   {
    "fieldname": "delete_archived_sites",
    "fieldtype": "Button",
-   "label": "Delete Archived Sites"
+   "label": "Delete"
+  },
+  {
+   "description": "Default Storage Limit is in GB",
+   "fieldname": "default_storage_limit",
+   "fieldtype": "Data",
+   "label": "Default Storage Limit"
+  },
+  {
+   "fieldname": "default_site_expiry_days",
+   "fieldtype": "Data",
+   "label": "Default Site Expiry Days"
+  },
+  {
+   "default": "0",
+   "fieldname": "site_delete_conf_enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "default": "0",
+   "fieldname": "stock_site_conf_enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "stock_sites_count",
+   "fieldtype": "Data",
+   "label": "Stock Sites Count"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-11-28 15:33:58.358023",
+ "modified": "2024-11-18 16:01:47.235134",
  "modified_by": "Administrator",
  "module": "Bettersaas",
- "name": "SaaS settings",
+ "name": "SaaS Settings",
  "owner": "Administrator",
  "permissions": [
   {

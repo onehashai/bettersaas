@@ -117,34 +117,21 @@ app_license = "MIT"
 
 
 scheduler_events = {
-    "monthly": [
-        "bettersaas.api.reset_email_limits",
-    ],
-    "weekly": [
-        "bettersaas.bettersaas.doctype.saas_site_backups.saas_site_backups.generateOneHashBackups"
-    ],
+    # "monthly": [
+    # ],
+    # "weekly": [
+    # ],
     "hourly": [
         "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.check_stock_sites",
-        "bettersaas.api.check_stock_sites",
     ],
-    "daily_long": [
-        "bettersaas.api.update_user_saas_sites"
-        # "bettersaas.api.delarchived",
-        # "bettersaas.bettersaas.doctype.saas_sites.saas_sites.update_user_to_main_app",
-    ],
-    # "cron": {
-    # "1-59 * * * *":[
-    # 			"bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refreshStockSites"
-    # 	]
-    # }
-    # 'all': [
-    #     'bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.schedule_refresh_stock_sites'
-    # ]
-    # "cron":{
-    #     "*/1 * * * *": [
-    #     "bettersaas.api.delete_free_sites"
-    #     ],
-    #  }
+    # "daily_long": [
+    #     "bettersaas.api.update_user_saas_sites"
+    # ],
+    "cron":{
+        "0 12 * * *": [
+        "bettersaas.api.delete_free_sites"
+        ],
+    }
 }
 
 # Testing

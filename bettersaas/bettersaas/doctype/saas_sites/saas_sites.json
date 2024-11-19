@@ -9,17 +9,18 @@
  "engine": "InnoDB",
  "field_order": [
   "site_name",
-  "encrypted_password",
+  "country",
   "linked_domains",
   "column_break_bivjq",
   "saas_user",
   "linked_email",
-  "is_deleted",
-  "do_backup",
+  "encrypted_password",
+  "site_deleted",
+  "create_backup",
   "users_tab",
-  "number_of_active_users",
+  "enabled_users",
   "column_break_splpb",
-  "number_of_users",
+  "total_users",
   "user_details_section",
   "user_details",
   "limits_tab",
@@ -32,90 +33,59 @@
   "current_period_start",
   "current_period_end",
   "subscription_status",
-  "column_break_oxvhq",
+  "current_plan",
   "days_left_in_current_period",
+  "column_break_oxvhq",
   "subscription_id",
-  "plan",
-  "payment_details_tab",
-  "cus_id",
-  "site_user"
+  "customer_id"
  ],
  "fields": [
   {
    "fieldname": "site_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Site name",
+   "label": "Site Name",
    "unique": 1
   },
   {
    "fieldname": "encrypted_password",
    "fieldtype": "Data",
-   "label": "Encrypted password"
+   "label": "Encrypted Password"
   },
   {
    "fieldname": "linked_email",
    "fieldtype": "Data",
-   "label": "Linked email"
+   "label": "Linked Email"
   },
   {
    "fieldname": "user_limit",
    "fieldtype": "Read Only",
    "is_virtual": 1,
-   "label": "User limit"
+   "label": "User Limit"
   },
   {
    "fieldname": "email_limit",
    "fieldtype": "Read Only",
    "is_virtual": 1,
-   "label": "Email limit"
-  },
-  {
-   "default": "1",
-   "fieldname": "do_backup",
-   "fieldtype": "Check",
-   "label": "Generate backups of this site?"
+   "label": "Email Limit"
   },
   {
    "fieldname": "space_limit",
    "fieldtype": "Read Only",
    "is_virtual": 1,
-   "label": "Space limit"
+   "label": "Space Limit"
   },
   {
    "fieldname": "linked_domains",
    "fieldtype": "Text",
    "hidden": 1,
    "is_virtual": 1,
-   "label": "Custom domains"
+   "label": "Custom Domains"
   },
   {
    "fieldname": "limits_tab",
    "fieldtype": "Tab Break",
    "label": "Limits"
-  },
-  {
-   "default": "no",
-   "fieldname": "is_deleted",
-   "fieldtype": "Data",
-   "label": "Is this site deleted because of inactivity?"
-  },
-  {
-   "fieldname": "payment_details_tab",
-   "fieldtype": "Tab Break",
-   "label": "Payment details"
-  },
-  {
-   "description": "Each site is treated as a customer on stripe",
-   "fieldname": "cus_id",
-   "fieldtype": "Data",
-   "label": "Stripe customer id"
-  },
-  {
-   "fieldname": "plan",
-   "fieldtype": "Read Only",
-   "is_virtual": 1,
-   "label": "Current Plan"
   },
   {
    "fieldname": "user_details",
@@ -127,16 +97,6 @@
    "fieldname": "user_details_section",
    "fieldtype": "Section Break",
    "label": "User Details"
-  },
-  {
-   "fieldname": "number_of_users",
-   "fieldtype": "Int",
-   "label": "Total users"
-  },
-  {
-   "fieldname": "number_of_active_users",
-   "fieldtype": "Int",
-   "label": "Number of enabled users"
   },
   {
    "fieldname": "subscription_tab",
@@ -151,13 +111,13 @@
    "fieldname": "current_period_start",
    "fieldtype": "Date",
    "is_virtual": 1,
-   "label": "Current period start"
+   "label": "Current Period Start"
   },
   {
    "fieldname": "current_period_end",
    "fieldtype": "Data",
    "is_virtual": 1,
-   "label": "Current period end"
+   "label": "Current Period End"
   },
   {
    "fieldname": "column_break_oxvhq",
@@ -173,7 +133,7 @@
    "fieldname": "subscription_id",
    "fieldtype": "Data",
    "is_virtual": 1,
-   "label": "Subscription id"
+   "label": "Subscription Id"
   },
   {
    "fieldname": "users_tab",
@@ -192,37 +152,72 @@
    "fieldname": "subscription_status",
    "fieldtype": "Data",
    "is_virtual": 1,
-   "label": "Subscription status"
-  },
-  {
-   "fieldname": "saas_user",
-   "fieldtype": "Data",
-   "label": "SaaS user"
+   "label": "Subscription Status"
   },
   {
    "description": "Changes might take some time to reflect on the customer's site",
    "fieldname": "update_limits",
    "fieldtype": "Button",
-   "label": "Update limits"
+   "label": "Update Limits"
   },
   {
-   "fieldname": "site_user",
+   "fieldname": "saas_user",
    "fieldtype": "Link",
-   "label": "Site User",
-   "options": "SaaS users"
+   "label": "SaaS User",
+   "options": "SaaS Users",
+   "search_index": 1
+  },
+  {
+   "default": "no",
+   "fieldname": "site_deleted",
+   "fieldtype": "Data",
+   "label": "Site Deleted"
+  },
+  {
+   "default": "1",
+   "fieldname": "create_backup",
+   "fieldtype": "Check",
+   "label": "Create Backup?"
+  },
+  {
+   "fieldname": "enabled_users",
+   "fieldtype": "Int",
+   "label": "Enabled Users"
+  },
+  {
+   "fieldname": "total_users",
+   "fieldtype": "Int",
+   "label": "Total Users"
+  },
+  {
+   "fieldname": "current_plan",
+   "fieldtype": "Read Only",
+   "is_virtual": 1,
+   "label": "Current Plan"
+  },
+  {
+   "description": "Each site is treated as a customer on stripe",
+   "fieldname": "customer_id",
+   "fieldtype": "Data",
+   "label": "Customer Id"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [
   {
-   "link_doctype": "SaaS users",
+   "link_doctype": "SaaS Users",
    "link_fieldname": "site"
   }
  ],
- "modified": "2023-07-27 16:23:28.297298",
+ "modified": "2024-11-18 13:10:53.268437",
  "modified_by": "Administrator",
  "module": "Bettersaas",
- "name": "SaaS sites",
+ "name": "SaaS Sites",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [

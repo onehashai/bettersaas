@@ -45,32 +45,30 @@ def remove_folders_created_more_than_x_days(directory_path, threshold_days, fold
         frappe.msgprint(f"An error occurred: {e}")
 
 @frappe.whitelist()
-def delarchived():
-    ss=frappe.get_doc('SaaS settings')
-
-    directory_path = ss.path
-    
-    threshold_days = ss.threshold_days
-    folders_to_delete_limit =ss.delete_limit
+def delete_archived_sites():
+    conf = frappe.get_doc('SaaS Settings')
+    directory_path = conf.path
+    threshold_days = conf.threshold_days
+    folders_to_delete_limit = conf.delete_limit
     frappe.msgprint(str(folders_to_delete_limit)+' Archived Sites Deleted Older than '+str(threshold_days)+' Days.')
     remove_folders_created_more_than_x_days(directory_path, threshold_days, folders_to_delete_limit)
 
 
 @frappe.whitelist()
 def update_user_saas_sites():
-    admin_site_name = "app.onehash.is"
+    admin_site_name = frappe.conf.admin_url
     frappe.destroy()
     frappe.init(site=admin_site_name)
     frappe.connect()
     try:
-        all_sites = frappe.get_all("SaaS sites")
+        all_sites = frappe.get_all("SaaS Sites")
         for site in all_sites:
             current_site_name = site.name
             frappe.init(site=current_site_name)
             frappe.connect()
             enabled_system_users = frappe.get_all("User", fields=['name', 'email', 'last_active', 'user_type', 'enabled', 'first_name', 'last_name', 'creation'])
 
-            site_doc = frappe.get_doc('SaaS sites', current_site_name)
+            site_doc = frappe.get_doc('SaaS Sites', current_site_name)
             site_doc.user_details = []
             enabled_users_count = 0
             for user in enabled_system_users:
@@ -101,24 +99,6 @@ def update_user_saas_sites():
     finally:
         frappe.destroy()
 
-
-@frappe.whitelist()
-def check_stock_sites():
-    config = frappe.get_doc("SaaS settings")
-    if not config.enabled:
-        return
-    if not config.run_at_interval:
-        return
-    curtime = nowtime()
-    if curtime[:2] == "00":
-        curtime = "24" + curtime[2:]
-
-    if int(curtime[:2]) % int(config.run_at_interval) != 0:
-        return
-
-    delete_free_sites()
-
-
 @frappe.whitelist()
 def get_bench_details_for_cloudwatch():
     """
@@ -134,12 +114,12 @@ def get_bench_details_for_cloudwatch():
 
 @frappe.whitelist()
 def reset_email_limits():
-    site_defaults = frappe.get_doc("SaaS settings")
-    sites = frappe.get_all("SaaS sites", fields=["site_name"])
-    total = frappe.db.count("SaaS sites")
+    site_defaults = frappe.get_doc("SaaS Settings")
+    sites = frappe.get_all("SaaS Sites", fields=["site_name"])
+    total = frappe.db.count("SaaS Sites")
     for i in range(0, total, 20):
         sites = frappe.get_all(
-            "SaaS sites", fields=["site_name"], limit_start=i, limit_page_length=20
+            "SaaS Sites", fields=["site_name"], limit_start=i, limit_page_length=20
         )
         for site in sites:
             frappe.utils.execute_in_shell(
@@ -151,7 +131,7 @@ def reset_email_limits():
 
 @frappe.whitelist(allow_guest=True)
 def delete_free_sites():
-    sites = frappe.get_list("SaaS sites", fields=["site_name"])
+    sites = frappe.get_list("SaaS Sites", fields=["site_name"])
     to_be_deleted = []
     for site in sites:
         try:
@@ -208,7 +188,6 @@ def delete_free_sites():
                 )
                 send_email(email, content)
     return "success"
-
 
 @frappe.whitelist()
 def drop_site_from_server(site_name):
@@ -283,3 +262,21 @@ def delete_all_sites():
                 file, config.db_password
             )
         )
+
+def upgrade_site(plan_metadata,subdomain):
+    import subprocess as sp
+    config = frappe.get_doc("SaaS settings")
+    def set_config(key,value):
+        try:
+            sp.Popen("bench --site {} set-config {} {}".format(subdomain +"."+ config.domain,key,value),shell=True)
+            frappe.utils.execute_in_shell("bench --site {} set-config {} {}".format(subdomain +"."+ config.domain,key,value))
+        
+        except Exception as e:
+            print(e)
+    plan = plan_metadata["product_id"]
+    if plan in ["ONEHASH_PLUS","ONEHASH_STARTER","ONEHASH_PRO"]:
+        set_config("plan",plan)
+        if plan == "ONEHASH_PRO":
+            set_config("max_users", "1000000")
+        else:
+            set_config("max_users", plan_metadata["user_count"])

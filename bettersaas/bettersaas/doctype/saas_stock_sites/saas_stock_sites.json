@@ -21,20 +21,20 @@
    "default": "no",
    "fieldname": "is_used",
    "fieldtype": "Data",
-   "label": "Is used"
+   "label": "Is Used"
   },
   {
    "fieldname": "admin_password",
    "fieldtype": "Data",
-   "label": "Admin password"
+   "label": "Admin Password"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-14 09:34:13.498136",
+ "modified": "2024-11-18 11:27:29.869017",
  "modified_by": "Administrator",
  "module": "Bettersaas",
- "name": "SaaS stock sites",
+ "name": "SaaS Stock Sites",
  "owner": "Administrator",
  "permissions": [
   {

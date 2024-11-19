@@ -1,10 +1,10 @@
-frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
+frappe.ui.form.on("SaaS Sites", "after_save", function (frm) {
   frappe.call({
     method:
-      "bettersaas.bettersaas.doctype.saas_sites.saas_sites.updateLimitsOfSite",
+      "bettersaas.bettersaas.doctype.saas_sites.saas_sites.update_limits",
     args: {
       max_users: frm.doc.user_limit,
-      sitename: frm.doc.site_name,
+      site_name: frm.doc.site_name,
       max_space: frm.doc.space_limit,
       max_email: frm.doc.email_limit,
     },
@@ -16,10 +16,8 @@ frappe.ui.form.on("SaaS sites", "after_save", function (frm) {
 // set default values fetched from SaaS settings
 
 // frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_s3
-frappe.ui.form.on("SaaS sites", {
+frappe.ui.form.on("SaaS Sites", {
   refresh: async function (frm) {
-
-	  
     frm.add_custom_button(__('Refresh User Count'), function(){
 				frappe.call({
 					"method": "bettersaas.bettersaas.doctype.saas_sites.saas_sites.get_users_list",
@@ -57,7 +55,7 @@ frappe.ui.form.on("SaaS sites", {
     frm.add_custom_button(__('Delete Site'), function(){
           frappe.confirm(__("This action will delete this saas-site permanently. It cannot be undone. Are you sure ?"), function() {
             frappe.call({
-              "method": "bettersaas.bettersaas.doctype.saas_sites.saas_sites.delete_thesite",
+              "method": "bettersaas.bettersaas.doctype.saas_sites.saas_sites.delete_site",
               args: {
                 "site_name" : frm.doc.name
               },
@@ -87,7 +85,7 @@ frappe.ui.form.on("SaaS sites", {
 							callback: function (r) {
 								frm.set_value("site_status", "In-Active");
 								frm.save();
-								frappe.msgprint("Site Disabled Sucessfully !!!");
+								frappe.msgprint("Site Disabled Successfully !!!");
 							}
 						});
 					}, function(){
@@ -111,7 +109,7 @@ frappe.ui.form.on("SaaS sites", {
 							callback: function (r) {
 								frm.set_value("site_status", "Active");
 								frm.save();
-								frappe.msgprint("Site Enabled Sucessfully !!!");
+								frappe.msgprint("Site Enabled Successfully !!!");
 							}
 						});
 					}, function(){
@@ -138,11 +136,11 @@ frappe.ui.form.on("SaaS sites", {
 
     frm.add_custom_button(__("Create Backup"), async function () {
       const { resp } = $.ajax({
-        url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.take_backup_of_site",
+        url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.create_backup",
         type: "GET",
         dataType: "json",
         data: {
-          sitename: frm.doc.site_name,
+          site_name: frm.doc.site_name,
         },
       });
       console.log(resp);
@@ -151,7 +149,7 @@ frappe.ui.form.on("SaaS sites", {
   },
 });
 
-frappe.ui.form.on("SaaS sites", "update_limits", function (frm) {
+frappe.ui.form.on("SaaS Sites", "update_limits", function (frm) {
   // create a frappe ui dialog with email limit, space limit, user limit, expiry date
   frappe.prompt(
     [
@@ -182,13 +180,13 @@ frappe.ui.form.on("SaaS sites", "update_limits", function (frm) {
     function (values) {
       frappe.call({
         method:
-          "bettersaas.bettersaas.doctype.saas_sites.saas_sites.updateLimitsOfSite",
+          "bettersaas.bettersaas.doctype.saas_sites.saas_sites.update_limits",
         args: {
           max_users:
             values.user_limit == -1 || values.user_limit == "-1"
               ? 1000000
               : values.user_limit,
-          sitename: frm.doc.site_name,
+          site_name: frm.doc.site_name,
           max_space: values.space_limit,
           max_email: values.email_limit,
           expiry_date: values.expiry_date,

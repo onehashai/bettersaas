@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class SaaSsettings(Document):
+class SaaSSettings(Document):
 	pass

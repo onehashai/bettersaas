@@ -45,7 +45,7 @@ const config = {
     },
     CHECK_SITE_CREATED: {
       ENDPOINT:
-        "bettersaas.bettersaas.doctype.saas_sites.saas_sites.checkSiteCreated",
+        "bettersaas.bettersaas.doctype.saas_sites.saas_sites.check_site_created",
       SUCCESS_MESSAGE: "yes",
     },
     SEND_OTP: {
@@ -71,7 +71,7 @@ const config = {
       SUCCESS_MESSAGE: "SUCCESS",
     },
     CREATE_SITE: {
-      ENDPOINT: "bettersaas.bettersaas.doctype.saas_sites.saas_sites.setupSite",
+      ENDPOINT: "bettersaas.bettersaas.doctype.saas_sites.saas_sites.setup_site",
     },
   },
 };
