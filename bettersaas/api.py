@@ -89,11 +89,8 @@ def update_user_saas_sites():
 
             site_doc.number_of_users = len(enabled_system_users) - 2
             site_doc.number_of_active_users = enabled_users_count
-
             site_doc.save()
-
         frappe.db.commit()
-
     except Exception as e:
         frappe.log_error(str(e))
     finally:
@@ -109,7 +106,7 @@ def get_bench_details_for_cloudwatch():
     - Number of stock sites
     """
     details = {}
-    number_of_total_sites = frappe.db.count("SaaS sites")
+    number_of_total_sites = frappe.db.count("SaaS Sites")
 
 
 @frappe.whitelist()

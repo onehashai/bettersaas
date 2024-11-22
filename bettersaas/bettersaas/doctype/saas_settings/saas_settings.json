@@ -12,6 +12,7 @@
   "restricted_subdomains",
   "column_break_idl9z",
   "saas_site_defaults_tab",
+  "default_user_limit",
   "default_email_limit",
   "default_storage_limit",
   "default_site_expiry_days",
@@ -31,7 +32,6 @@
   "path",
   "delete_archived_sites",
   "stock_site_configuration_tab",
-  "stock_site_conf_enabled",
   "stock_sites_count"
  ],
  "fields": [
@@ -162,21 +162,20 @@
    "label": "Enabled"
   },
   {
-   "default": "0",
-   "fieldname": "stock_site_conf_enabled",
-   "fieldtype": "Check",
-   "label": "Enabled"
-  },
-  {
    "fieldname": "stock_sites_count",
    "fieldtype": "Data",
    "label": "Stock Sites Count"
+  },
+  {
+   "fieldname": "default_user_limit",
+   "fieldtype": "Data",
+   "label": "Default User Limit"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-11-18 16:01:47.235134",
+ "modified": "2024-11-21 15:42:46.605381",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Settings",

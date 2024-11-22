@@ -1,9 +1,9 @@
 frappe.listview_settings["SaaS Stock Sites"] = {
   onload(listview) {
     listview.page.set_secondary_action(
-      "Refresh sites",
+      "Restock",
       () => refresh(),
-      "octicon octicon-sync"
+      { icon: "refresh", size: "sm" }
     );
   },
 };

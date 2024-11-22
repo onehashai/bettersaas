@@ -9,23 +9,23 @@
  "engine": "InnoDB",
  "field_order": [
   "site_name",
-  "country",
-  "linked_domains",
-  "column_break_bivjq",
   "saas_user",
   "linked_email",
   "encrypted_password",
+  "custom_domains",
+  "column_break_bivjq",
+  "country",
   "site_deleted",
   "create_backup",
   "users_tab",
-  "enabled_users",
+  "active_users",
   "column_break_splpb",
   "total_users",
   "user_details_section",
   "user_details",
   "limits_tab",
   "user_limit",
-  "space_limit",
+  "storage_limit",
   "column_break_7kpem",
   "email_limit",
   "update_limits",
@@ -43,7 +43,6 @@
   {
    "fieldname": "site_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Site Name",
    "unique": 1
   },
@@ -55,6 +54,7 @@
   {
    "fieldname": "linked_email",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Linked Email"
   },
   {
@@ -68,19 +68,6 @@
    "fieldtype": "Read Only",
    "is_virtual": 1,
    "label": "Email Limit"
-  },
-  {
-   "fieldname": "space_limit",
-   "fieldtype": "Read Only",
-   "is_virtual": 1,
-   "label": "Space Limit"
-  },
-  {
-   "fieldname": "linked_domains",
-   "fieldtype": "Text",
-   "hidden": 1,
-   "is_virtual": 1,
-   "label": "Custom Domains"
   },
   {
    "fieldname": "limits_tab",
@@ -180,11 +167,6 @@
    "label": "Create Backup?"
   },
   {
-   "fieldname": "enabled_users",
-   "fieldtype": "Int",
-   "label": "Enabled Users"
-  },
-  {
    "fieldname": "total_users",
    "fieldtype": "Int",
    "label": "Total Users"
@@ -204,17 +186,36 @@
   {
    "fieldname": "country",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Country"
+  },
+  {
+   "fieldname": "active_users",
+   "fieldtype": "Int",
+   "label": "Active Users"
+  },
+  {
+   "fieldname": "storage_limit",
+   "fieldtype": "Read Only",
+   "is_virtual": 1,
+   "label": "Storage Limit"
+  },
+  {
+   "fieldname": "custom_domains",
+   "fieldtype": "Text",
+   "is_virtual": 1,
+   "label": "Custom Domains",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [
   {
    "link_doctype": "SaaS Users",
-   "link_fieldname": "site"
+   "link_fieldname": "linked_to_site"
   }
  ],
- "modified": "2024-11-18 13:10:53.268437",
+ "modified": "2024-11-22 13:38:02.219497",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Sites",

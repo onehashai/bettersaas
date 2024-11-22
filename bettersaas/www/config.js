@@ -53,11 +53,12 @@ const config = {
         "/api/method/bettersaas.bettersaas.doctype.saas_users.saas_users.send_otp",
       METHOD: "GET",
       DATA: {
-        PHONE: "phone",
         EMAIl: "email",
+        PHONE: "phone",
         FNAME: "fname",
-        CNAME: "company_name",
         LNAME: "lname",
+        CNAME: "company_name",
+        SITE_NAME: "site_name"
       },
     },
     VERIFY_OTP: {

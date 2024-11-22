@@ -98,7 +98,6 @@ window.Vue.createApp({
           "jsonp"
         ).always((resp) => {
           let countryCode = resp && resp.country ? resp.country : "us";
-          // console.log(resp);
           callback(countryCode);
         });
       },
@@ -167,7 +166,6 @@ window.Vue.createApp({
     },
 
     async onSubmit(values) {
-      console.log(values);
       // skip captcha for cypress tests
       if (!window.Cypress) {
         grecaptcha.ready(function () {
@@ -181,7 +179,6 @@ window.Vue.createApp({
             });
         });
       }
-
       this.fname = values["first-name"];
       this.lname = values["last-name"];
       this.email = values["email"].toLowerCase();
@@ -265,12 +262,10 @@ window.Vue.createApp({
       return response;
     },
     checkSiteCreatedPoll() {
-      console.log("polling site creation");
       this.checkSiteCreated();
       if (this.siteCreated) {
         this.status.step3 = "completed";
         const pass = this.password.replaceAll(/#/g, "%23");
-        console.log(frappe.conf);
         enc_password = CryptoJS.enc.Base64.stringify(
           CryptoJS.enc.Utf8.parse(pass)
         );
@@ -278,22 +273,12 @@ window.Vue.createApp({
         this.status.step2 = "completed";
         setTimeout(() => {
           this.status.step3 = "completed";
-          let siteToRedirect = "";
-          if (window.dev_server) {
-            siteToRedirect = this.targetSubdomain;
-          } else {
-            siteToRedirect = this.sitename;
-          }
-          domainToRedirect = this.sitename;
-          
+          const siteToRedirect = this.targetSubdomain;
           window.location.href =
             `${
               window.location.protocol
             }//${siteToRedirect}${getDomain()}/redirect` + query;
         }, 1500);
-        // const urlToRedirect = `http://app.onehash.is/redirect`;
-    
-        // window.open(urlToRedirect, "_blank");
       } else {
         setTimeout(() => {
           this.checkSiteCreatedPoll();
@@ -310,25 +295,21 @@ window.Vue.createApp({
       }
 
       frappe.show_alert("Please check your email for OTP", 5);
-      // send otp and set otpSent to tru;
+      // send otp and set otpSent to true;
       let message;
-      if (!window.dev_server) {
-        const resp = await $.ajax({
-          url: config.HTTP_METHODS.SEND_OTP.ENDPOINT,
-          type: config.HTTP_METHODS.SEND_OTP.METHOD,
-          data: {
-            [config.HTTP_METHODS.SEND_OTP.DATA.EMAIl]: this.email,
-            [config.HTTP_METHODS.SEND_OTP.DATA.PHONE]: t_phone.replace("+", ""),
-            [config.HTTP_METHODS.SEND_OTP.DATA.FNAME]: this.fname,
-            [config.HTTP_METHODS.SEND_OTP.DATA.CNAME]: this.company_name,
-            [config.HTTP_METHODS.SEND_OTP.DATA.LNAME]: this.lname,
-          },
-        });
-        message = resp.message;
-      } else {
-        message = "123456";
-      }
-
+      const resp = await $.ajax({
+        url: config.HTTP_METHODS.SEND_OTP.ENDPOINT,
+        type: config.HTTP_METHODS.SEND_OTP.METHOD,
+        data: {
+          [config.HTTP_METHODS.SEND_OTP.DATA.EMAIl]: this.email,
+          [config.HTTP_METHODS.SEND_OTP.DATA.PHONE]: t_phone.replace("+", ""),
+          [config.HTTP_METHODS.SEND_OTP.DATA.FNAME]: this.fname,
+          [config.HTTP_METHODS.SEND_OTP.DATA.LNAME]: this.lname,
+          [config.HTTP_METHODS.SEND_OTP.DATA.CNAME]: this.company_name,
+          [config.HTTP_METHODS.SEND_OTP.DATA.SITE_NAME]: this.sitename,
+        },
+      });
+      message = resp.message;
       this.otpUniqueId = message;
       this.otpVerificationStatus.setOTPSent();
       this.otpTimer(config.OTP_RESEND_TIME_SECONDS);
@@ -347,20 +328,15 @@ window.Vue.createApp({
         return config.ERROR_MESSAGES.INVALID_EMAIL;
       }
       let message;
-      if (!window.dev_server) {
-        const resp = await $.ajax({
-          url: config.HTTP_METHODS.VERIFY_OTP.ENDPOINT,
-          type: config.HTTP_METHODS.VERIFY_OTP.METHOD,
-          data: {
-            [config.HTTP_METHODS.VERIFY_OTP.DATA.UNIQUE_ID]: this.otpUniqueId,
-            [config.HTTP_METHODS.VERIFY_OTP.DATA.OTP]: otp,
-          },
-        });
-        message = resp.message;
-      } else {
-        message = config.HTTP_METHODS.VERIFY_OTP.SUCCESS_MESSAGE;
-      }
-      console.log(message);
+      const resp = await $.ajax({
+        url: config.HTTP_METHODS.VERIFY_OTP.ENDPOINT,
+        type: config.HTTP_METHODS.VERIFY_OTP.METHOD,
+        data: {
+          [config.HTTP_METHODS.VERIFY_OTP.DATA.UNIQUE_ID]: this.otpUniqueId,
+          [config.HTTP_METHODS.VERIFY_OTP.DATA.OTP]: otp,
+        },
+      });
+      message = resp.message;
       if (message === config.HTTP_METHODS.VERIFY_OTP.SUCCESS_MESSAGE) {
         this.otpVerificationStatus.otpVerified = true;
         document.getElementById(
@@ -394,7 +370,7 @@ window.Vue.createApp({
           last_name: this.lname,
           phone: this.phone,
           country: this.country,
-          allow_creating_users: "yes",
+          allow_creating_users: true,
         },
         callback: (r) => {
           if (r.message.subdomain) {

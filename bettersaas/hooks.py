@@ -4,7 +4,7 @@ app_name = "bettersaas"
 app_title = "Bettersaas"
 app_publisher = "OneHash"
 app_description = "This app manages multi tenancy"
-app_email = "digital@onehash.ai"
+app_email = "support@onehash.ai"
 app_license = "MIT"
 
 # Includes in <head>
@@ -121,15 +121,15 @@ scheduler_events = {
     # ],
     # "weekly": [
     # ],
-    "hourly": [
-        "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.check_stock_sites",
-    ],
+    # "hourly": [
+    # ],
     # "daily_long": [
     #     "bettersaas.api.update_user_saas_sites"
     # ],
     "cron":{
-        "0 12 * * *": [
-        "bettersaas.api.delete_free_sites"
+        "*/5 * * * *": [
+            "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refresh_stock_sites",
+            # "bettersaas.api.delete_free_sites"
         ],
     }
 }

@@ -1,7 +1,7 @@
 {
- "_comments": "[{\"comment\": \"Action Failed<br><br>Document Links Row #1: Invalid doctype or fieldname.<br>('DocType', 'SaaS Us...\", \"by\": \"Administrator\", \"name\": \"i35rs6cheb\"}]",
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:email",
  "creation": "2023-06-13 21:43:51.197517",
  "default_view": "List",
  "doctype": "DocType",
@@ -12,14 +12,14 @@
   "first_name",
   "last_name",
   "phone",
-  "column_break_7cbup",
-  "site"
+  "linked_to_site"
  ],
  "fields": [
   {
    "fieldname": "email",
    "fieldtype": "Data",
-   "label": "Email"
+   "label": "Email",
+   "unique": 1
   },
   {
    "fieldname": "first_name",
@@ -32,33 +32,33 @@
    "label": "Last Name"
   },
   {
-   "fieldname": "site",
-   "fieldtype": "Data",
-   "label": "Linked To Site"
-  },
-  {
    "fieldname": "phone",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Phone",
    "options": "Phone"
   },
   {
-   "fieldname": "column_break_7cbup",
-   "fieldtype": "Column Break"
+   "fieldname": "linked_to_site",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Linked To Site",
+   "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [
   {
    "group": "SaaS sites",
-   "link_doctype": "SaaS sites",
+   "link_doctype": "SaaS Sites",
    "link_fieldname": "saas_user"
   }
  ],
- "modified": "2024-11-18 11:28:59.385274",
+ "modified": "2024-11-22 14:07:23.158309",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Users",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

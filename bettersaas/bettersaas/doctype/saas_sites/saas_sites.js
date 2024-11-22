@@ -5,7 +5,7 @@ frappe.ui.form.on("SaaS Sites", "after_save", function (frm) {
     args: {
       max_users: frm.doc.user_limit,
       site_name: frm.doc.site_name,
-      max_space: frm.doc.space_limit,
+      max_storage: frm.doc.storage_limit,
       max_email: frm.doc.email_limit,
     },
     callback: function (r) {
@@ -161,10 +161,10 @@ frappe.ui.form.on("SaaS Sites", "update_limits", function (frm) {
         reqd: 1,
       },
       {
-        fieldname: "space_limit",
+        fieldname: "storage_limit",
         label: "Space Limit",
         fieldtype: "Int",
-        default: frm.doc.space_limit.replace("GB", ""),
+        default: frm.doc.storage_limit.replace("GB", ""),
         description: "Enter in GB ( without the suffix GB )",
         reqd: 1,
       },
@@ -187,7 +187,7 @@ frappe.ui.form.on("SaaS Sites", "update_limits", function (frm) {
               ? 1000000
               : values.user_limit,
           site_name: frm.doc.site_name,
-          max_space: values.space_limit,
+          max_storage: values.storage_limit,
           max_email: values.email_limit,
           expiry_date: values.expiry_date,
         },

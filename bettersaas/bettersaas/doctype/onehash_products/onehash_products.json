@@ -1,43 +1,28 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2023-06-14 09:33:03.913458",
- "default_view": "List",
+ "autoname": "field:product_name",
+ "creation": "2024-11-19 17:18:22.998311",
  "doctype": "DocType",
- "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "subdomain",
-  "is_used",
-  "admin_password"
+  "product_name"
  ],
  "fields": [
   {
-   "fieldname": "subdomain",
+   "fieldname": "product_name",
    "fieldtype": "Data",
-   "label": "Subdomain",
-   "read_only": 1
-  },
-  {
-   "default": "no",
-   "fieldname": "is_used",
-   "fieldtype": "Data",
-   "label": "Is Used",
-   "read_only": 1
-  },
-  {
-   "fieldname": "admin_password",
-   "fieldtype": "Data",
-   "label": "Admin Password",
-   "read_only": 1
+   "label": "Product Name",
+   "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-21 15:31:36.825132",
+ "modified": "2024-11-19 17:19:59.465859",
  "modified_by": "Administrator",
  "module": "Bettersaas",
- "name": "SaaS Stock Sites",
+ "name": "OneHash Products",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
