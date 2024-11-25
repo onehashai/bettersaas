@@ -20,7 +20,6 @@ def generate_otp():
         OTP += digits[math.floor(random.random() * 10)]
     return OTP
 
-
 def send_otp_via_sms(number, otp):
     receiver_list = []
     receiver_list.append(number)
@@ -77,17 +76,14 @@ def send_otp(email, phone, fname, lname, company_name, site_name):
         < 10 * 60
     ):
         new_otp_doc.otp = doc[0].otp
-        new_otp_doc.ip = str(get_ip())
-
     else:
         new_otp_doc.otp = generate_otp()
-        new_otp_doc.ip = str(get_ip())
 
     unique_id = frappe.generate_hash("", 5)
     new_otp_doc.id = unique_id
     new_otp_doc.ip = str(get_ip())
     new_otp_doc.email = email
-    if phone and frappe.conf.domain != 'localhost.com':
+    if phone and frappe.conf.domain != "localhost":
         new_otp_doc.phone = phone
         from datetime import datetime
 
@@ -178,7 +174,6 @@ def check_user_name_and_password_for_a_site(site_name, email, password):
 
 @frappe.whitelist()
 def create_lead(email, phone, fname, lname, company_name, site_name):	
-    saas_site = site_name+"."+frappe.conf.domain
     existing_lead = frappe.get_value("Lead",filters={"email_id": email})
     if existing_lead:
         lead_doc = frappe.get_doc("Lead",existing_lead,ignore_permissions=True)

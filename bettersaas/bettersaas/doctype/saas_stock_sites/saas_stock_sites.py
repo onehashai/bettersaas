@@ -24,10 +24,9 @@ def delete_site(site_name):
             site=site_name, db_root_password=frappe.conf.db_password
         )
     )
-    if frappe.conf.domain != "localhost.com":
-        os.system(
-            "echo {} | sudo -S sudo service nginx reload".format(frappe.conf.root_password)
-        )
+    os.system(
+        "echo {} | sudo -S sudo service nginx reload".format(frappe.conf.root_password)
+    )
 
 @frappe.whitelist()
 def delete_used_sites():

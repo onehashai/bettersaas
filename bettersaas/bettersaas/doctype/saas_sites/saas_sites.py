@@ -57,10 +57,9 @@ def execute_commands(commands):
     command = " ; ".join(commands)
     process = sp.Popen(command, shell=True)
     process.wait()
-    if frappe.conf.domain != "localhost.com":
-        os.system(
-            "echo {} | sudo -S sudo service nginx reload".format(frappe.conf.get("root_password"))
-        )
+    os.system(
+        "echo {} | sudo -S sudo service nginx reload".format(frappe.conf.get("root_password"))
+    )
 
 @frappe.whitelist(allow_guest=True)
 def check_subdomain():
@@ -182,7 +181,7 @@ def setup_site(*args, **kwargs):
             new_site, target_site.subdomain + "." + frappe.conf.domain
         )
     )
-    if frappe.conf.domain != "localhost.com":
+    if frappe.conf.domain != "localhost":
         commands.append(
             "cd /home/{}/frappe-bench/sites & mv {}.{} {}".format(
                 frappe.conf.server_user_name, target_site.subdomain, frappe.conf.domain, new_site
@@ -237,8 +236,7 @@ def setup_site(*args, **kwargs):
 
     commands.append("bench --site {} enable-scheduler".format(new_site))
     commands.append("bench --site {} set-maintenance-mode off".format(new_site))
-    if frappe.conf.get('domain') != "localhost.com":
-        commands.append("bench setup nginx --yes")
+    commands.append("bench setup nginx --yes")
 
     # enqueue long running tasks - execute_commands
     execute_commands(commands)

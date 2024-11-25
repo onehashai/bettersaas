@@ -47,6 +47,8 @@ def remove_folders_created_more_than_x_days(directory_path, threshold_days, fold
 @frappe.whitelist()
 def delete_archived_sites():
     conf = frappe.get_doc('SaaS Settings')
+    if not conf.arch_site_delete_conf_enabled:
+        return
     directory_path = conf.path
     threshold_days = conf.threshold_days
     folders_to_delete_limit = conf.delete_limit
@@ -138,11 +140,9 @@ def delete_free_sites():
         except:
             pass
     for site in to_be_deleted:
-        # get last login of site from site config
         # if current date - last login date > 25 days and site has "has_subscription" as "no" then send warning mail
         # if current date - last login date >= 30 days and site has "has_subscription" as "no" then delete site
         config = frappe.get_site_config(site_path=site.site_name)
-        # print all conditions
         if (
             site.is_deleted != "Yes"
             and ("has_subscription" in config)
@@ -188,18 +188,16 @@ def delete_free_sites():
 
 @frappe.whitelist()
 def drop_site_from_server(site_name):
-    print("deleting", site_name)
     doc = frappe.get_list(
-        "SaaS sites", filters={"site_name": site_name}, fields=["site_name", "name"]
+        "SaaS Sites", filters={"site_name": site_name}, fields=["site_name", "name"]
     )[0]
-    decrypted_db_password = frappe.get_doc("SaaS settings").get_password("db_password")
 
     frappe.utils.execute_in_shell(
-        "bench   drop-site {site} --root-password {db_root_password} --force --no-backup".format(
-            site=doc["site_name"], db_root_password=decrypted_db_password
+        "bench drop-site {site} --root-password {db_root_password} --force --no-backup".format(
+            site=doc["site_name"], db_root_password=frappe.conf.root_password
+
         )
     )
-
 
 def send_email(
     email,
