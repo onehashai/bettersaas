@@ -63,20 +63,20 @@ def refresh_stock_sites(*args, **kwargs):
                 )
             )
             commands.append(
+                "bench --site {} install-app payments".format(
+                    subdomain + "." + domain
+                )
+            )
+            commands.append(
                 "bench --site {} install-app whitelabel".format(
                     subdomain + "." + domain
                 )
             )
-            # commands.append(
-            #     "bench --site {} install-app frappe_s3_attachment".format(
-            #         subdomain + "." + domain
-            #     )
-            # )
-            # commands.append(
-            #     "bench --site {} install-app clientside".format(
-            #         subdomain + "." + domain
-            #     )
-            # )
+            commands.append(
+                "bench --site {} install-app clientside".format(
+                    subdomain + "." + domain
+                )
+            )
             admin_subdomain = frappe.conf.admin_subdomain
             commands.append(
                 "bench --site {} execute bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.insert_site --args \"'{}','{}'\"".format(
