@@ -15,10 +15,9 @@ from frappe.utils import validate_email_address
 from frappe.utils.password import decrypt, encrypt
 from frappe.model.document import Document
 from frappe.utils import today, nowtime, add_days, get_formatted_email
-		
+
 @frappe.whitelist()
 def get_users_list(site_name):
-    # from bettersaas.bettersaas.doctype.saas_sites.frappeclient import FrappeClient
     from frappe.frappeclient import FrappeClient
     site = frappe.db.get("SaaS Sites", filters={"site_name": site_name})
     site_password = decrypt(site.encrypted_password, frappe.conf.enc_key)
@@ -37,7 +36,7 @@ def delete_site(site_name):
     root_password = frappe.conf.root_password
     commands.append("bench drop-site {site} --db-root-password {root_pass}".format(site=site_name, root_pass=root_password))
     execute_commands(commands)
-    frappe.msgprint('Site Deleted !')
+    frappe.msgprint('Site Deleted!')
 
 @frappe.whitelist()
 def disable_enable_site(site_name, status):
@@ -316,7 +315,7 @@ def get_decrypted_password(*args, **kwargs):
     return decrypt(site.encrypted_password, frappe.conf.enc_key)
 
 @frappe.whitelist(allow_guest=True)
-def create_backup(site_name, is_manual=0):
+def create_backup(site_name):
     command = (
         "bench --site {} execute clientside.clientside.utils.take_backups_s3 ".format(
             site_name
@@ -336,18 +335,14 @@ def backup():
         )
     return "done"
 
-def insert_backup_record(site, backup_size, key, is_manual):
-    is_manual = int(is_manual)
+def insert_backup_record(site, backup_path, backup_size, encrypt_backup):
     try:
-        doc = frappe.new_doc("SaaS Site Backups")
-        doc.site_name = site
-        doc.created_on = frappe.utils.now_datetime()
-        doc.site_files = key
-        doc.time = frappe.utils.now_datetime().strftime("%H:%M:%S")
+        doc = frappe.new_doc("SaaS Sites Backup")
+        doc.created_on = frappe.utils.now()
         doc.site = site
-        doc.backup_size = backup_size
-        if is_manual:
-            doc.created_by_user = 1
+        doc.path = backup_path
+        doc.size = backup_size
+        doc.encrypted = encrypt_backup
         doc.save(ignore_permissions=True)
     except Exception as e:
         print("Error while inserting backup record", e)
@@ -371,18 +366,30 @@ def upgrade_user(*args, **kwargs):
     site_doc.save(ignore_permissions=True)
     return "done"
 
+def convert_to_bytes(sizeInStringWithPrefix):
+    if sizeInStringWithPrefix == "0":
+        return 0
+    prefix = sizeInStringWithPrefix[-1]
+    if prefix == "G":
+        return float(sizeInStringWithPrefix[:-1]) * 1024 * 1024 * 1024
+    if prefix == "M":
+        return float(sizeInStringWithPrefix[:-1]) * 1024 * 1024
+    if prefix == "K":
+        return float(sizeInStringWithPrefix[:-1]) * 1024
+    return float(sizeInStringWithPrefix)
+
 @frappe.whitelist(allow_guest=True)
 def get_site_backup_size(site_name):
     docs = frappe.db.get_list(
-        "SaaS Site Backups",
-        filters={"site": site_name, "created_by_user": 1},
-        fields=["backup_size"],
+        "SaaS Sites Backup",
+        filters={"site": site_name},
+        fields=["size"],
         ignore_permissions=True,
     )
-    # from clientside.clientside.utils import convertToB
-
-    # return sum([float(convertToB(doc.backup_size)) for doc in docs])
-    return
+    total_size = sum(
+        float(convert_to_bytes(doc["size"])) for doc in docs if doc["size"] is not None
+    )
+    return total_size
 
 @frappe.whitelist(allow_guest=True)
 def download_backup(backup_id, site_name):
@@ -392,7 +399,7 @@ def download_backup(backup_id, site_name):
         aws_access_key_id=frappe.conf.aws_access_key_id,
         aws_secret_access_key=frappe.conf.aws_secret_access_key,
     )
-    backup_doc = frappe.get_doc("SaaS Site Backups", backup_id)
+    backup_doc = frappe.get_doc("SaaS Sites Backup", backup_id)
     files = [backup_doc.site_files, backup_doc.database_files, backup_doc.private_files]
     file_names = [x.split("/")[-1] for x in files]
     for i in range(len(files)):
@@ -447,22 +454,39 @@ def create_new_site_from_backup(*args, **kwargs):
     resp = frappe.utils.execute_in_shell(command_from_sql_source)
     resp = frappe.utils.execute_in_shell(command_to_add_files)
 
+def delete_from_s3(key):
+    import boto3
+    from botocore.exceptions import ClientError
+
+    S3_CLIENT = boto3.client(
+        's3',
+        aws_access_key_id=frappe.conf.aws_access_key_id,
+        aws_secret_access_key=frappe.conf.aws_secret_access_key,
+        region_name=frappe.conf.aws_bucket_region_name,
+    )
+    try:
+        S3_CLIENT.delete_object(
+            Bucket=frappe.conf.aws_bucket_name,
+            Key=key
+        )
+    except ClientError:
+        frappe.throw(frappe._("Access denied: Could not delete file"))
+
 
 @frappe.whitelist(allow_guest=True)
-def delete_old_backups(limit, site_name, created_by_user=1):
-    limit = int(limit)
-    # We only retain the most recent "limit" backups and remove the older ones.
+def delete_old_backups(site_name, limit):
     records = frappe.get_list(
-        "SaaS Site Backups",
-        filters={"site": site_name, "created_by_user": created_by_user},
-        fields=["name", "created_on"],
+        "SaaS Sites Backup",
+        filters={"site": site_name},
+        fields=["name", "path", "created_on"],
         order_by="created_on desc",
         ignore_permissions=True,
     )
-    for i in range(limit, len(records)):
-        frappe.delete_doc("SaaS Site Backups", records[i].name)
+    for i in range(int(limit), len(records)):
+        frappe.delete_doc("SaaS Sites Backup", records[i].name)
         frappe.db.commit()
-    return "deletion done"
+        delete_from_s3(records[i].path)
+    return "Deletion Done"
 
 @frappe.whitelist()
 def get_limits(site_name):

@@ -159,17 +159,13 @@ def check_user_name_and_password_for_a_site(site_name, email, password):
         if dec_password != password:
             return "INVALID_CREDENTIALS"
     # check for active subscription
-    #  print(frappe.conf)
-    country = frappe.get_site_config(site_path=site.site_name)["country"]
+    # country = frappe.get_site_config(site_path=site.site_name)["country"]
     # stripe_subscription_manager = StripeSubscriptionManager(country=country)
     # has_sub = stripe_subscription_manager.has_valid_site_subscription(site.cus_id)
-    has_sub = True
+    # has_sub = True
     # find user and check if has role of Administator
-    hasRoleAdmin = frappe.db.exists(
-        "Has Role", {"parent": email, "role": "Administrator"}
-    )
-    if not has_sub:
-        return "NO_SUBSCRIPTION"
+    # if not has_sub:
+    #     return "NO_SUBSCRIPTION"
     return "OK"
 
 @frappe.whitelist()

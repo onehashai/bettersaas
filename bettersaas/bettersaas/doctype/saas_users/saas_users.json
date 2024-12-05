@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:email",
+ "autoname": "field:linked_to_site",
  "creation": "2023-06-13 21:43:51.197517",
  "default_view": "List",
  "doctype": "DocType",
@@ -18,8 +18,8 @@
   {
    "fieldname": "email",
    "fieldtype": "Data",
-   "label": "Email",
-   "unique": 1
+   "in_list_view": 1,
+   "label": "Email"
   },
   {
    "fieldname": "first_name",
@@ -41,7 +41,6 @@
   {
    "fieldname": "linked_to_site",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Linked To Site",
    "unique": 1
   }
@@ -54,7 +53,7 @@
    "link_fieldname": "saas_user"
   }
  ],
- "modified": "2024-11-22 14:07:23.158309",
+ "modified": "2024-11-29 14:37:44.935680",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Users",
