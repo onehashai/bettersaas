@@ -4,11 +4,6 @@ from frappe.model.document import Document
 from frappe.utils import random_string
 from frappe.utils import nowdate, nowtime
 
-
-def get_site_config():
-    siteConfig = frappe.get_doc("SaaS Settings")
-    return siteConfig
-
 def insert_site(site_name, admin_password):
     site = frappe.new_doc("SaaS Stock Sites")
     site.subdomain = site_name

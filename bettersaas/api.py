@@ -1,15 +1,6 @@
 import frappe
-from datetime import datetime, timedelta
-from frappe.utils import add_to_date, getdate
-import subprocess
-from frappe.commands.site import drop_site
-from frappe.utils import get_datetime, now, add_to_date
-from frappe.utils import nowdate, nowtime
+from datetime import datetime
 from frappe import _
-from frappe.exceptions import DoesNotExistError
-from frappe.utils import today, nowtime, add_days
-from frappe.model.document import Document
-from werkzeug.exceptions import ExpectationFailed
 import os
 import datetime
 import shutil
@@ -55,7 +46,6 @@ def delete_archived_sites():
     frappe.msgprint(str(folders_to_delete_limit)+' Archived Sites Deleted Older than '+str(threshold_days)+' Days.')
     remove_folders_created_more_than_x_days(directory_path, threshold_days, folders_to_delete_limit)
 
-
 @frappe.whitelist()
 def update_user_saas_sites():
     admin_site_name = frappe.conf.admin_url
@@ -99,19 +89,6 @@ def update_user_saas_sites():
         frappe.destroy()
 
 @frappe.whitelist()
-def get_bench_details_for_cloudwatch():
-    """
-    API to get bench details for cloudwatch
-    - number of created sites
-    - number of active agents on our site
-    - number of users who created site today
-    - Number of stock sites
-    """
-    details = {}
-    number_of_total_sites = frappe.db.count("SaaS Sites")
-
-
-@frappe.whitelist()
 def reset_email_limits():
     site_defaults = frappe.get_doc("SaaS Settings")
     sites = frappe.get_all("SaaS Sites", fields=["site_name"])
@@ -126,7 +103,6 @@ def reset_email_limits():
                     site["site_name"], site_defaults.default_email_limit
                 )
             )
-
 
 @frappe.whitelist(allow_guest=True)
 def delete_free_sites():
@@ -222,12 +198,9 @@ def reset_sites():
     # delete record
     for site in sites:
         frappe.delete_doc("SaaS sites", sites["name"])
-        print("deleting", site)
         command = "bench drop-site {} --force".format(site["site_name"])
         frappe.utils.execute_in_shell(command)
     frappe.db.commit()
-    print("RESET")
-
 
 def delete_all_sites():
     import os
@@ -257,21 +230,3 @@ def delete_all_sites():
                 file, config.db_password
             )
         )
-
-def upgrade_site(plan_metadata,subdomain):
-    import subprocess as sp
-    config = frappe.get_doc("SaaS settings")
-    def set_config(key,value):
-        try:
-            sp.Popen("bench --site {} set-config {} {}".format(subdomain +"."+ config.domain,key,value),shell=True)
-            frappe.utils.execute_in_shell("bench --site {} set-config {} {}".format(subdomain +"."+ config.domain,key,value))
-        
-        except Exception as e:
-            print(e)
-    plan = plan_metadata["product_id"]
-    if plan in ["ONEHASH_PLUS","ONEHASH_STARTER","ONEHASH_PRO"]:
-        set_config("plan",plan)
-        if plan == "ONEHASH_PRO":
-            set_config("max_users", "1000000")
-        else:
-            set_config("max_users", plan_metadata["user_count"])

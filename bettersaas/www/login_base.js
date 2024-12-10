@@ -28,7 +28,6 @@ login.bind_events = function () {
 			frappe.msgprint('{{ _("Both login and password required") }}');
 			return false;
 		}
-       // const hasSubscription = await fetch("/api/method/clientside.clientside.utils.hasActiveSubscription");
         login.call(args);
         if(args.usr.toLowerCase() == "administrator"){
 
