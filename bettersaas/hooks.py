@@ -124,13 +124,15 @@ scheduler_events = {
     # "hourly": [
     # ],
     # "daily_long": [
-    #     "bettersaas.api.update_user_saas_sites"
     # ],
     "cron":{
         "*/5 * * * *": [
             "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refresh_stock_sites",
-            # "bettersaas.api.delete_free_sites"
         ],
+        "0 0 * * *": [
+            "bettersaas.bettersaas.doctype.saas_settings.saas_settings.delete_archived_sites",
+            "bettersaas.bettersaas.doctype.saas_settings.saas_settings.delete_free_sites",
+        ]
     }
 }
 

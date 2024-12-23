@@ -11,23 +11,19 @@
   "restricted_subdomains",
   "column_break_idl9z",
   "saas_site_defaults_tab",
-  "default_user_limit",
+  "default_license_limit",
   "default_email_limit",
   "default_storage_limit",
-  "default_site_expiry_days",
   "site_delete_configuration_tab",
   "site_delete_conf_enabled",
   "inactive_for_days",
   "column_break_fg8ow",
   "warning_days",
-  "intermittent_warning_day",
-  "deletion_warning_template",
-  "delete_stock_sites_section",
+  "intermittent_warning_days",
+  "delete_archived_sites_section",
   "arch_site_delete_conf_enabled",
   "threshold_days",
-  "delete_limit",
   "path",
-  "delete_archived_sites",
   "stock_site_configuration_tab",
   "stock_sites_count"
  ],
@@ -78,27 +74,9 @@
    "label": "Warning Days"
   },
   {
-   "description": "Intermittent Warning Day",
-   "fieldname": "intermittent_warning_day",
-   "fieldtype": "Int",
-   "label": "Intermittent Warning Day"
-  },
-  {
-   "description": "This template is for deletion success warning only. All the rest of warnings are sent through Notification",
-   "fieldname": "deletion_warning_template",
-   "fieldtype": "Link",
-   "label": "Deletion Warning Template",
-   "options": "Email Template"
-  },
-  {
    "fieldname": "stock_site_configuration_tab",
    "fieldtype": "Tab Break",
    "label": "Stock Site Configuration"
-  },
-  {
-   "fieldname": "delete_stock_sites_section",
-   "fieldtype": "Section Break",
-   "label": "Delete Archived Sites"
   },
   {
    "fieldname": "threshold_days",
@@ -106,32 +84,15 @@
    "label": "Threshold Days"
   },
   {
-   "fieldname": "delete_limit",
-   "fieldtype": "Int",
-   "label": "Delete Limit"
-  },
-  {
-   "default": "/home/rishabh/OneHash/onehash-crm-v15/frappe-bench/archived/sites/",
    "fieldname": "path",
    "fieldtype": "Data",
-   "label": "Path",
-   "read_only": 1
-  },
-  {
-   "fieldname": "delete_archived_sites",
-   "fieldtype": "Button",
-   "label": "Delete"
+   "label": "Path"
   },
   {
    "description": "In GB",
    "fieldname": "default_storage_limit",
    "fieldtype": "Data",
    "label": "Default Storage Limit"
-  },
-  {
-   "fieldname": "default_site_expiry_days",
-   "fieldtype": "Data",
-   "label": "Default Site Expiry Days"
   },
   {
    "default": "0",
@@ -145,21 +106,33 @@
    "label": "Stock Sites Count"
   },
   {
-   "fieldname": "default_user_limit",
-   "fieldtype": "Data",
-   "label": "Default User Limit"
+   "default": "1",
+   "fieldname": "delete_archived_sites_section",
+   "fieldtype": "Section Break",
+   "label": "Delete Archived Sites"
   },
   {
    "default": "0",
    "fieldname": "arch_site_delete_conf_enabled",
    "fieldtype": "Check",
    "label": "Enabled"
+  },
+  {
+   "description": "Intermittent Warning Day",
+   "fieldname": "intermittent_warning_days",
+   "fieldtype": "Int",
+   "label": "Intermittent Warning Days"
+  },
+  {
+   "fieldname": "default_license_limit",
+   "fieldtype": "Data",
+   "label": "Default License Limit"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-12-05 17:34:11.346776",
+ "modified": "2024-12-18 16:45:48.400303",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Settings",

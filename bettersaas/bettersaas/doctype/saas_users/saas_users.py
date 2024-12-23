@@ -4,14 +4,11 @@
 import frappe
 import math
 import random
-import requests
-import json
 import socket
+from frappe import _
 from frappe.core.doctype.sms_settings.sms_settings import send_sms
 from frappe.utils.password import decrypt
 from frappe.model.document import Document
-# from clientside.stripe import StripeSubscriptionManager
-
 
 def generate_otp():
     digits = "0123456789"
@@ -37,24 +34,18 @@ def get_ip():
     except Exception as e:
         return f"Error occurred: {e}"
 
-def send_otp_via_email(otp, email):
-    subject = "Please confirm this email address for OneHash"
+def send_otp_via_email(otp, email, fname):
+    subject = "Verify Email Address for OneHash"
     template = "signup_otp_email"
     args = {
-        "first_name": "user",
-        "last_name": "",
-        "title": subject,
+        "first_name": fname,
         "otp": otp,
     }
-    sender = None
     frappe.sendmail(
         recipients=email,
-        sender=sender,
         subject=subject,
-        bcc=[""],
         template=template,
         args=args,
-        header=[subject, "green"],
         delayed=False,
     )
     return True
@@ -96,7 +87,7 @@ def send_otp(email, phone, fname, lname, company_name, site_name):
                 send_otp_via_sms(phone, new_otp_doc.otp)
         else:
             send_otp_via_sms(phone, new_otp_doc.otp)
-    send_otp_via_email(new_otp_doc.otp, email)
+    send_otp_via_email(new_otp_doc.otp, email , fname)
     new_otp_doc.save(ignore_permissions=True)
     create_lead(email, phone, fname, lname, company_name, site_name)
     frappe.db.commit()

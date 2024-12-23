@@ -9,18 +9,18 @@ import re
 import requests
 import subprocess as sp
 from bettersaas.bettersaas.doctype.saas_users.saas_users import create_user
+from frappe import _
 from frappe.core.doctype.user.user import test_password_strength
 from frappe.utils import validate_email_address
 from frappe.utils.password import decrypt, encrypt
 from frappe.model.document import Document
-from frappe.utils import today, nowtime, add_days, get_formatted_email
 
 @frappe.whitelist()
 def get_users_list(site_name):
     from frappe.frappeclient import FrappeClient
     site = frappe.db.get("SaaS Sites", filters={"site_name": site_name})
-    site_password = decrypt(site.encrypted_password, frappe.conf.enc_key)
-    conn = FrappeClient("https://"+site_name, "Administrator", site_password)
+    site_password = decrypt(site.encrypted_password, frappe.conf.encryption_key)
+    conn = FrappeClient("http://"+site_name, "Administrator", site_password)
     total_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name', 'enabled', 'last_active','user_type'],limit_page_length=10000)
     active_users = conn.get_list('User', fields = ['name', 'first_name', 'last_name','last_active','user_type'], filters = {'enabled':'1'},limit_page_length=10000)
     return {"total_users":total_users, "active_users":active_users}
@@ -29,14 +29,6 @@ def get_users_list(site_name):
 def login(name):
 	return frappe.get_doc("SaaS Sites",name).get_login_sid()
     
-@frappe.whitelist()
-def delete_site(site_name):
-    commands = []
-    root_password = frappe.conf.root_password
-    commands.append("bench drop-site {site} --db-root-password {root_pass}".format(site=site_name, root_pass=root_password))
-    execute_commands(commands)
-    frappe.msgprint('Site Deleted!')
-
 @frappe.whitelist()
 def disable_enable_site(site_name, status):
     commands=[]
@@ -192,14 +184,9 @@ def setup_site(*args, **kwargs):
                 frappe.conf.server_user_name, target_site.subdomain, frappe.conf.domain, new_site
             )
         )
-    # commands.append(
-    #     "bench --site {} set-config plan_name {}".format(
-    #         new_site, "ERP Starter"
-    #     )
-    # )    
     commands.append(
-        "bench --site {} set-config max_users {}".format(
-            new_site, saas_settings.default_user_limit
+        "bench --site {} set-config min_license {}".format(
+            new_site, saas_settings.default_license_limit
         )
     )
     commands.append(
@@ -218,28 +205,11 @@ def setup_site(*args, **kwargs):
     commands.append(
         "bench --site {} set-config site_name {}".format(new_site, new_site)
     )
-    expiry_days = int(saas_settings.default_site_expiry_days)
-    expiry_date = frappe.utils.add_days(frappe.utils.nowdate(), expiry_days)
-    commands.append(
-        "bench --site {} set-config expiry_date {}".format(new_site, expiry_date)
-    )
     commands.append(
         "bench --site {} set-config country {}".format(new_site, kwargs["country"])
     )
-    # if kwargs["country"] == "IN":
-    #     stripe_prices_in = frappe.conf.get("stripe_prices", {}).get("IN", {})
-    #     stripe_prices_json = json.dumps(stripe_prices_in).replace("'", "\\'")
-    #     commands.append(
-    #         "bench --site {} set-config stripe_prices '{}'".format(new_site, stripe_prices_json)
-    #     )
-    # else:
-    #     stripe_prices_us = frappe.conf.get("stripe_prices", {}).get("US", {})
-    #     stripe_prices_json = json.dumps(stripe_prices_us).replace("'", "\\'")
-    #     commands.append(
-    #         "bench --site {} set-config stripe_prices '{}'".format(new_site, stripe_prices_json)
-    #     )
     commands.append(
-        "bench --site {} set-config creation_date {}".format(
+        "bench --site {} set-config created_on {}".format(
             new_site, frappe.utils.nowdate()
         )
     )
@@ -260,7 +230,6 @@ def setup_site(*args, **kwargs):
     new_site_doc.country = kwargs["country"]
     new_site_doc.linked_email = email
     new_site_doc.encrypted_password = encrypted_password
-    new_site_doc.expiry_date = expiry_date
     new_site_doc.active_users=1
     new_site_doc.total_users=1
     new_site_doc.user_details = []
@@ -296,9 +265,9 @@ def check_site_created(*args, **kwargs):
 def update_limits(*args, **kwargs):
     commands = []
     for key, value in kwargs.items():
-        if key in ["max_users", "max_email", "max_storage", "expiry_date"]:
+        if key in ["min_license", "max_email", "max_storage"]:
             commands.append(
-                "bench --site   {} set-config {} {}".format(
+                "bench --site {} set-config {} {}".format(
                     kwargs["site_name"], key, value
                 )
             )
@@ -308,16 +277,6 @@ def update_limits(*args, **kwargs):
 def get_decrypted_password(*args, **kwargs):
     site = frappe.db.get("SaaS Sites", filters={"site_name": kwargs["site_name"]})
     return decrypt(site.encrypted_password, frappe.conf.enc_key)
-
-@frappe.whitelist(allow_guest=True)
-def create_backup(site_name):
-    command = (
-        "bench --site {} execute clientside.clientside.utils.take_backups_s3 ".format(
-            site_name
-        )
-    )
-    frappe.utils.execute_in_shell(command)
-    return "executing command: " + command
 
 @frappe.whitelist()
 def backup():
@@ -357,7 +316,7 @@ def upgrade_user(*args, **kwargs):
     product_id = kwargs["product_id"]
     site_doc = frappe.get_doc("SaaS Sites", {"site_name": site})
     site_doc.plan = product_id
-    site_doc.user_limit = user_count
+    site_doc.license_limit = user_count
     site_doc.save(ignore_permissions=True)
     return "done"
 
@@ -489,9 +448,13 @@ def delete_old_backups(site_name, limit):
         delete_from_s3(records[i].path)
     return "Deletion Done"
 
+@frappe.whitelist(allow_guest=True)
+def user_contacted(site_name):
+    return frappe.db.get_value("SaaS Sites", site_name, "user_contacted")
+
 @frappe.whitelist()
 def get_limits(site_name):
-    users = frappe.get_site_config(site_path=site_name).get("max_users")
+    users = frappe.get_site_config(site_path=site_name).get("min_license")
     emails = frappe.get_site_config(site_path=site_name).get("max_email")
     storage = frappe.get_site_config(site_path=site_name).get("max_storage")
     plan = frappe.get_site_config(site_path=site_name).get("plan")
@@ -502,8 +465,8 @@ class SaaSSites(Document):
         self.site_config = frappe.get_site_config(site_path=self.site_name)
 
     @property
-    def user_limit(self):
-        return frappe.get_site_config(site_path=self.site_name).get("max_users")
+    def license_limit(self):
+        return frappe.get_site_config(site_path=self.site_name).get("min_license")
 
     @property
     def email_limit(self):
@@ -513,48 +476,29 @@ class SaaSSites(Document):
     def storage_limit(self):
         return frappe.get_site_config(site_path=self.site_name).get("max_storage")
         
-    # @property
-    # def current_period_start(self):
-    #     import datetime
+    @property
+    def subscription_starts_on(self):
+        return frappe.get_site_config(site_path=self.site_name).get("subscription_starts_on")
 
-    #     sub = self.subcription
-    #     if sub == "NONE":
-    #         return ""
-    #     return datetime.datetime.fromtimestamp(sub["current_period_start"])
+    @property
+    def subscription_ends_on(self):
+        return frappe.get_site_config(site_path=self.site_name).get("subscription_ends_on")
 
-    # @property
-    # def current_period_end(self):
-    #     import datetime
-
-    #     sub = self.subcription
-    #     if sub == "NONE":
-    #         return ""
-    #     return datetime.datetime.fromtimestamp(sub["current_period_end"])
-
-    # @property
-    # def days_left_in_current_period(self):
-    #     import datetime
-
-    #     if self.subcription == "NONE":
-    #         return ""
-    #     end_date = self.current_period_end
-    #     return (end_date - datetime.datetime.now()).days
-
-    # @property
-    # def subscription_id(self):
-    #     if self.subcription == "NONE":
-    #         return ""
-    #     return self.subcription["id"]
-
-    # @property
-    # def plan(self):
-    #     return self.site_config.get("plan") or "Free"
-
-    # @property
-    # def subscription_status(self):
-    #     if self.subcription == "NONE":
-    #         return "No subscription"
-    #     return self.subcription["status"].capitalize()
+    @property
+    def customer_id(self):
+        return frappe.get_site_config(site_path=self.site_name).get("customer_id")
+    
+    @property
+    def subscription_id(self):
+        return frappe.get_site_config(site_path=self.site_name).get("subscription_id")
+    
+    @property
+    def plan_name(self):
+        return frappe.get_site_config(site_path=self.site_name).get("plan_name")
+    
+    @property
+    def subscription_status(self):
+        return frappe.get_site_config(site_path=self.site_name).get("subscription_status")
 
     @property
     def custom_domains(self):
@@ -580,7 +524,3 @@ class SaaSSites(Document):
         sid = response.cookies.get("sid")
         if sid:
             return sid
-            
-    def update_limits(self):
-        frappe.msgprint("Updating Limits")
-        return

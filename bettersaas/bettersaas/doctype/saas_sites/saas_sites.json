@@ -9,14 +9,15 @@
  "engine": "InnoDB",
  "field_order": [
   "site_name",
+  "status",
   "saas_user",
   "linked_email",
   "encrypted_password",
-  "custom_domains",
   "column_break_bivjq",
+  "custom_domains",
   "country",
-  "site_deleted",
   "create_backup",
+  "user_contacted",
   "users_tab",
   "active_users",
   "column_break_splpb",
@@ -24,18 +25,16 @@
   "user_details_section",
   "user_details",
   "limits_tab",
-  "user_limit",
+  "license_limit",
   "storage_limit",
-  "column_break_7kpem",
   "email_limit",
   "update_limits",
   "subscription_tab",
-  "current_period_start",
-  "current_period_end",
+  "subscription_starts_on",
+  "subscription_ends_on",
   "subscription_status",
-  "current_plan",
-  "days_left_in_current_period",
   "column_break_oxvhq",
+  "plan_name",
   "subscription_id",
   "customer_id"
  ],
@@ -44,24 +43,21 @@
    "fieldname": "site_name",
    "fieldtype": "Data",
    "label": "Site Name",
+   "read_only": 1,
    "unique": 1
   },
   {
    "fieldname": "encrypted_password",
    "fieldtype": "Data",
-   "label": "Encrypted Password"
+   "label": "Encrypted Password",
+   "read_only": 1
   },
   {
    "fieldname": "linked_email",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Linked Email"
-  },
-  {
-   "fieldname": "user_limit",
-   "fieldtype": "Read Only",
-   "is_virtual": 1,
-   "label": "User Limit"
+   "label": "Linked Email",
+   "read_only": 1
   },
   {
    "fieldname": "email_limit",
@@ -91,30 +87,8 @@
    "label": "Subscription"
   },
   {
-   "fieldname": "column_break_7kpem",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "current_period_start",
-   "fieldtype": "Date",
-   "is_virtual": 1,
-   "label": "Current Period Start"
-  },
-  {
-   "fieldname": "current_period_end",
-   "fieldtype": "Data",
-   "is_virtual": 1,
-   "label": "Current Period End"
-  },
-  {
    "fieldname": "column_break_oxvhq",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "days_left_in_current_period",
-   "fieldtype": "Data",
-   "is_virtual": 1,
-   "label": "Days left in current period"
   },
   {
    "fieldname": "subscription_id",
@@ -142,7 +116,6 @@
    "label": "Subscription Status"
   },
   {
-   "description": "Changes might take some time to reflect on the customer's site",
    "fieldname": "update_limits",
    "fieldtype": "Button",
    "label": "Update Limits"
@@ -152,13 +125,8 @@
    "fieldtype": "Link",
    "label": "SaaS User",
    "options": "SaaS Users",
+   "read_only": 1,
    "search_index": 1
-  },
-  {
-   "default": "no",
-   "fieldname": "site_deleted",
-   "fieldtype": "Data",
-   "label": "Site Deleted"
   },
   {
    "default": "1",
@@ -169,30 +137,27 @@
   {
    "fieldname": "total_users",
    "fieldtype": "Int",
-   "label": "Total Users"
+   "label": "Total Users",
+   "read_only": 1
   },
   {
-   "fieldname": "current_plan",
-   "fieldtype": "Read Only",
-   "is_virtual": 1,
-   "label": "Current Plan"
-  },
-  {
-   "description": "Each site is treated as a customer on stripe",
    "fieldname": "customer_id",
    "fieldtype": "Data",
+   "is_virtual": 1,
    "label": "Customer Id"
   },
   {
    "fieldname": "country",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Country"
+   "label": "Country",
+   "read_only": 1
   },
   {
    "fieldname": "active_users",
    "fieldtype": "Int",
-   "label": "Active Users"
+   "label": "Active Users",
+   "read_only": 1
   },
   {
    "fieldname": "storage_limit",
@@ -206,6 +171,43 @@
    "is_virtual": 1,
    "label": "Custom Domains",
    "read_only": 1
+  },
+  {
+   "fieldname": "subscription_starts_on",
+   "fieldtype": "Date",
+   "is_virtual": 1,
+   "label": "Subscription Starts On"
+  },
+  {
+   "fieldname": "subscription_ends_on",
+   "fieldtype": "Date",
+   "is_virtual": 1,
+   "label": "Subscription Ends On"
+  },
+  {
+   "fieldname": "plan_name",
+   "fieldtype": "Data",
+   "is_virtual": 1,
+   "label": "Plan Name"
+  },
+  {
+   "fieldname": "license_limit",
+   "fieldtype": "Read Only",
+   "is_virtual": 1,
+   "label": "License Limit"
+  },
+  {
+   "default": "0",
+   "fieldname": "user_contacted",
+   "fieldtype": "Check",
+   "label": "Contacted for Inc User Limit?"
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nIn-Active"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -215,7 +217,7 @@
    "link_fieldname": "linked_to_site"
   }
  ],
- "modified": "2024-11-22 13:38:02.219497",
+ "modified": "2024-12-23 17:13:17.653442",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Sites",

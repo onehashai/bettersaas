@@ -44,7 +44,7 @@ def refresh_stock_sites(*args, **kwargs):
         "SaaS Stock Sites", filters={"is_used": "no"}, ignore_permissions=True
     )
     if (method not in queued_jobs[frappe.local.site]) and (len(current_stock) < config.stock_sites_count):
-        number_of_sites_to_stock = int(config.stock_sites_count) - len(current_stock)
+        number_of_sites_to_stock = config.stock_sites_count - len(current_stock)
         for _ in range(number_of_sites_to_stock):
             import string
             import random
