@@ -136,9 +136,9 @@ def get_sites(email):
 @frappe.whitelist(allow_guest=True)
 def check_user_name_and_password_for_a_site(site_name, email, password):
     site = frappe.db.get_all(
-        "SaaS sites",
+        "SaaS Sites",
         filters={"site_name": site_name, "linked_email": email},
-        fields=["linked_email", "encrypted_password", "site_name", "cus_id"],
+        fields=["linked_email", "encrypted_password", "site_name", "customer_id"],
     )
     if len(site) == 0:
         return "INVALID_SITE"

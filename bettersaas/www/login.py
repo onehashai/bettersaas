@@ -118,7 +118,6 @@ def get_context(context):
 
 @frappe.whitelist(allow_guest=True)
 def login_via_token(login_token: str):
-    frappe.msgprint("ejd")
     sid = frappe.cache().get_value(f"login_token:{login_token}", expires=True)
     if not sid:
         frappe.respond_as_web_page(

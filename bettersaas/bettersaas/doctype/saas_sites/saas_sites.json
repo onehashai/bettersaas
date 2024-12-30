@@ -16,7 +16,6 @@
   "column_break_bivjq",
   "custom_domains",
   "country",
-  "create_backup",
   "user_contacted",
   "users_tab",
   "active_users",
@@ -129,12 +128,6 @@
    "search_index": 1
   },
   {
-   "default": "1",
-   "fieldname": "create_backup",
-   "fieldtype": "Check",
-   "label": "Create Backup?"
-  },
-  {
    "fieldname": "total_users",
    "fieldtype": "Int",
    "label": "Total Users",
@@ -205,9 +198,9 @@
   {
    "default": "Active",
    "fieldname": "status",
-   "fieldtype": "Select",
+   "fieldtype": "Data",
    "label": "Status",
-   "options": "Active\nIn-Active"
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -217,7 +210,7 @@
    "link_fieldname": "linked_to_site"
   }
  ],
- "modified": "2024-12-23 17:13:17.653442",
+ "modified": "2024-12-30 15:45:35.185964",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Sites",

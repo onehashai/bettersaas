@@ -12,9 +12,9 @@ window.onload = function () {
   document.querySelector(".spinner-border").style.visibility = "hidden";
 };
 VeeValidate.configure({
-  validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
-  validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
-  validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
+  validateOnBlur: true, 
+  validateOnChange: true,
+  validateOnInput: true,
 });
 class OTPVerificationStatus {
   constructor() {
@@ -98,12 +98,13 @@ window.Vue.createApp({
           "jsonp"
         ).always((resp) => {
           let countryCode = resp && resp.country ? resp.country : "us";
+          const countrySelect = document.getElementById("country");
+          countrySelect.value = countryCode;
           callback(countryCode);
         });
       },
     });
     phoneInputField.addEventListener("countrychange", () => {
-      this.country = phoneInput.getSelectedCountryData().iso2.toUpperCase();
     });
     this.phoneInput = phoneInput;
   },
@@ -181,6 +182,7 @@ window.Vue.createApp({
       }
       this.fname = values["first-name"];
       this.lname = values["last-name"];
+      this.country = document.getElementById("country").value;
       this.email = values["email"].toLowerCase();
       this.password = values["password"];
       this.phone = this.phoneInput.getNumber();

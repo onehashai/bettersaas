@@ -165,7 +165,17 @@ main {
 .iti {
   width: 100% !important;
 }
-
+.form-select {
+  height: auto; 
+  overflow: visible;
+}
+.form-select::-webkit-scrollbar {
+  width: 8px;
+}
+.form-select::-webkit-scrollbar-thumb {
+  background-color: #ccc; 
+  border-radius: 4px;
+}
 @media screen and (min-width: 768px) and (max-width: 1200px) {
   main {
     height: 100vh;

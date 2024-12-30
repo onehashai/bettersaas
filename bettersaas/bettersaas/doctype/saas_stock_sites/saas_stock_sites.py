@@ -2,7 +2,16 @@ import frappe
 import os
 from frappe.model.document import Document
 from frappe.utils import random_string
-from frappe.utils import nowdate, nowtime
+
+@frappe.whitelist(allow_guest=True)
+def is_stock_site(site):
+    stock_site = frappe.db.get_list(
+        "SaaS Stock Sites",
+		filters={"subdomain": site.split('.')[0]},
+		fields=["*"],
+        ignore_permissions=True
+    )
+    return stock_site
 
 def insert_site(site_name, admin_password):
     site = frappe.new_doc("SaaS Stock Sites")
@@ -12,24 +21,6 @@ def insert_site(site_name, admin_password):
 
 def create_multiple_sites_in_parallel(command):
     frappe.utils.execute_in_shell(command)
-
-def delete_site(site_name):
-    frappe.utils.execute_in_shell(
-        "bench drop-site {site} --root-password {db_root_password} --force --no-backup".format(
-            site=site_name, db_root_password=frappe.conf.db_password
-        )
-    )
-    os.system(
-        "echo {} | sudo -S sudo service nginx reload".format(frappe.conf.root_password)
-    )
-
-@frappe.whitelist()
-def delete_used_sites():
-    sites = frappe.db.get_list("SaaS Stock Sites", filters={"isUsed": "yes"})
-    for site in sites:
-        delete_site(site.subdomain + "." + frappe.conf.domain)
-    frappe.db.delete("SaaS Stock Sites", filters={"isUsed": "yes"})
-    return "Deleted test sites"
 
 @frappe.whitelist()
 def refresh_stock_sites(*args, **kwargs):

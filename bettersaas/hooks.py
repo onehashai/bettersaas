@@ -144,9 +144,9 @@ scheduler_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "bettersaas.event.get_events"
-# }
+override_whitelisted_methods = {
+    "frappe.desk.page.backups.backups.schedule_files_backup": "bettersaas.bettersaas.overrides.globals.schedule_files_backup",
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,

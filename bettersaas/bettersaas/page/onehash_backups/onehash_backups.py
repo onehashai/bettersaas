@@ -104,7 +104,7 @@ def create_zip_with_files(zip_file_path, files_to_zip):
             zipf.write(file_path, os.path.basename(file_path))
 
 @frappe.whitelist()
-def take_backups_s3(retry_count=0, backup_limit=3, site=frappe.local.site):
+def take_backups_s3(retry_count=0, backup_limit=3, site=None):
     try:
         validate_file_size()
         backup_to_s3(backup_limit=backup_limit, site=site)
@@ -118,7 +118,7 @@ def take_backups_s3(retry_count=0, backup_limit=3, site=frappe.local.site):
     except Exception:
         print(frappe.get_traceback())
 
-def backup_to_s3(backup_limit=3, site=frappe.local.site):
+def backup_to_s3(backup_limit, site):
     import boto3
     from frappe.utils import get_backups_path
     from frappe.utils.backups import new_backup
@@ -190,15 +190,6 @@ def backup_to_s3(backup_limit=3, site=frappe.local.site):
             to_upload_config.append([files_filename, folder])
 
     server_keys = [x[0] for x in to_upload_config]
-    site_config_util = frappe.get_site_config(site_path=site)
-    storage_limit = int(site_config_util["max_storage"]) * 1024
-    current_usage = (get_total_files_size() + get_database_size_of_site()[1][1] + get_backup_size_of_site())
-
-    if current_usage > convert_to_bytes(str(storage_limit) + "G"):
-        frappe.throw("Storage Limit Exceeded")
-        for x in server_keys:
-            os.remove(x)
-            
     replaced_site_name = site.replace(".", "_")
     target_zip_file_name = (
         to_upload_config[0][1][:-1] + "-" + replaced_site_name + ".zip"

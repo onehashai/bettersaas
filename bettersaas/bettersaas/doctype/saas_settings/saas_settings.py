@@ -4,7 +4,7 @@
 import os
 import frappe
 import shutil
-from datetime import datetime
+from datetime import datetime, timedelta
 from frappe import _
 from frappe.utils.password import decrypt
 from frappe.model.document import Document
@@ -80,14 +80,15 @@ def delete_free_sites():
         saas_settings = frappe.get_doc("SaaS Settings")
         site_config = frappe.get_site_config(site_path=site.site_name)
         linked_email = site_config.customer_email
-        subscription_ends_on = datetime.strptime(site_config.subscription_ends_on, "%Y-%m-%d")
 
         last_login_date = get_last_login_date(site.site_name)
         present_date = datetime.now()
         inactive_days = (present_date - last_login_date).days
+        days_until_deletion = saas_settings.inactive_for_days - inactive_days
+        exp_date = present_date + timedelta(days=days_until_deletion)
         if inactive_days >= saas_settings.inactive_for_days:
             content = "This is to inform you that your OneHash account with the email address {email_address} has been permanently deleted on {exp_date}. You will no longer be able to access your account or recover any data".format(
-				email_address=linked_email, exp_date=subscription_ends_on.strftime("%d-%m-%y")
+				email_address=linked_email, exp_date=exp_date.strftime("%d-%m-%y")
 			)
             send_email(linked_email, content)
             method = "bettersaas.api.delete_site"
@@ -98,12 +99,12 @@ def delete_free_sites():
             )
         elif inactive_days >= saas_settings.inactive_for_days - saas_settings.warning_days:
             content = "This is to inform you that your OneHash account with the email address {email_address} will be permanently deleted on {exp_date}. You will no longer be able to access your account or recover any data".format(
-				email_address=linked_email, exp_date=subscription_ends_on.strftime("%d-%m-%y")
+				email_address=linked_email, exp_date=exp_date.strftime("%d-%m-%y")
 			)
             send_email(linked_email, content)
         elif inactive_days >= saas_settings.inactive_for_days - saas_settings.intermittent_warning_days:
             content = "This is to inform you that your OneHash account with the email address {email_address} will be permanently deleted on {exp_date}. You will no longer be able to access your account or recover any data".format(
-				email_address=linked_email, exp_date=subscription_ends_on.strftime("%d-%m-%y")
+				email_address=linked_email, exp_date=exp_date.strftime("%d-%m-%y")
 		  	)
             send_email(linked_email, content)
     return "success"

@@ -11,7 +11,7 @@ frappe.pages['onehash-backups'].on_page_load = function(wrapper) {
 	
 	page.add_inner_button(__("Schedule a Backup Now"), function () {
 		frappe.call({
-			method: "bettersaaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup",
+			method: "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup",
 		});
 	});
 	

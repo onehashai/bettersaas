@@ -35,7 +35,7 @@
   },
   {
    "fieldname": "default_email_limit",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "Default Email Limit"
   },
   {
@@ -91,7 +91,7 @@
   {
    "description": "In GB",
    "fieldname": "default_storage_limit",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "Default Storage Limit"
   },
   {
@@ -125,14 +125,14 @@
   },
   {
    "fieldname": "default_license_limit",
-   "fieldtype": "Data",
+   "fieldtype": "Int",
    "label": "Default License Limit"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-12-18 16:45:48.400303",
+ "modified": "2024-12-26 17:08:09.662173",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Settings",

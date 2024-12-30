@@ -5,7 +5,7 @@ frappe.ui.form.on("SaaS Sites Backup", {
 	refresh(frm) {
         frm.add_custom_button(__("Restore Site"), async function () {
             await $.ajax({
-              url: "/api/method/bettersaas.bettersaas.doctype.saas_sites.saas_sites.restore_site",
+              url: "/api/method/bettersaas.bettersaas.doctype.saas_sites_backup.saas_sites_backup.restore_site",
               type: "GET",
               dataType: "json",
               data: {

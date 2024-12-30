@@ -278,17 +278,6 @@ def get_decrypted_password(*args, **kwargs):
     site = frappe.db.get("SaaS Sites", filters={"site_name": kwargs["site_name"]})
     return decrypt(site.encrypted_password, frappe.conf.enc_key)
 
-@frappe.whitelist()
-def backup():
-    sites = frappe.get_all("SaaS Sites", filters={"do_backup": 1}, fields=["site_name"])
-    for site in sites:
-        frappe.enqueue(
-            "bettersaas.bettersaas.doctype.saas_sites.saas_sites.create_backup",
-            site_name=site.site_name,
-            at_front=1,
-        )
-    return "done"
-
 def insert_backup_record(site, backup_path, backup_size, encrypt_backup):
     try:
         doc = frappe.new_doc("SaaS Sites Backup")
@@ -301,36 +290,17 @@ def insert_backup_record(site, backup_path, backup_size, encrypt_backup):
     except Exception as e:
         print("Error while inserting backup record", e)
 
-@frappe.whitelist(allow_guest=True)
-def delete_site(*args, **kwargs):
-    doc = frappe.get_doc("SaaS Sites", {"site_name": kwargs["site_name"]})
-    doc.site_deleted = 1
-    doc.save(ignore_permissions=True)
-    frappe.db.commit()
-    return "done"
-
-@frappe.whitelist(allow_guest=True, methods=["POST"])
-def upgrade_user(*args, **kwargs):
-    site = kwargs["site_name"]
-    user_count = kwargs["user_count"]
-    product_id = kwargs["product_id"]
-    site_doc = frappe.get_doc("SaaS Sites", {"site_name": site})
-    site_doc.plan = product_id
-    site_doc.license_limit = user_count
-    site_doc.save(ignore_permissions=True)
-    return "done"
-
-def convert_to_bytes(sizeInStringWithPrefix):
-    if sizeInStringWithPrefix == "0":
+def convert_to_bytes(size):
+    if size == "0":
         return 0
-    prefix = sizeInStringWithPrefix[-1]
+    prefix = size[-1]
     if prefix == "G":
-        return float(sizeInStringWithPrefix[:-1]) * 1024 * 1024 * 1024
+        return float(size[:-1]) * 1024 * 1024 * 1024
     if prefix == "M":
-        return float(sizeInStringWithPrefix[:-1]) * 1024 * 1024
+        return float(size[:-1]) * 1024 * 1024
     if prefix == "K":
-        return float(sizeInStringWithPrefix[:-1]) * 1024
-    return float(sizeInStringWithPrefix)
+        return float(size[:-1]) * 1024
+    return float(size)
 
 @frappe.whitelist(allow_guest=True)
 def get_site_backup_size(site_name):
@@ -344,74 +314,6 @@ def get_site_backup_size(site_name):
         float(convert_to_bytes(doc["size"])) for doc in docs if doc["size"] is not None
     )
     return total_size
-                    
-def extract_zipfile(zip_file_path):
-    import zipfile
-
-    paths = [None, None, None, None]
-    with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
-        extract_dir = os.path.splitext(zip_file_path)[0]
-        zip_ref.extractall(extract_dir)
-
-        for root, _, files in os.walk(extract_dir):
-            for file in files:
-                file_path = os.path.join(root, file)
-                if file_path.endswith('.gz'):
-                    paths[0]=file_path
-                elif 'private-files' in file_path and file_path.endswith('.tar'):
-                    paths[1]=file_path
-                elif file_path.endswith('.tar'):
-                    paths[2]=file_path
-                else:
-                    paths[3]=file_path
-    os.remove(zip_file_path)
-    return [extract_dir, paths]
-
-@frappe.whitelist(allow_guest=True)
-def download_backup(backup_id):
-    from frappe.utils import get_backups_path
-
-    conn = boto3.client(
-        "s3",
-        aws_access_key_id=frappe.conf.aws_access_key_id,
-        aws_secret_access_key=frappe.conf.aws_secret_access_key,
-    )
-    bucket_name = frappe.conf.aws_bucket_name
-    backup_doc = frappe.get_doc("SaaS Sites Backup", backup_id)
-    download_path = os.path.join(get_backups_path(), os.path.basename(backup_doc.path))
-    if not os.path.exists(download_path):
-        conn.download_file(
-            bucket_name,
-            backup_doc.path,
-            download_path,
-        )
-    return extract_zipfile(download_path)
-
-@frappe.whitelist(allow_guest=True)
-def restore_site(*args, **kwargs):
-    import shutil
-
-    site_name = kwargs["site_name"]
-    extract_dir, files_path = download_backup(kwargs["backup_id"])
-    if int(kwargs.get("encrypted")):
-        command = "bench --site {} --force restore {} --with-public-files {} --with-private-files {} --db-root-password {} --backup-encryption-key {}".format(
-            site_name, files_path[0], files_path[2], files_path[1], frappe.conf.root_password, frappe.get_site_config(site_path=site_name).get("backup_encryption_key")
-        )
-    else:
-        command = "bench --site {} --force restore {} --with-public-files {} --with-private-files {} --db-root-password {}".format(
-            site_name, files_path[0], files_path[2], files_path[1], frappe.conf.root_password
-        )
-    frappe.enqueue(
-        "bettersaas.bettersaas.doctype.saas_sites.saas_sites.execute_command_async",
-        command=command,
-        queue="short",
-        now=True,
-    )
-    shutil.rmtree(extract_dir)
-    frappe.publish_realtime(
-        "site_restored", {"site_name": site_name}, user=frappe.session.user
-    )
-    return "Restored"
 
 def execute_command_async(command):
     frappe.utils.execute_in_shell(command)
