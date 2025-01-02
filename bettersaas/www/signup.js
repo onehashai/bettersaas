@@ -167,19 +167,6 @@ window.Vue.createApp({
     },
 
     async onSubmit(values) {
-      // skip captcha for cypress tests
-      if (!window.Cypress) {
-        grecaptcha.ready(function () {
-          grecaptcha
-            .execute("6LeP2esnAAAAAEYxmv3RteO1BTQnQQGf5YASo-qx", {
-              action: "submit",
-            })
-            .then(function (token) {
-              // Add your logic to submit to your backend server here.
-              console.log(token);
-            });
-        });
-      }
       this.fname = values["first-name"];
       this.lname = values["last-name"];
       this.country = document.getElementById("country").value;

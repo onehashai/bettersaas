@@ -20,10 +20,12 @@ def get_days_since_creation(folder_path):
     
 @frappe.whitelist()
 def delete_archived_sites():
+    from frappe.utils import get_bench_path
+
     conf = frappe.get_doc('SaaS Settings')
     if not conf.arch_site_delete_conf_enabled:
         return
-    directory_path = conf.path
+    directory_path = os.path.join(get_bench_path(), "archived", "sites")
     threshold_days = conf.threshold_days
     try:
         for folder_name in os.listdir(directory_path):

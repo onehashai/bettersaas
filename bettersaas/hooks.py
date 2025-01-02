@@ -95,7 +95,6 @@ app_license = "MIT"
 # Override standard doctype classes
 
 # override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
 # }
 
 # Document Events
@@ -162,7 +161,7 @@ override_whitelisted_methods = {
 # Ignore links to specified DocTypes when deleting documents
 # -----------------------------------------------------------
 
-# ignore_links_on_delete = ["Communication", "ToDo"]
+# ignore_links_on_delete = ["Communication"]
 
 # Request Events
 # ----------------

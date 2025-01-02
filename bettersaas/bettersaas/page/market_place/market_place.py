@@ -2,6 +2,7 @@ import frappe
 import requests
 import json
 
+@frappe.whitelist(allow_guest=True)
 def get_all_apps():
     url = "http://{site_name}/api/method/bettersaas.bettersaas.doctype.available_apps.available_apps.get_apps".format(
         site_name=frappe.conf.admin_url

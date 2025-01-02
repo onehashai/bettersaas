@@ -125,39 +125,14 @@ def create_user(first_name, last_name, email, site, phone):
     frappe.db.commit()
     return user
 
-@frappe.whitelist(allow_guest=True)
-def get_sites(email):
-    return frappe.get_all(
-        "SaaS Sites",
-        filters={"linked_email": email},
-        fields=["name", "site_name"],
-    )
-
-@frappe.whitelist(allow_guest=True)
-def check_user_name_and_password_for_a_site(site_name, email, password):
-    site = frappe.db.get_all(
-        "SaaS Sites",
-        filters={"site_name": site_name, "linked_email": email},
-        fields=["linked_email", "encrypted_password", "site_name", "customer_id"],
-    )
-    if len(site) == 0:
-        return "INVALID_SITE"
-
-    site = site[0]
-
-    dec_password = decrypt(site.encrypted_password, frappe.conf.enc_key)
-    if site:
-        if dec_password != password:
-            return "INVALID_CREDENTIALS"
-    # check for active subscription
-    # country = frappe.get_site_config(site_path=site.site_name)["country"]
-    # stripe_subscription_manager = StripeSubscriptionManager(country=country)
-    # has_sub = stripe_subscription_manager.has_valid_site_subscription(site.cus_id)
-    # has_sub = True
-    # find user and check if has role of Administator
-    # if not has_sub:
-    #     return "NO_SUBSCRIPTION"
-    return "OK"
+# TODO TO remove
+# @frappe.whitelist(allow_guest=True)
+# def get_sites(email):
+#     return frappe.get_all(
+#         "SaaS Sites",
+#         filters={"linked_email": email},
+#         fields=["name", "site_name"],
+#     )
 
 @frappe.whitelist()
 def create_lead(email, phone, fname, lname, company_name, site_name):	

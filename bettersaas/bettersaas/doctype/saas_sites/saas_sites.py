@@ -10,6 +10,7 @@ import requests
 import subprocess as sp
 from bettersaas.bettersaas.doctype.saas_users.saas_users import create_user
 from frappe import _
+from frappe.utils import get_bench_path
 from frappe.core.doctype.user.user import test_password_strength
 from frappe.utils import validate_email_address
 from frappe.utils.password import decrypt, encrypt
@@ -171,19 +172,12 @@ def setup_site(*args, **kwargs):
             new_site, target_site.subdomain + "." + frappe.conf.domain
         )
     )
-    if frappe.conf.domain != "localhost":
-        commands.append(
-            "cd /home/{}/frappe-bench/sites & mv {}.{} {}".format(
-                frappe.conf.server_user_name, target_site.subdomain, frappe.conf.domain, new_site
-            )
+    sites_path = os.path.join(get_bench_path(), "sites")
+    commands.append(
+        "cd {} & mv {}.{} {}".format(
+            sites_path, target_site.subdomain, frappe.conf.domain, new_site
         )
-    else:
-        #  Override command according to your local directory
-         commands.append(
-            "cd /home/{}/OneHash/onehash-crm-v15/frappe-bench/sites & mv {}.{} {}".format(
-                frappe.conf.server_user_name, target_site.subdomain, frappe.conf.domain, new_site
-            )
-        )
+    )
     commands.append(
         "bench --site {} set-config min_license {}".format(
             new_site, saas_settings.default_license_limit

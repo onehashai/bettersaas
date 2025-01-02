@@ -23,7 +23,6 @@
   "delete_archived_sites_section",
   "arch_site_delete_conf_enabled",
   "threshold_days",
-  "path",
   "stock_site_configuration_tab",
   "stock_sites_count"
  ],
@@ -84,11 +83,6 @@
    "label": "Threshold Days"
   },
   {
-   "fieldname": "path",
-   "fieldtype": "Data",
-   "label": "Path"
-  },
-  {
    "description": "In GB",
    "fieldname": "default_storage_limit",
    "fieldtype": "Int",
@@ -132,7 +126,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-12-26 17:08:09.662173",
+ "modified": "2024-12-31 13:27:18.309756",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Settings",
