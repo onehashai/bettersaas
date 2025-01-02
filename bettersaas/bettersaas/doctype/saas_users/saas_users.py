@@ -23,17 +23,6 @@ def send_otp_via_sms(number, otp):
     message = otp + " is OTP to verify your account request for OneHash."
     send_sms(receiver_list, message, sender_name="", success_msg=False)
 
-def get_ip():
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        
-        ip = s.getsockname()[0]
-        s.close()
-        return ip
-    except Exception as e:
-        return f"Error occurred: {e}"
-
 def send_otp_via_email(otp, email, fname):
     subject = "Verify Email Address for OneHash"
     template = "signup_otp_email"
@@ -72,21 +61,8 @@ def send_otp(email, phone, fname, lname, company_name, site_name):
 
     unique_id = frappe.generate_hash("", 5)
     new_otp_doc.id = unique_id
-    new_otp_doc.ip = str(get_ip())
     new_otp_doc.email = email
-    if phone and frappe.conf.domain != "localhost":
-        new_otp_doc.phone = phone
-        from datetime import datetime
-
-        doc_otp=frappe.get_list('OTP',fields=['*'],filters={'ip':str(get_ip()),'date':datetime.now().date()})
-        if doc_otp:
-            count=0
-            for i in doc_otp:
-                count+=1
-            if count<=2:
-                send_otp_via_sms(phone, new_otp_doc.otp)
-        else:
-            send_otp_via_sms(phone, new_otp_doc.otp)
+    new_otp_doc.phone = phone
     send_otp_via_email(new_otp_doc.otp, email , fname)
     new_otp_doc.save(ignore_permissions=True)
     create_lead(email, phone, fname, lname, company_name, site_name)
