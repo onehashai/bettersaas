@@ -12,8 +12,10 @@ def delete_site(site_name):
     )[0]
     if saas_sites_doc and saas_users_doc:
         schedule_files_backup(site_name)
-        frappe.delete_doc("SaaS Users", saas_users_doc.name)
+        frappe.init(site=frappe.conf.admin_url)
+        frappe.connect()
         frappe.delete_doc("SaaS Sites", saas_sites_doc.name)
+        frappe.delete_doc("SaaS Users", saas_users_doc.name)
         frappe.db.commit()
         frappe.utils.execute_in_shell(
             "bench drop-site {site} --root-password {root_password} --force --no-backup".format(
@@ -21,7 +23,5 @@ def delete_site(site_name):
 
             )
         )
-        frappe.utils.execute_in_shell(
-            "bench setup nginx --yes".format
-        )
+        frappe.destroy()
         

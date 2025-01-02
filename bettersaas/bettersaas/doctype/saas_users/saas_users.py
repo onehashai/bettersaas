@@ -125,15 +125,6 @@ def create_user(first_name, last_name, email, site, phone):
     frappe.db.commit()
     return user
 
-# TODO TO remove
-# @frappe.whitelist(allow_guest=True)
-# def get_sites(email):
-#     return frappe.get_all(
-#         "SaaS Sites",
-#         filters={"linked_email": email},
-#         fields=["name", "site_name"],
-#     )
-
 @frappe.whitelist()
 def create_lead(email, phone, fname, lname, company_name, site_name):	
     existing_lead = frappe.get_value("Lead",filters={"email_id": email})
