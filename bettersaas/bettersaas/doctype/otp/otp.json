@@ -7,10 +7,10 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "phone",
-  "email",
+  "id",
   "otp",
-  "id"
+  "phone",
+  "email"
  ],
  "fields": [
   {
@@ -36,7 +36,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-18 11:27:59.565309",
+ "modified": "2025-01-03 12:21:00.374114",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "OTP",
