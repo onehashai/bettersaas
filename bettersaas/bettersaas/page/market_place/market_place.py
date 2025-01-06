@@ -17,7 +17,7 @@ def get_all_apps():
             else:
                 app["installed"] = "false"
             apps_to_return.append(app)
-        return apps_to_return
+        return sorted(apps_to_return, key=lambda x: x["name"].lower())
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
         return e

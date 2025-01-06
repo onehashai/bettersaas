@@ -71,6 +71,7 @@ window.Vue.createApp({
       targetSubdomain: "",
       otpSent: false,
       country: "",
+      recaptchaSiteKey: config.RECAPTCHA_SITE_KEY, 
       status: {
         step1: "neutral",
         step2: "neutral",
@@ -85,6 +86,8 @@ window.Vue.createApp({
   },
 
   async mounted() {
+    window.onRecaptchaVerified = this.onRecaptchaVerified;
+
     const phoneInputField = document.querySelector("#phone");
     const phoneInput = window.intlTelInput(phoneInputField, {
       utilsScript:
@@ -166,15 +169,9 @@ window.Vue.createApp({
       return config.ERROR_MESSAGES.REQUIRED;
     },
 
-    async onSubmit(values) {
-      this.fname = values["first-name"];
-      this.lname = values["last-name"];
+    async onSubmit() {
       this.country = document.getElementById("country").value;
-      this.email = values["email"].toLowerCase();
-      this.password = values["password"];
       this.phone = this.phoneInput.getNumber();
-      this.company_name = values["company-name"];
-      this.sitename = values["site-name"].toLowerCase();
       this.otpVerificationStatus.setSendingOTP();
       this.sendOtp();
     },
@@ -381,6 +378,15 @@ window.Vue.createApp({
           this.loading = false;
         },
       });
+    },
+    handleSubmit() {
+      grecaptcha.execute();
+    },
+    onRecaptchaVerified() {
+      this.onSubmit();
+    },
+    convertToLowercase(event) {
+      this.sitename = event.target.value.toLowerCase();
     },
   },
 }).mount("#main");

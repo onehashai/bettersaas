@@ -139,17 +139,23 @@
             aria-hidden="true"
           />
           <div class="tagline">
-            <div class="tagline_main">14 Days Trial on Us</div>
+            <div class="tagline_main">30 Days Trial on Us</div>
             <div class="tagline_sub">No credit card required</div>
           </div>
         </div>
         <v-form
-          @submit="onSubmit"
+          @submit="handleSubmit"
           id="form"
           v-slot="{meta}"
           autocomplete="off"
           novalidate="novalidate"
         >
+        <div
+          class="g-recaptcha"
+          :data-sitekey="recaptchaSiteKey"
+          data-callback="onRecaptchaVerified"
+          data-size="invisible"
+        ></div>
         <div class="feedback" v-if="!meta.valid ">Invalid</div>
           <div class="feedback" v-if="meta.valid ">valid</div>
           <div class="row">
@@ -160,6 +166,7 @@
                 type="text"
                 placeholder="First Name"
                 :rules="isRequired"
+                v-model="fname"
               ></v-field>
 
               <error-message
@@ -175,6 +182,7 @@
                 type="text"
                 placeholder="Last Name"
                 :rules="isRequired"
+                v-model="lname"
               ></v-field>
 
               <error-message
@@ -440,6 +448,9 @@
                 <option value="ZM">Zambia</option>
                 <option value="ZW">Zimbabwe</option>
               </select>
+              <span class="absolute inset-y-0 mb-2 text-xl right-4 flex items-center pointer-events-none">
+                ⌄
+              </span>
               <span class="text-sm text-secondary px-3">Chart of accounts will be configured based on the chosen country.</span>
             </div>
           </div>
@@ -451,6 +462,7 @@
                 type="text"
                 placeholder="Company Name"
                 :rules="isRequired"
+                v-model="company_name"
               ></v-field>
               <error-message
                 name="company-name"
@@ -475,13 +487,11 @@
                   oninput="restrictInput(event)"
                   autocomplete="off"
                   pattern="^[a-zA-Z0-9 ]+$"
-                  placeholder="Site name"
+                  placeholder="Site Name"
                   v-bind="field"
-                  class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500 lowercase"
+                  class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
+                  @input="convertToLowercase"
                 />
-               
-   
- 
                 <div v-if=" errorMessage" class="feedback error-feedback">
                   Site name is invalid or not available
                 </div>
@@ -498,7 +508,7 @@
           <div class="row">
             <div class="col-12 col-md-6 mb-1">
               <v-field
-                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500 lowercase"
+                class="appearance-none placeholder:text-slate-600 block text-black-900 border py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
                 name="email"
                 type="text"
                 placeholder="Email"
@@ -518,6 +528,7 @@
                 :rules="checkPasswordStrength"
                 :validateOnInput="true"
                 name="password"
+                v-model="password"
               >
                 <input
                   id="password"
@@ -703,15 +714,15 @@
                    });
                    
                    // Block opening of inspect element on Windows
-                   document.addEventListener("keydown", function (event) {
-                     // Check for F12 key or Ctrl+Shift+I (Inspect Element shortcut)
-                     if (
-                       event.key === "F12" ||
-                       (event.ctrlKey && event.shiftKey && event.key === "I")
-                     ) {
-                       event.preventDefault();
-                     }
-                   });
+                  //  document.addEventListener("keydown", function (event) {
+                  //    // Check for F12 key or Ctrl+Shift+I (Inspect Element shortcut)
+                  //    if (
+                  //      event.key === "F12" ||
+                  //      (event.ctrlKey && event.shiftKey && event.key === "I")
+                  //    ) {
+                  //      event.preventDefault();
+                  //    }
+                  //  });
                    
                    // Block opening of inspect element on Mac
                    document.addEventListener("keydown", function (event) {
@@ -748,7 +759,7 @@
   referrerpolicy="no-referrer"
 ></script>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://www.google.com/recaptcha/api.js?render=6LeP2esnAAAAAEYxmv3RteO1BTQnQQGf5YASo-qx"></script>
+<script src="https://www.google.com/recaptcha/api.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
 <script src="https://unpkg.com/@popperjs/core@2"></script>
