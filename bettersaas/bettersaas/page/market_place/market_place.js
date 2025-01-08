@@ -72,7 +72,7 @@ frappe.pages["market-place"].on_page_load = function (wrapper) {
 		).innerHTML = ` <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Installing...`;
 		$(":button").prop("disabled", true);
 		frappe.call({
-		  method: "clientside.clientside.page.market_place.market_place.install_app",
+		  method: "bettersaas.bettersaas.page.market_place.market_place.install_app",
 		  args: {
 			app_name: this.name,
 		  },
@@ -97,7 +97,7 @@ frappe.pages["market-place"].on_page_load = function (wrapper) {
 		).innerHTML = ` <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Uninstalling...`;
 		$(":button").prop("disabled", true);
 		frappe.call({
-		  method: "clientside.clientside.page.market_place.market_place.uninstall_app",
+		  method: "bettersaas.bettersaas.page.market_place.market_place.uninstall_app",
 		  args: {
 			app_name: this.name,
 		  },

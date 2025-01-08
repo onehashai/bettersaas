@@ -87,9 +87,6 @@ def check_password_strength(*args, **kwargs):
         }
     return test_password_strength(passphrase, user_data=user_data)
 
-def escape_dollar_sign(input_string):
-    return re.sub(r'\$', r'\\$', input_string) if '$' in input_string else input_string
-
 @frappe.whitelist(allow_guest=True)
 def setup_site(*args, **kwargs):
     company_name = kwargs["company_name"]
@@ -158,13 +155,9 @@ def setup_site(*args, **kwargs):
             target_site.subdomain + "." + frappe.conf.domain
         )
     )
-    
-    pass_value = str(admin_password)
-    escaped_pass = escape_dollar_sign(pass_value)
-
     commands.append(
         "bench --site {} set-admin-password {}".format(
-            target_site.subdomain + "." + frappe.conf.domain, escaped_pass
+            target_site.subdomain + "." + frappe.conf.domain, admin_password
         )
     )
     commands.append(

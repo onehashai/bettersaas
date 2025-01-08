@@ -1,6 +1,5 @@
 {% extends "bettersaas/templates/web.html" %} {% block style %}
 
-
 <!-- no-header -->
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -47,12 +46,6 @@
       justify-content: center;
       animation: fadeIn 2s ease-in-out, moveUp 4s infinite alternate;
     }
-    /* .loading-dots {
-      display: inline-block;
-      font-size: 32px;
-      color: #333;
-      animation: blink 1.5s infinite;
-    } */
     .loading-text {
       margin-top: 0;
       font-size: 15px;
@@ -93,22 +86,6 @@
 
   </head>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- <script>
-  const loadingPhrases = [
-    'Just a moment while we work our magic',
-  ];
-  
-  let currentPhraseIndex = 0;
-  
-  function updateLoadingText() {
-    document.querySelector('.loading-text').textContent =
-      loadingPhrases[currentPhraseIndex];
-    currentPhraseIndex = (currentPhraseIndex + 1) % loadingPhrases.length;
-  }
-  
-  setInterval(updateLoadingText, 15000);
-</script> -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
@@ -156,8 +133,6 @@
           data-callback="onRecaptchaVerified"
           data-size="invisible"
         ></div>
-        <div class="feedback" v-if="!meta.valid ">Invalid</div>
-          <div class="feedback" v-if="meta.valid ">valid</div>
           <div class="row">
             <div class="col-12 col-md-6 mb-1">
               <v-field
@@ -532,11 +507,27 @@
               >
                 <input
                   id="password"
-                  type="password"
+                  :type="showPassword ? 'text' : 'password'"
                   placeholder="Password"
                   v-bind="field"
                   class="appearance-none placeholder:text-slate-600 block text-black-900 py-3 px-4 leading-tight bg-white focus:outline-none focus:bg-gray-500"
                 />
+                <button
+                  type="button"
+                  @click="togglePasswordVisibility"
+                  class="absolute inset-y-0 right-4 mb-2 flex items-center text-gray-500 focus:outline-none"
+                >
+                <svg v-if="showPassword" class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M1 12C1 12 5 20 12 20C19 20 23 12 23 12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="12" cy="12" r="3" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <svg v-else class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 2L22 22" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M6.71277 6.7226C3.66479 8.79527 2 12 2 12C2 12 5.63636 19 12 19C14.0503 19 15.8174 18.2734 17.2711 17.2884M11 5.05822C11.3254 5.02013 11.6588 5 12 5C18.3636 5 22 12 22 12C22 12 21.3082 13.3317 20 14.8335" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M14 14.2362C13.4692 14.7112 12.7684 15.0001 12 15.0001C10.3431 15.0001 9 13.657 9 12.0001C9 11.1764 9.33193 10.4303 9.86932 9.88818" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                </button>
                 <div v-if=" errorMessage" class="feedback long-feedback">
                   {{errorMessage}}
                 </div>

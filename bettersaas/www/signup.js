@@ -61,6 +61,7 @@ window.Vue.createApp({
       lname: "",
       email: "",
       password: "",
+      showPassword: false,
       siteCreated: false,
       loading: false,
       sitename: "",
@@ -130,13 +131,6 @@ window.Vue.createApp({
       }
       this.otpVerificationStatus.reset();
     },
-    // isTermsChecked(value) {
-    //   if (value && value === "no") {
-    //     return true;
-    //   }
-    //   return config.ERROR_MESSAGES.ACCEPT_TERMS;
-    // },
-
     isRequired(value) {
       if (value && value.length > 0) {
         return true;
@@ -157,16 +151,10 @@ window.Vue.createApp({
       if (!value) {
         return config.ERROR_MESSAGES.REQUIRED;
       }
-      if (this.country !== "IN") {
+      if (this.phoneInput.isValidNumber()) {
         return true;
       }
-      if (value && value.length > 0) {
-        if (this.phoneInput.isValidNumber()) {
-          return true;
-        }
-        return config.ERROR_MESSAGES.INVALID_PHONE;
-      }
-      return config.ERROR_MESSAGES.REQUIRED;
+      return config.ERROR_MESSAGES.INVALID_PHONE;
     },
 
     async onSubmit() {
@@ -293,6 +281,7 @@ window.Vue.createApp({
           [config.HTTP_METHODS.SEND_OTP.DATA.LNAME]: this.lname,
           [config.HTTP_METHODS.SEND_OTP.DATA.CNAME]: this.company_name,
           [config.HTTP_METHODS.SEND_OTP.DATA.SITE_NAME]: this.sitename,
+          [config.HTTP_METHODS.SEND_OTP.DATA.URL_PARAMS]: JSON.stringify(Object.fromEntries(new URLSearchParams(window.location.search))),
         },
       });
       message = resp.message;
@@ -387,6 +376,9 @@ window.Vue.createApp({
     },
     convertToLowercase(event) {
       this.sitename = event.target.value.toLowerCase();
+    },
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
     },
   },
 }).mount("#main");

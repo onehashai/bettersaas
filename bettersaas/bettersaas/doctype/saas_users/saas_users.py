@@ -4,10 +4,9 @@
 import frappe
 import math
 import random
-import socket
+import json
 from frappe import _
 from frappe.core.doctype.sms_settings.sms_settings import send_sms
-from frappe.utils.password import decrypt
 from frappe.model.document import Document
 
 def generate_otp():
@@ -40,7 +39,7 @@ def send_otp_via_email(otp, email, fname):
     return True
 
 @frappe.whitelist(allow_guest=True)
-def send_otp(email, phone, fname, lname, company_name, site_name):
+def send_otp(email, phone, fname, lname, company_name, site_name, url_params):
     doc = frappe.db.get_all(
         "OTP",
         filters={"email": email},
@@ -65,7 +64,7 @@ def send_otp(email, phone, fname, lname, company_name, site_name):
     new_otp_doc.phone = phone
     send_otp_via_email(new_otp_doc.otp, email , fname)
     new_otp_doc.save(ignore_permissions=True)
-    create_lead(email, phone, fname, lname, company_name, site_name)
+    create_lead(email, phone, fname, lname, company_name, site_name, url_params)
     frappe.db.commit()
     return unique_id
 
@@ -102,16 +101,25 @@ def create_user(first_name, last_name, email, site, phone):
     return user
 
 @frappe.whitelist()
-def create_lead(email, phone, fname, lname, company_name, site_name):	
+def create_lead(email, phone, fname, lname, company_name, site_name, url_params):	
+    if url_params: 
+        params = json.loads(url_params)
     existing_lead = frappe.get_value("Lead",filters={"email_id": email})
     if existing_lead:
         lead_doc = frappe.get_doc("Lead",existing_lead,ignore_permissions=True)
+        lead_doc.site_name = site_name
         lead_doc.email_id = email
         lead_doc.mobile_no = phone
         lead_doc.first_name = fname
         lead_doc.last_name = lname
         lead_doc.lead_name = fname+" "+lname
         lead_doc.company_name = company_name
+        if url_params:
+            lead_doc.utm_source = params.get("utm_source", "")
+            lead_doc.utm_medium = params.get("utm_medium", "")
+            lead_doc.utm_campaign = params.get("utm_campaign", "")
+            lead_doc.utm_content = params.get("utm_content", "")
+            lead_doc.utm_term = params.get("utm_term", "")
         lead_doc.save(ignore_permissions=True)
     else:
         lead = frappe.get_doc({
@@ -123,10 +131,17 @@ def create_lead(email, phone, fname, lname, company_name, site_name):
         lead.lead_owner = frappe.get_all("User",filters={
 			"name": "Administrator"
 		})[0].get("name")
+        lead.site_name = site_name
         lead.first_name = fname
         lead.last_name = lname
         lead.lead_name = fname+" "+lname
         lead.company_name = company_name
+        if url_params:
+            lead.utm_source = params.get("utm_source", "")
+            lead.utm_medium = params.get("utm_medium", "")
+            lead.utm_campaign = params.get("utm_campaign", "")
+            lead.utm_content = params.get("utm_content", "")
+            lead.utm_term = params.get("utm_term", "")
         lead.save(ignore_permissions=True)
 class SaaSUsers(Document):
     pass

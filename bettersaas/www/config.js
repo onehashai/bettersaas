@@ -59,7 +59,8 @@ const config = {
         FNAME: "fname",
         LNAME: "lname",
         CNAME: "company_name",
-        SITE_NAME: "site_name"
+        SITE_NAME: "site_name",
+        URL_PARAMS: "url_params"
       },
     },
     VERIFY_OTP: {
