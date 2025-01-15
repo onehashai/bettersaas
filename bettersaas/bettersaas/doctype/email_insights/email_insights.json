@@ -1,0 +1,45 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-01-15 14:46:27.628123",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "email",
+  "opened",
+  "opened_at"
+ ],
+ "fields": [
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email"
+  },
+  {
+   "fieldname": "opened",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Opened"
+  },
+  {
+   "fieldname": "opened_at",
+   "fieldtype": "Long Text",
+   "in_list_view": 1,
+   "label": "Opened At"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-01-15 14:59:49.504661",
+ "modified_by": "Administrator",
+ "module": "Bettersaas",
+ "name": "Email Insights",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
