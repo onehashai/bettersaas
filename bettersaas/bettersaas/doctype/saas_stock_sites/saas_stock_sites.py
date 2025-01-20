@@ -68,6 +68,11 @@ def refresh_stock_sites(*args, **kwargs):
                 )
             )
             commands.append(
+                "bench --site {} migrate".format(
+                    subdomain + "." + domain
+                )
+            )
+            commands.append(
                 "bench --site {} install-app clientside".format(
                     subdomain + "." + domain
                 )
