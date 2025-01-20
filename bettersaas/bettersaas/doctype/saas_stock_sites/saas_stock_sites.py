@@ -46,15 +46,15 @@ def refresh_stock_sites(*args, **kwargs):
             admin_password = random_string(5)
             commands = []
             commands.append(
-                "bench --site {} install-app payments".format(
-                    subdomain + "." + domain
-                )
-            )
-            commands.append(
                 "bench new-site {} --install-app erpnext --admin-password {} --db-root-password {}".format(
                     subdomain + "." + domain,
                     admin_password,
                     frappe.conf.root_password,
+                )
+            )
+            commands.append(
+                "bench --site {} install-app payments".format(
+                    subdomain + "." + domain
                 )
             )
             commands.append(
