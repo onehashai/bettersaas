@@ -12,6 +12,7 @@
   "column_break_idl9z",
   "saas_site_defaults_tab",
   "default_license_limit",
+  "default_license_limit_in",
   "default_email_limit",
   "default_storage_limit",
   "site_delete_configuration_tab",
@@ -121,12 +122,17 @@
    "fieldname": "default_license_limit",
    "fieldtype": "Int",
    "label": "Default License Limit"
+  },
+  {
+   "fieldname": "default_license_limit_in",
+   "fieldtype": "Data",
+   "label": "Default License Limit (IN)"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-12-31 13:27:18.309756",
+ "modified": "2025-01-17 12:23:34.299256",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Settings",

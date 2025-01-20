@@ -171,11 +171,18 @@ def setup_site(*args, **kwargs):
             sites_path, target_site.subdomain, frappe.conf.domain, new_site
         )
     )
-    commands.append(
-        "bench --site {} set-config min_license {}".format(
-            new_site, saas_settings.default_license_limit
+    if kwargs["country"] == "IN":
+        commands.append(
+            "bench --site {} set-config min_license {}".format(
+                new_site, saas_settings.default_license_limit_in
+            )
         )
-    )
+    else:
+        commands.append(
+            "bench --site {} set-config min_license {}".format(
+                new_site, saas_settings.default_license_limit
+            )
+        )
     commands.append(
         "bench --site {} set-config max_email {}".format(
             new_site, saas_settings.default_email_limit
