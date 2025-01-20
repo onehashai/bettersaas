@@ -9,9 +9,17 @@ def get_plan_name(product_id):
     elif frappe.conf.get("stripe_prices",{}).get("IN", {}).get("products",{}).get("ONEHASH_ERP",{})['product_id'] == product_id:
         return "OneHash_ERP"
 
+def get_site_name_from_customer_id(customer_id):
+    customer = stripe.Customer.retrieve(customer_id)
+    site_name = customer.metadata.get("site_name")
+    return site_name
+    
 def process_subscription_updated(data):
-    site_name = data["metadata"]["site_name"]
     customer_id = data["customer"]
+    metadata = data.get("metadata", {})
+    site_name = metadata.get("site_name", "")
+    if not site_name:
+        site_name = get_site_name_from_customer_id(customer_id)
     subscription_id = data["id"]
     price_id = data["plan"]["id"]
     product_id = data["plan"]["product"]
@@ -69,8 +77,11 @@ def process_subscription_updated(data):
     execute_commands(commands)
 
 def process_subscription_deleted(data):
-    site_name = data["metadata"]["site_name"]
     customer_id = data["customer"]
+    metadata = data.get("metadata", {})
+    site_name = metadata.get("site_name", "")
+    if not site_name:
+        site_name = get_site_name_from_customer_id(customer_id)
     subscription_id = data["id"]
     price_id = data["plan"]["id"]
     product_id = data["plan"]["product"]
