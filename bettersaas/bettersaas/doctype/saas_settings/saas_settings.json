@@ -25,7 +25,8 @@
   "arch_site_delete_conf_enabled",
   "threshold_days",
   "stock_site_configuration_tab",
-  "stock_sites_count"
+  "stock_sites_count",
+  "check_every"
  ],
  "fields": [
   {
@@ -127,12 +128,18 @@
    "fieldname": "default_license_limit_in",
    "fieldtype": "Data",
    "label": "Default License Limit (IN)"
+  },
+  {
+   "description": "Only Set in Hours and Minutes",
+   "fieldname": "check_every",
+   "fieldtype": "Duration",
+   "label": "Check Every"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-17 12:23:34.299256",
+ "modified": "2025-01-21 14:17:49.425567",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Settings",

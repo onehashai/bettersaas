@@ -15,25 +15,28 @@
    "fieldname": "email",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Email"
+   "label": "Email",
+   "read_only": 1
   },
   {
    "fieldname": "opened",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Opened"
+   "label": "Opened",
+   "read_only": 1
   },
   {
    "fieldname": "opened_at",
    "fieldtype": "Long Text",
    "in_list_view": 1,
-   "label": "Opened At"
+   "label": "Opened At",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-01-15 14:59:49.504661",
+ "modified": "2025-01-21 12:06:33.280331",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "Email Insights",
