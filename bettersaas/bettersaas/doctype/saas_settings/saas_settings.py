@@ -122,13 +122,13 @@ def update_refresh_stock_site_scheduler(check_every):
         frappe.throw(f"Invalid check_every value: {check_every}. Must be at least 60 seconds.")
 
     if minutes == 0 and hours != 0:
-        cron_expression = f"* */{hours} * * *"
+        cron_expression = f"0 */{hours} * * *"
     
     elif hours == 0 and minutes != 0:
         cron_expression = f"*/{minutes} * * * *"
 
     else:
-        cron_expression = f"*/{minutes} */{hours} * * *"
+        cron_expression = f"{minutes} */{hours} * * *"
 
     job = frappe.get_doc("Scheduled Job Type", "saas_stock_sites.refresh_stock_sites")
     job.cron_format = cron_expression

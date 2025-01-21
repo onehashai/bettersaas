@@ -125,7 +125,7 @@ scheduler_events = {
     # "daily_long": [
     # ],
     "cron":{
-        "* */4 * * *": [
+        "0 */4 * * *": [
             "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refresh_stock_sites",
         ],
         "0 0 * * *": [
