@@ -6,7 +6,6 @@ frappe.ui.form.on("SaaS Settings", {
         frappe.call({
             method: "bettersaas.bettersaas.doctype.saas_settings.saas_settings.update_refresh_stock_site_scheduler",
             args: {
-                doc_name: frm.doc.name,
                 check_every: frm.doc.check_every
             },
             callback: function (r) {

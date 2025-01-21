@@ -112,7 +112,7 @@ def delete_free_sites():
     return "success"
 
 @frappe.whitelist()
-def update_refresh_stock_site_scheduler(doc_name, check_every):
+def update_refresh_stock_site_scheduler(check_every):
     check_every = int(check_every)
     hours = check_every // 3600
     remaining_seconds = check_every % 3600
