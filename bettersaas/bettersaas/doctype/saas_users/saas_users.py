@@ -6,7 +6,6 @@ import math
 import random
 import json
 from frappe import _
-from frappe.core.doctype.sms_settings.sms_settings import send_sms
 from frappe.model.document import Document
 
 def generate_otp():
@@ -16,11 +15,12 @@ def generate_otp():
         OTP += digits[math.floor(random.random() * 10)]
     return OTP
 
-def send_otp_via_sms(number, otp):
+def send_otp_via_sms(otp, number):
+    from frappe.core.doctype.sms_settings.sms_settings import send_sms
     receiver_list = []
     receiver_list.append(number)
-    message = otp + " is OTP to verify your account request for OneHash."
-    send_sms(receiver_list, message, sender_name="", success_msg=False)
+    msg = otp + " is OTP to verify your account request for OneHash."
+    send_sms(receiver_list, msg, sender_name="", success_msg=False)
 
 def send_otp_via_email(otp, email, fname):
     subject = "Verify Email Address for OneHash"
@@ -63,6 +63,7 @@ def send_otp(email, phone, fname, lname, company_name, site_name, url_params):
     new_otp_doc.email = email
     new_otp_doc.phone = phone
     send_otp_via_email(new_otp_doc.otp, email , fname)
+    send_otp_via_sms(new_otp_doc.otp, phone)
     new_otp_doc.save(ignore_permissions=True)
     create_lead(email, phone, fname, lname, company_name, site_name, url_params)
     frappe.db.commit()

@@ -69,6 +69,9 @@ def get_last_login_date(site_name):
      
 @frappe.whitelist()
 def delete_free_sites():
+    saas_settings = frappe.get_doc("SaaS Settings")
+    if not saas_settings.site_delete_conf_enabled:
+        return
     sites = frappe.get_list("SaaS Sites", fields=["site_name"])
     to_be_deleted = []
     for site in sites:
@@ -79,7 +82,6 @@ def delete_free_sites():
         except:
             pass
     for site in to_be_deleted:
-        saas_settings = frappe.get_doc("SaaS Settings")
         site_config = frappe.get_site_config(site_path=site.site_name)
         linked_email = site_config.customer_email
 
