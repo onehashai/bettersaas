@@ -1,5 +1,5 @@
 # Copyright (c) 2023, OneHash and contributors
-# For license information, please see license.txt 
+# For license information, please see license.txt
 
 import frappe
 import math
@@ -8,6 +8,7 @@ import json
 from frappe import _
 from frappe.model.document import Document
 
+
 def generate_otp():
     digits = "0123456789"
     OTP = ""
@@ -15,12 +16,14 @@ def generate_otp():
         OTP += digits[math.floor(random.random() * 10)]
     return OTP
 
+
 def send_otp_via_sms(otp, number):
     from frappe.core.doctype.sms_settings.sms_settings import send_sms
     receiver_list = []
     receiver_list.append(number)
     msg = otp + " is OTP to verify your account request for OneHash."
     send_sms(receiver_list, msg, sender_name="", success_msg=False)
+
 
 def send_otp_via_email(otp, email, fname):
     subject = "Verify Email Address for OneHash"
@@ -38,6 +41,61 @@ def send_otp_via_email(otp, email, fname):
     )
     return True
 
+
+def send_otp_via_whatsapp(otp, phone):
+    from frappe.integrations.utils import make_post_request
+
+    api_version = frappe.conf.whatsapp_otp_config["api_version"]
+    phone_number_id = frappe.conf.whatsapp_otp_config["phone_number_id"]
+    access_token =frappe.conf.whatsapp_otp_config["access_token"]
+    template_name = frappe.conf.whatsapp_otp_config["template_name"]
+    language_code = frappe.conf.whatsapp_otp_config["language_code"]
+    url = "https://graph.facebook.com"
+
+    data = {
+        "messaging_product": "whatsapp",
+        "recipient_type": "individual",
+        "to": phone,
+        "type": "template",
+        "template": {
+            "name": template_name,
+            "language": {"code": language_code},
+            "components": [],
+        },
+    }
+    param_1 = [{"type": "text", "text": otp}]
+    param_2 = [{"type": "text", "text": otp}]
+    data["template"]["components"].append(
+        {
+            "type": "body",
+            "parameters": param_1,
+        }
+    )
+    data["template"]["components"].append(
+        {
+            "type": "button",
+            "sub_type": "url",
+            "index": "0",
+            "parameters": param_2,
+        }
+    )
+
+    headers = {
+        "authorization": f"Bearer {access_token}",
+        "content-type": "application/json",
+    }
+
+    try:
+        make_post_request(
+            f"{url}/{api_version}/{phone_number_id}/messages",
+            headers=headers,
+            data=json.dumps(data),
+        )
+    except Exception as e:
+        res = frappe.flags.integration_request.json()["error"]
+        error_message = res.get("Error", res.get("message"))
+        frappe.throw(msg=error_message, title=res.get("error_user_title", "Error"))
+
 @frappe.whitelist(allow_guest=True)
 def send_otp(email, phone, fname, lname, company_name, site_name, url_params):
     doc = frappe.db.get_all(
@@ -50,7 +108,8 @@ def send_otp(email, phone, fname, lname, company_name, site_name, url_params):
     if (
         len(doc) > 0
         and frappe.utils.time_diff_in_seconds(
-            frappe.utils.now(), doc[0].modified.strftime("%Y-%m-%d %H:%M:%S.%f")
+            frappe.utils.now(), doc[0].modified.strftime(
+                "%Y-%m-%d %H:%M:%S.%f")
         )
         < 10 * 60
     ):
@@ -62,12 +121,15 @@ def send_otp(email, phone, fname, lname, company_name, site_name, url_params):
     new_otp_doc.id = unique_id
     new_otp_doc.email = email
     new_otp_doc.phone = phone
-    send_otp_via_email(new_otp_doc.otp, email , fname)
+    send_otp_via_email(new_otp_doc.otp, email, fname)
     send_otp_via_sms(new_otp_doc.otp, phone)
+    send_otp_via_whatsapp(new_otp_doc.otp, phone)
     new_otp_doc.save(ignore_permissions=True)
-    create_lead(email, phone, fname, lname, company_name, site_name, url_params)
+    create_lead(email, phone, fname, lname,
+                company_name, site_name, url_params)
     frappe.db.commit()
     return unique_id
+
 
 @frappe.whitelist(allow_guest=True)
 def verify_account_request(unique_id, otp):
@@ -89,6 +151,7 @@ def verify_account_request(unique_id, otp):
     frappe.db.commit()
     return "SUCCESS"
 
+
 @frappe.whitelist()
 def create_user(first_name, last_name, email, site, phone):
     user = frappe.new_doc("SaaS Users")
@@ -101,13 +164,15 @@ def create_user(first_name, last_name, email, site, phone):
     frappe.db.commit()
     return user
 
+
 @frappe.whitelist()
-def create_lead(email, phone, fname, lname, company_name, site_name, url_params):	
-    if url_params: 
+def create_lead(email, phone, fname, lname, company_name, site_name, url_params):
+    if url_params:
         params = json.loads(url_params)
-    existing_lead = frappe.get_value("Lead",filters={"email_id": email})
+    existing_lead = frappe.get_value("Lead", filters={"email_id": email})
     if existing_lead:
-        lead_doc = frappe.get_doc("Lead",existing_lead,ignore_permissions=True)
+        lead_doc = frappe.get_doc(
+            "Lead", existing_lead, ignore_permissions=True)
         lead_doc.site_name = site_name
         lead_doc.email_id = email
         lead_doc.mobile_no = phone
@@ -124,14 +189,14 @@ def create_lead(email, phone, fname, lname, company_name, site_name, url_params)
         lead_doc.save(ignore_permissions=True)
     else:
         lead = frappe.get_doc({
-                "doctype":"Lead",
-                "email_id": email,
-                "mobile_no": phone,
-                "status": "Lead",
-            })
-        lead.lead_owner = frappe.get_all("User",filters={
-			"name": "Administrator"
-		})[0].get("name")
+            "doctype": "Lead",
+            "email_id": email,
+            "mobile_no": phone,
+            "status": "Lead",
+        })
+        lead.lead_owner = frappe.get_all("User", filters={
+            "name": "Administrator"
+        })[0].get("name")
         lead.site_name = site_name
         lead.first_name = fname
         lead.last_name = lname
@@ -144,5 +209,7 @@ def create_lead(email, phone, fname, lname, company_name, site_name, url_params)
             lead.utm_content = params.get("utm_content", "")
             lead.utm_term = params.get("utm_term", "")
         lead.save(ignore_permissions=True)
+
+
 class SaaSUsers(Document):
     pass

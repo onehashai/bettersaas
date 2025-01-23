@@ -124,7 +124,7 @@ frappe.ui.form.on("SaaS Sites", {
     frm.add_custom_button(__("Create Backup"), async function () {
 		frappe.call({
 			method:
-			  "bettersaas.bettersaas.doctype.saas_sites.saas_sites.update_limits",
+			  "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup",
 			args: {
 			  site_name: frm.doc.site_name,
 			},
