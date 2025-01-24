@@ -47,7 +47,7 @@ def send_otp_via_whatsapp(otp, phone):
 
     api_version = frappe.conf.whatsapp_otp_config["api_version"]
     phone_number_id = frappe.conf.whatsapp_otp_config["phone_number_id"]
-    access_token =frappe.conf.whatsapp_otp_config["access_token"]
+    access_token = frappe.conf.whatsapp_otp_config["access_token"]
     template_name = frappe.conf.whatsapp_otp_config["template_name"]
     language_code = frappe.conf.whatsapp_otp_config["language_code"]
     url = "https://graph.facebook.com"
@@ -94,7 +94,9 @@ def send_otp_via_whatsapp(otp, phone):
     except Exception as e:
         res = frappe.flags.integration_request.json()["error"]
         error_message = res.get("Error", res.get("message"))
-        frappe.throw(msg=error_message, title=res.get("error_user_title", "Error"))
+        frappe.throw(msg=error_message, title=res.get(
+            "error_user_title", "Error"))
+
 
 @frappe.whitelist(allow_guest=True)
 def send_otp(email, phone, fname, lname, company_name, site_name, url_params):
@@ -121,9 +123,23 @@ def send_otp(email, phone, fname, lname, company_name, site_name, url_params):
     new_otp_doc.id = unique_id
     new_otp_doc.email = email
     new_otp_doc.phone = phone
-    send_otp_via_email(new_otp_doc.otp, email, fname)
-    send_otp_via_sms(new_otp_doc.otp, phone)
-    send_otp_via_whatsapp(new_otp_doc.otp, phone)
+
+    try:
+        send_otp_via_email(new_otp_doc.otp, email, fname)
+    except Exception as e:
+        frappe.log_error(message=str(e), title="Failed to send OTP via Email")
+
+    try:
+        send_otp_via_sms(new_otp_doc.otp, phone)
+    except Exception as e:
+        frappe.log_error(message=str(e), title="Failed to send OTP via SMS")
+
+    try:
+        send_otp_via_whatsapp(new_otp_doc.otp, phone)
+    except Exception as e:
+        frappe.log_error(message=str(
+            e), title="Failed to send OTP via WhatsApp")
+
     new_otp_doc.save(ignore_permissions=True)
     create_lead(email, phone, fname, lname,
                 company_name, site_name, url_params)

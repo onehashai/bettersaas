@@ -101,13 +101,11 @@ app_license = "MIT"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+    "SaaS Stock Sites": {
+        "after_delete": "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.delete_stock_sites"
+    }
+}
 
 # Scheduled Tasks
 # ---------------

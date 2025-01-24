@@ -268,7 +268,7 @@ window.Vue.createApp({
         t_phone = this.phoneInput.getNumber();
       }
 
-      frappe.show_alert("Please check your email for OTP", 5);
+      frappe.show_alert("Please check your email or phone for the OTP", 5);
       // send otp and set otpSent to true;
       let message;
       const resp = await $.ajax({

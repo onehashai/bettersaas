@@ -92,5 +92,12 @@ def refresh_stock_sites(*args, **kwargs):
             )
 
     return "Stock Sites updated"
+
+def delete_stock_sites(doc, method):
+    cmd = "bench drop-site {} --db-root-password {} --no-backup".format(
+        doc.subdomain + "." + frappe.conf.domain, frappe.conf.root_password
+    )
+    frappe.utils.execute_in_shell(cmd)
+
 class SaaSStockSites(Document):
     pass
