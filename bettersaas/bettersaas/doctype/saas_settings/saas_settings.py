@@ -136,5 +136,16 @@ def update_refresh_stock_site_scheduler(check_every):
     job.cron_format = cron_expression
     job.save()
 
+@frappe.whitelist(allow_guest=True)
+def get_backup_limit(frequency):
+    if frequency == "Daily":
+        return frappe.get_doc("SaaS Settings").daily
+    elif frequency == "Alternate Days":
+        return frappe.get_doc("SaaS Settings").alternate_days
+    elif frequency == "Weekly":
+        return frappe.get_doc("SaaS Settings").weekly
+    elif frequency == "Monthly":
+        return frappe.get_doc("SaaS Settings").monthly
+
 class SaaSSettings(Document):
 	pass

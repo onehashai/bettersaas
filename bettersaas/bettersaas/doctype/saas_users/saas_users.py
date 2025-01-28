@@ -6,7 +6,44 @@ import math
 import random
 import json
 from frappe import _
+from frappe.utils.password import decrypt
 from frappe.model.document import Document
+
+# def get_stock_sites():
+#     req = requests.get(
+#             "http://"
+#             + frappe.conf.admin_url
+#             + "/api/method/bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.get_all_stock_sites"
+#         ).json()
+    
+#     return req["message"]
+  
+# @frappe.whitelist(allow_guest=True)
+# def get_user_sites(email):
+#     if not email:
+#         return
+    
+#     from frappe.utils import get_sites
+
+#     sites = get_sites()
+#     user_sites = []
+#     stock_sites = get_stock_sites()
+#     stock_subdomains_set = {site['subdomain'] for site in stock_sites}
+#     for site in sites:
+#         try:
+#             if site.split('.')[0] in stock_subdomains_set:
+#                 continue
+#             frappe.init(site=site)
+#             frappe.connect()
+
+#             if frappe.db.exists("User", {"email": email}):
+#                 frappe.cache().set_value(f"user_sites_{email}", user_sites, expires_in_sec=60)
+#                 user_sites.append(site)
+
+#         except Exception:
+#             pass
+#         finally:
+#             frappe.destroy()
 
 
 def generate_otp():
@@ -190,6 +227,7 @@ def create_lead(email, phone, fname, lname, company_name, site_name, url_params)
         lead_doc = frappe.get_doc(
             "Lead", existing_lead, ignore_permissions=True)
         lead_doc.site_name = site_name
+        lead_doc.site_status = "OTP Sended"
         lead_doc.email_id = email
         lead_doc.mobile_no = phone
         lead_doc.first_name = fname
@@ -214,6 +252,7 @@ def create_lead(email, phone, fname, lname, company_name, site_name, url_params)
             "name": "Administrator"
         })[0].get("name")
         lead.site_name = site_name
+        lead.site_status = "OTP Sended"
         lead.first_name = fname
         lead.last_name = lname
         lead.lead_name = fname+" "+lname

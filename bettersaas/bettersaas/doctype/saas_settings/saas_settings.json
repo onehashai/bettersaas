@@ -15,6 +15,12 @@
   "default_license_limit_in",
   "default_email_limit",
   "default_storage_limit",
+  "site_backup_configuration_tab",
+  "backups_limit_section",
+  "daily",
+  "alternate_days",
+  "weekly",
+  "monthly",
   "site_delete_configuration_tab",
   "site_delete_conf_enabled",
   "inactive_for_days",
@@ -134,12 +140,42 @@
    "fieldname": "check_every",
    "fieldtype": "Duration",
    "label": "Check Every"
+  },
+  {
+   "fieldname": "site_backup_configuration_tab",
+   "fieldtype": "Tab Break",
+   "label": "Site Backup Configuration"
+  },
+  {
+   "fieldname": "alternate_days",
+   "fieldtype": "Data",
+   "label": "Alternate Days"
+  },
+  {
+   "fieldname": "weekly",
+   "fieldtype": "Data",
+   "label": "Weekly"
+  },
+  {
+   "fieldname": "monthly",
+   "fieldtype": "Data",
+   "label": "Monthly"
+  },
+  {
+   "fieldname": "backups_limit_section",
+   "fieldtype": "Section Break",
+   "label": "Backups Limit"
+  },
+  {
+   "fieldname": "daily",
+   "fieldtype": "Data",
+   "label": "Daily"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-21 14:17:49.425567",
+ "modified": "2025-01-28 14:51:11.234814",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Settings",

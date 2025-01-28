@@ -29,7 +29,8 @@ def get_context(context):
                 "s3",
                 aws_access_key_id=frappe.conf.aws_access_key_id,
                 aws_secret_access_key=frappe.conf.aws_secret_access_key,
-                config=Config(signature_version="s3v4", region_name="ap-south-1"),
+                config=Config(signature_version="s3v4",
+                              region_name="ap-south-1"),
             )
             url = conn.generate_presigned_url(
                 "get_object", Params={"Bucket": bucket_name, "Key": key}, ExpiresIn=300
@@ -40,7 +41,8 @@ def get_context(context):
             return None
 
     def get_time(created_on):
-        created_on_datetime = datetime.datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S.%f")
+        created_on_datetime = datetime.datetime.strptime(
+            created_on, "%Y-%m-%d %H:%M:%S.%f")
         return created_on_datetime.strftime("%a %b %d %H:%M %Y")
 
     req = requests.get(
@@ -53,26 +55,31 @@ def get_context(context):
     files = req["message"]
     filtered_files = [
         (
-            get_download_link(file["path"]), 
+            get_download_link(file["path"]),
             get_time(file["created_on"]),
             file["encrypted"],
-            file["size"]
+            file["size"],
+            file["frequency"]
         )
         for file in files
     ]
     return {"files": filtered_files}
 
+
 def encrypt_backup():
     return frappe.get_system_settings("encrypt_backup")
+
 
 def backup_encryption(site_path):
     from shutil import which
     from frappe.utils.backups import get_or_generate_backup_encryption_key
 
     if which("gpg") is None:
-        click.secho("Please install `gpg` and ensure its available in your PATH", fg="red")
+        click.secho(
+            "Please install `gpg` and ensure its available in your PATH", fg="red")
         sys.exit(1)
-    file_paths = [os.path.join(site_path, file) for file in os.listdir(site_path) if os.path.isfile(os.path.join(site_path, file))]
+    file_paths = [os.path.join(site_path, file) for file in os.listdir(
+        site_path) if os.path.isfile(os.path.join(site_path, file))]
     for path in file_paths:
         if os.path.exists(path):
             if path.endswith(".json"):
@@ -92,6 +99,7 @@ def backup_encryption(site_path):
                 "Error occurred during encryption. Files are stored without encryption.", fg="red"
             )
 
+
 def create_zip_with_files(zip_file_path, files_to_zip):
     import zipfile
 
@@ -99,22 +107,25 @@ def create_zip_with_files(zip_file_path, files_to_zip):
         for file_path in files_to_zip:
             zipf.write(file_path, os.path.basename(file_path))
 
+
 @frappe.whitelist()
-def take_backups_s3(retry_count=0, backup_limit=3, site=None):
+def take_backups_s3(retry_count=0, backup_limit=None, site=None, frequency=None):
     try:
         validate_file_size()
-        backup_to_s3(backup_limit=backup_limit, site=site)
+        backup_to_s3(backup_limit=backup_limit, site=site, frequency=frequency)
     except JobTimeoutException:
         if retry_count < 2:
             take_backups_s3(
                 retry_count=retry_count + 1,
                 backup_limit=backup_limit,
                 site=site,
+                frequency=frequency,
             )
     except Exception:
         print(frappe.get_traceback())
 
-def backup_to_s3(backup_limit, site):
+
+def backup_to_s3(backup_limit, site, frequency):
     import boto3
     from frappe.utils import get_backups_path
     from frappe.utils.backups import new_backup
@@ -193,7 +204,7 @@ def backup_to_s3(backup_limit, site):
     on_server_zip_key = site + "/private/" + target_zip_file_name
     if encrypt_backup():
         backup_encryption(get_backups_path())
-        
+
     create_zip_with_files(on_server_zip_key, server_keys)
     if frappe.conf.domain == "onehash.ai":
         dest_path = "production/site_backups/" + site + "/" + target_zip_file_name
@@ -201,14 +212,16 @@ def backup_to_s3(backup_limit, site):
         dest_path = "staging/site_backups/" + site + "/" + target_zip_file_name
     try:
         conn.upload_file(on_server_zip_key, bucket, dest_path)
-        backup_size = check_disk_size("./" + site + "/private/" + target_zip_file_name) 
+        backup_size = check_disk_size(
+            "./" + site + "/private/" + target_zip_file_name)
         try:
-            insert_cmd = "bench --site {} execute bettersaas.bettersaas.doctype.saas_sites.saas_sites.insert_backup_record --args \"'{}','{}','{}','{}'\"".format(
-                frappe.conf.admin_subdomain + "." + frappe.conf.domain, site, dest_path, backup_size, encrypt_backup()
+            insert_cmd = "bench --site {} execute bettersaas.bettersaas.doctype.saas_sites.saas_sites.insert_backup_record --args \"'{}','{}','{}','{}','{}'\"".format(
+                frappe.conf.admin_subdomain + "." +
+                    frappe.conf.domain, site, dest_path, backup_size, encrypt_backup(), frequency
                 )
             frappe.utils.execute_in_shell(insert_cmd)
-            delete_cmd = "bench --site {} execute bettersaas.bettersaas.doctype.saas_sites.saas_sites.delete_old_backups --args \"'{}','{}'\"".format(
-                frappe.conf.admin_subdomain + "." + frappe.conf.domain, site, backup_limit
+            delete_cmd = "bench --site {} execute bettersaas.bettersaas.doctype.saas_sites.saas_sites.delete_old_backups --args \"'{}','{}','{}'\"".format(
+                frappe.conf.admin_subdomain + "." + frappe.conf.domain, site, backup_limit, frequency
                 )
             frappe.utils.execute_in_shell(delete_cmd)
             for key in server_keys:
@@ -219,26 +232,55 @@ def backup_to_s3(backup_limit, site):
     except Exception as e:
         print("Error uploading files to s3", e)
 
-def get_scheduled_backup_limit():
-	backup_limit = frappe.db.get_singles_value("System Settings", "backup_limit")
-	return cint(backup_limit)
+
+def get_scheduled_backup_limit(frequency):
+    if frequency == "Daily":
+        return frappe.get_doc("SaaS Settings").daily
+    elif frequency == "Alternate Days":
+        return frappe.get_doc("SaaS Settings").alternate_days
+    elif frequency == "Weekly":
+        return frappe.get_doc("SaaS Settings").weekly
+    elif frequency == "Monthly":
+        return frappe.get_doc("SaaS Settings").monthly
 
 @frappe.whitelist()
-def schedule_files_backup(site_name=None):
+def schedule_files_backup_daily(site_name=None):
+    backup_limit = get_scheduled_backup_limit("Daily")
+    site_name = site_name or frappe.local.site
+    schedule_files_backup(site_name, backup_limit, "Daily")
+
+@frappe.whitelist()
+def schedule_files_backup_alternate_days(site_name=None):
+    backup_limit = get_scheduled_backup_limit("Alternate Days")
+    site_name = site_name or frappe.local.site
+    schedule_files_backup(site_name, backup_limit, "Alternate Days")
+
+@frappe.whitelist()
+def schedule_files_backup_weekly(site_name=None):
+    backup_limit = get_scheduled_backup_limit("Weekly")
+    site_name = site_name or frappe.local.site
+    schedule_files_backup(site_name, backup_limit, "Weekly")
+
+@frappe.whitelist()
+def schedule_files_backup_monthly(site_name=None):
+    backup_limit = get_scheduled_backup_limit("Monthly")
+    site_name = site_name or frappe.local.site
+    schedule_files_backup(site_name, backup_limit, "Monthly")
+
+def schedule_files_backup(site_name, backup_limit, frequency):
     from frappe.utils.background_jobs import enqueue, get_jobs
 
     frappe.only_for("System Manager")
-    site_name = site_name or frappe.local.site
     queued_jobs = get_jobs(site=site_name, queue="long")
     method = "bettersaas.bettersaas.page.onehash_backups.onehash_backups.take_backups_s3"
-    backup_limit = get_scheduled_backup_limit()
 
     if method not in queued_jobs[site_name]:
         enqueue(
             "bettersaas.bettersaas.page.onehash_backups.onehash_backups.take_backups_s3",
             queue="long",
             backup_limit=backup_limit,
-            site=site_name
+            site=site_name,
+            frequency=frequency,
         )
         frappe.msgprint(_("Queued for backup."))
     else:

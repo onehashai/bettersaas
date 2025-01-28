@@ -237,6 +237,11 @@ def setup_site(*args, **kwargs):
     })
     new_site_doc.saas_user = saas_user.name if saas_user else None
     new_site_doc.save(ignore_permissions=True)
+
+    lead_doc = frappe.get_last_doc("Lead",filters={'email_id': email})
+    lead_doc.site_status = "Creating Site"
+    lead_doc.save(ignore_permissions=True)
+
     frappe.db.commit()
 
     return {"subdomain": subdomain, "encrypted_password": encrypted_password}
@@ -272,10 +277,11 @@ def get_decrypted_password(*args, **kwargs):
     site = frappe.db.get("SaaS Sites", filters={"site_name": kwargs["site_name"]})
     return decrypt(site.encrypted_password, frappe.conf.enc_key)
 
-def insert_backup_record(site, backup_path, backup_size, encrypt_backup):
+def insert_backup_record(site, backup_path, backup_size, encrypt_backup, frequency):
     try:
         doc = frappe.new_doc("SaaS Sites Backup")
         doc.created_on = frappe.utils.now()
+        doc.frequency = frequency
         doc.site = site
         doc.path = backup_path
         doc.size = backup_size
@@ -330,10 +336,10 @@ def delete_from_s3(key):
         frappe.throw(frappe._("Access denied: Could not delete file"))
 
 @frappe.whitelist(allow_guest=True)
-def delete_old_backups(site_name, limit):
+def delete_old_backups(site_name, limit, frequency):
     records = frappe.get_list(
         "SaaS Sites Backup",
-        filters={"site": site_name},
+        filters={"site": site_name, "frequency": frequency},
         fields=["name", "path", "created_on"],
         order_by="created_on desc",
         ignore_permissions=True,

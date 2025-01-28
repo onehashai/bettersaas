@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "created_on",
+  "frequency",
   "site",
   "path",
   "size",
@@ -16,23 +17,27 @@
    "fieldname": "created_on",
    "fieldtype": "Datetime",
    "in_list_view": 1,
-   "label": "Created On"
+   "label": "Created On",
+   "read_only": 1
   },
   {
    "fieldname": "site",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Site"
+   "label": "Site",
+   "read_only": 1
   },
   {
    "fieldname": "size",
    "fieldtype": "Data",
-   "label": "Size"
+   "label": "Size",
+   "read_only": 1
   },
   {
    "fieldname": "path",
    "fieldtype": "Data",
-   "label": "Path"
+   "label": "Path",
+   "read_only": 1
   },
   {
    "default": "0",
@@ -40,11 +45,17 @@
    "fieldtype": "Check",
    "label": "Encrypted",
    "read_only": 1
+  },
+  {
+   "fieldname": "frequency",
+   "fieldtype": "Data",
+   "label": "Frequency",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-04 18:57:33.188285",
+ "modified": "2025-01-28 15:14:27.617521",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Sites Backup",

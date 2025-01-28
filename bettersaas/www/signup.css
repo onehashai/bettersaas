@@ -49,7 +49,7 @@ main {
   height: 100vh;
 }
 .login_box {
-  padding: 30px;
+  padding: 0 30px 70px 30px;
   background-color: white;
   height: 100%;
   display: flex;
@@ -133,6 +133,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 20px;
 }
 .ad-title {
   font-weight: 500;

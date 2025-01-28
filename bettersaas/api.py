@@ -1,7 +1,6 @@
 import frappe
 from frappe import _
 from frappe_s3_attachment.controller import delete_from_cloud
-from bettersaas.bettersaas.page.onehash_backups.onehash_backups import schedule_files_backup
 
 def delete_site_files_from_s3(site_name):
     frappe.init(site=site_name)
@@ -21,8 +20,8 @@ def delete_site(site_name):
         "SaaS Users", filters={"name": site_name}, fields=["name"]
     )[0]
     if saas_sites_doc and saas_users_doc:
-        schedule_files_backup(site_name)
-        delete_site_files_from_s3(site_name)
+        # TODO Fix
+        # delete_site_files_from_s3(site_name)
         frappe.init(site=frappe.conf.admin_url)
         frappe.connect()
         frappe.delete_doc("SaaS Sites", saas_sites_doc.name)
@@ -36,3 +35,8 @@ def delete_site(site_name):
         )
         frappe.destroy()
         
+def update_lead_status(email):
+    lead_doc = frappe.get_last_doc("Lead",filters={'email_id': email})
+    lead_doc.site_status = "Site Created"
+    lead_doc.save(ignore_permissions=True)
+    frappe.db.commit()

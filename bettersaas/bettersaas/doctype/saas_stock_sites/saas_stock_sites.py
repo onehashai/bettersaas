@@ -4,14 +4,13 @@ from frappe.model.document import Document
 from frappe.utils import random_string
 
 @frappe.whitelist(allow_guest=True)
-def is_stock_site(site):
-    stock_site = frappe.db.get_list(
+def get_all_stock_sites():
+    stock_sites = frappe.db.get_list(
         "SaaS Stock Sites",
-		filters={"subdomain": site.split('.')[0]},
-		fields=["*"],
+		fields=["name", "subdomain"],
         ignore_permissions=True
     )
-    return stock_site
+    return stock_sites
 
 def insert_site(site_name, admin_password):
     site = frappe.new_doc("SaaS Stock Sites")

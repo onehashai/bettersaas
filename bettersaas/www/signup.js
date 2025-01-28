@@ -1,4 +1,3 @@
-// config.js conatins the "config" variable imported through signup.html
 function getDomain() {
   let domain = "." + window.location.hostname.split(".").splice(1, 2).join(".");
   if (window.location.port) {

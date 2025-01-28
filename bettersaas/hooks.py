@@ -114,15 +114,23 @@ doc_events = {
 
 
 scheduler_events = {
-    # "monthly": [
-    # ],
-    # "weekly": [
-    # ],
+    "monthly": [
+        "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup_monthly",
+    ],
+    "weekly": [
+        "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup_weekly",
+    ],
     # "hourly": [
     # ],
     # "daily_long": [
     # ],
     "cron":{
+        "0 */6 * * *": [
+            "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup_daily",
+        ],
+        "0 0 */2 * *" : [
+            "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup_alternate_days",
+        ],
         "0 */4 * * *": [
             "bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.refresh_stock_sites",
         ],

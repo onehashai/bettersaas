@@ -5,14 +5,47 @@ frappe.pages['onehash-backups'].on_page_load = function(wrapper) {
 		single_column: true
 	});
 
-	page.add_inner_button(__("Set Number of Backups"), function () {
-		frappe.set_route("Form", "System Settings");
-	  });
-	
 	page.add_inner_button(__("Schedule a Backup Now"), function () {
-		frappe.call({
-			method: "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup",
+		let d = new frappe.ui.Dialog({
+			title: 'Select a Backup Schedule',
+			fields: [
+				{
+					label: 'Frequency',
+					fieldtype: 'Select',
+					fieldname: 'frequency',
+					options: [
+						'Daily',
+						'Alternate Days',
+						'Weekly',
+						'Monthly'
+					].join('\n')
+				},
+			],
+			size: 'small', 
+			primary_action_label: 'Submit',
+			primary_action(values) {
+				if (values.frequency === "Daily"){
+					frappe.call({
+						method: "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup_daily",
+					});
+				} else if (values.frequency === "Alternate Days"){
+					frappe.call({
+						method: "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup_alternate_days",
+					});
+				} else if (values.frequency === "Weekly"){
+					frappe.call({
+						method: "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup_weekly",
+					});
+				} else if (values.frequency === "Monthly"){
+					frappe.call({
+						method: "bettersaas.bettersaas.page.onehash_backups.onehash_backups.schedule_files_backup_monthly",
+					});
+				}    
+				d.hide();
+			}
 		});
+		
+		d.show();
 	});
 	
 	page.add_inner_button(__("Get Backup Encryption Key"), function () {
