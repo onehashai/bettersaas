@@ -118,6 +118,12 @@ def setup_site(*args, **kwargs):
     )
     if not password_check_result["feedback"]["password_policy_validation_passed"]:
         return "PASSWORD_NOT_STRONG"
+    
+    lead_doc = frappe.get_last_doc("Lead",filters={'email_id': email})
+    lead_doc.site_status = "Creating Site"
+    lead_doc.save(ignore_permissions=True)
+    frappe.db.commit()
+
     new_site = subdomain + "." + frappe.conf.domain
     saas_user = None
     if allow_creating_users:
@@ -237,10 +243,6 @@ def setup_site(*args, **kwargs):
     })
     new_site_doc.saas_user = saas_user.name if saas_user else None
     new_site_doc.save(ignore_permissions=True)
-
-    lead_doc = frappe.get_last_doc("Lead",filters={'email_id': email})
-    lead_doc.site_status = "Creating Site"
-    lead_doc.save(ignore_permissions=True)
 
     frappe.db.commit()
 
