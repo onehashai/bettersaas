@@ -5,7 +5,6 @@ import frappe
 import json
 import os
 import boto3
-import re
 import requests
 import subprocess as sp
 from bettersaas.bettersaas.doctype.saas_users.saas_users import create_user
@@ -320,6 +319,7 @@ def get_site_backup_size(site_name):
 def execute_command_async(command):
     frappe.utils.execute_in_shell(command)
 
+@frappe.whitelist()
 def delete_from_s3(key):
     from botocore.exceptions import ClientError
 
