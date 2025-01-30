@@ -24,9 +24,11 @@
   "site_delete_configuration_tab",
   "site_delete_conf_enabled",
   "inactive_for_days",
+  "site_deleted_template",
   "column_break_fg8ow",
   "warning_days",
   "intermittent_warning_days",
+  "site_deletion_warning_template",
   "delete_archived_sites_section",
   "arch_site_delete_conf_enabled",
   "threshold_days",
@@ -170,12 +172,24 @@
    "fieldname": "daily",
    "fieldtype": "Data",
    "label": "Daily"
+  },
+  {
+   "fieldname": "site_deleted_template",
+   "fieldtype": "Link",
+   "label": "Site Deleted Template",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "site_deletion_warning_template",
+   "fieldtype": "Link",
+   "label": "Site Deletion Warning Template",
+   "options": "Email Template"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-01-28 14:51:11.234814",
+ "modified": "2025-01-30 17:08:38.480726",
  "modified_by": "Administrator",
  "module": "Bettersaas",
  "name": "SaaS Settings",

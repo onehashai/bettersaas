@@ -26,7 +26,18 @@ login.bind_events = function () {
 			return false;
 		}
 
-		sitename = document.getElementById("siteSelectList").value
+		sitename=""
+		if(document.getElementById("siteSelectList")){
+            sitename = document.getElementById("siteSelectList").value
+        }else{
+			const sites = await getUserSites(args.usr);
+			if (sites.length == 0){
+				frappe.msgprint("No sites found")
+                return false;
+			}
+			sitename = sites[0]
+		}
+		
 		if (window.location.hostname == sitename){
 			login.call(args, null, "/login");
 			return false
