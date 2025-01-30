@@ -50,7 +50,7 @@ login.bind_events = function () {
 			enc_password = CryptoJS.enc.Base64.stringify(
 				CryptoJS.enc.Utf8.parse(args.pwd)
 			);
-			window.location.href = `http://${sitename}/redirect?email=${args.usr}&utm_id=${enc_password}`;
+			window.location.href = `http://${sitename}/login_redirect?email=${args.usr}&utm_id=${enc_password}`;
 			return false;
 		}
 	});
