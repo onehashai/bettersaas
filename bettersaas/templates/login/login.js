@@ -14,7 +14,7 @@ login.bind_events = function () {
 	});
 
 
-	$(".form-login").on("submit", function (event) {
+	$(".form-login").on("submit", async function (event) {
 		event.preventDefault();
 		var args = {};
 		args.cmd = "login";
@@ -25,8 +25,23 @@ login.bind_events = function () {
 			frappe.msgprint("{{ _('Both login and password required') | striptags | e }}");
 			return false;
 		}
-		login.call(args, null, "/login");
-		return false;
+
+		sitename = document.getElementById("siteSelectList").value
+		if (window.location.hostname == sitename){
+			login.call(args, null, "/login");
+			return false
+		}else{
+			const checkCreds = await checkUserNameAndPassword(sitename, args.usr, args.pwd);
+			if(checkCreds !== "VALID"){
+				login.set_invalid("Invalid username or password");
+				return false;
+			}
+			enc_password = CryptoJS.enc.Base64.stringify(
+				CryptoJS.enc.Utf8.parse(args.pwd)
+			);
+			window.location.href = `http://${sitename}/redirect?email=${args.usr}&utm_id=${enc_password}`;
+			return false;
+		}
 	});
 
 	$(".form-signup").on("submit", function (event) {
@@ -392,6 +407,61 @@ var continue_email = function (setup, prompt) {
 		email_div.append(direction);
 		$('#otp_div').prepend(email_div);
 	}
+}
+
+async function onEmailChange(email){
+    const sites = await getUserSites(email);
+	appendSiteOptions(sites);
+}
+
+async function appendSiteOptions(sites){
+    if(document.getElementById("siteSelectList")){
+        document.getElementById("siteSelectList").remove();
+    }
+    const siteSelectList = document.createElement("select");
+	siteSelectList.classList.add("form-select", "border", "rounded", "p-1");
+    if(sites.length < 2){
+		siteSelectList.classList.add("hidden");
+    }
+    siteSelectList.style.width = "100%";
+    siteSelectList.id = "siteSelectList";  
+    parent = document.getElementById("sites");
+    parent.appendChild(siteSelectList);
+    for (var i = 0; i < sites.length; i++) {    
+        var option = document.createElement("option");
+        option.value = sites[i];
+        option.text = sites[i];
+        siteSelectList.appendChild(option);
+    }
+
+}
+
+async function getUserSites(email){
+    req = await $.ajax({
+        url: "/api/method/bettersaas.bettersaas.doctype.saas_users.saas_users.get_user_sites",
+        type: "GET",
+        dataType: "json",
+        data:{
+            email: email
+        }
+    });
+
+	return req.message.user_sites
+}
+
+async function checkUserNameAndPassword(site_name, email, password){
+    req = await $.ajax({
+        url: "/api/method/bettersaas.bettersaas.doctype.saas_users.saas_users.check_user_name_and_password",
+        type: "GET",
+        dataType: "json",
+        data:{
+            site_name: site_name,
+            email: email,
+            password: password
+        }
+    });
+
+	return req.message
 }
 
 login.route();

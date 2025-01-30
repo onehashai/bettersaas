@@ -5,46 +5,63 @@ import frappe
 import math
 import random
 import json
+import requests
 from frappe import _
+from frappe.frappeclient import FrappeClient
 from frappe.utils.password import decrypt
 from frappe.model.document import Document
 
-# def get_stock_sites():
-#     req = requests.get(
-#             "http://"
-#             + frappe.conf.admin_url
-#             + "/api/method/bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.get_all_stock_sites"
-#         ).json()
+
+def get_stock_sites():
+    req = requests.get(
+            "http://"
+            + frappe.conf.admin_url
+            + "/api/method/bettersaas.bettersaas.doctype.saas_stock_sites.saas_stock_sites.get_all_stock_sites"
+        ).json()
     
-#     return req["message"]
-  
-# @frappe.whitelist(allow_guest=True)
-# def get_user_sites(email):
-#     if not email:
-#         return
+    return req["message"]
+
+@frappe.whitelist(allow_guest=True)
+def check_user_name_and_password(site_name, email, password):
+    try:
+        conn = FrappeClient("http://"+site_name, email, password)
+        if conn:
+            return "VALID"
+    except Exception as e:
+        return "INVALID"
+
+@frappe.whitelist(allow_guest=True)
+def get_user_sites(email):
+    if not email:
+        return
     
-#     from frappe.utils import get_sites
+    from frappe.utils import get_sites
 
-#     sites = get_sites()
-#     user_sites = []
-#     stock_sites = get_stock_sites()
-#     stock_subdomains_set = {site['subdomain'] for site in stock_sites}
-#     for site in sites:
-#         try:
-#             if site.split('.')[0] in stock_subdomains_set:
-#                 continue
-#             frappe.init(site=site)
-#             frappe.connect()
+    sites = get_sites()
+    user_sites = []
+    stock_sites = get_stock_sites()
+    stock_subdomains_set = {site['subdomain'] for site in stock_sites}
+    for site in sites:
+        try:
+            if site.split('.')[0] in stock_subdomains_set:
+                continue
 
-#             if frappe.db.exists("User", {"email": email}):
-#                 frappe.cache().set_value(f"user_sites_{email}", user_sites, expires_in_sec=60)
-#                 user_sites.append(site)
+            if site == frappe.conf.admin_url:
+                conn = FrappeClient("http://"+site, "Administrator", frappe.conf.administrator_password)
+                user = conn.get_list('User', fields = ['name', 'email'], filters={'email': email}, limit_page_length=10000)
+            else:
+                saas_site = frappe.db.get("SaaS Sites", filters={"site_name": site})
+                site_password = decrypt(saas_site.encrypted_password, frappe.conf.encryption_key)
+                conn = FrappeClient("http://"+saas_site.name, "Administrator", site_password)
+                user = conn.get_list('User', fields = ['name', 'email'], filters={'email': email}, limit_page_length=10000)
 
-#         except Exception:
-#             pass
-#         finally:
-#             frappe.destroy()
+            if user:
+                user_sites.append(site)
 
+        except Exception:
+            pass
+
+    return {"user_sites": user_sites}
 
 def generate_otp():
     digits = "0123456789"
