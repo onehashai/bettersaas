@@ -91,8 +91,8 @@ def delete_free_sites():
         days_until_deletion = saas_settings.inactive_for_days - inactive_days
         exp_date = present_date + timedelta(days=days_until_deletion)
         if inactive_days >= saas_settings.inactive_for_days:
-            content = "This is to inform you that your OneHash account with the email address {email_address} has been permanently deleted on {exp_date}. You will no longer be able to access your account or recover any data".format(
-				email_address=linked_email, exp_date=exp_date.strftime("%d-%m-%y")
+            content = "This is to notify you that on {exp_date}, your OneHash account {site_name} with email address {email_address} been permanently terminated. You won't be able to retrieve any data or access your account any more.".format(
+				email_address=linked_email, exp_date=exp_date.strftime("%d-%m-%y"), site_name = site.site_name
 			)
             send_email(linked_email, content)
             method = "bettersaas.api.delete_site"
@@ -102,13 +102,13 @@ def delete_free_sites():
                 site_name=site.site_name
             )
         elif inactive_days >= saas_settings.inactive_for_days - saas_settings.warning_days:
-            content = "This is to inform you that your OneHash account with the email address {email_address} will be permanently deleted on {exp_date}. You will no longer be able to access your account or recover any data".format(
-				email_address=linked_email, exp_date=exp_date.strftime("%d-%m-%y")
+            content = "This is to let you know that on {exp_date}, your OneHash account {site_name} with email address {email_address} will be permanently removed. You will no longer be able to retrieve any data or access your account".format(
+				email_address=linked_email, exp_date=exp_date.strftime("%d-%m-%y"), site_name = site.site_name
 			)
             send_email(linked_email, content)
         elif inactive_days >= saas_settings.inactive_for_days - saas_settings.intermittent_warning_days:
-            content = "This is to inform you that your OneHash account with the email address {email_address} will be permanently deleted on {exp_date}. You will no longer be able to access your account or recover any data".format(
-				email_address=linked_email, exp_date=exp_date.strftime("%d-%m-%y")
+            content = "This is to let you know that on {exp_date}, your OneHash account {site_name} with email address {email_address} will be permanently removed. You will no longer be able to retrieve any data or access your account.".format(
+				email_address=linked_email, exp_date=exp_date.strftime("%d-%m-%y"), site_name = site.site_name
 		  	)
             send_email(linked_email, content)
     return "success"

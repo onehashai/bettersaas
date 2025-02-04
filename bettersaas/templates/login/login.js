@@ -430,21 +430,19 @@ async function appendSiteOptions(sites){
         document.getElementById("siteSelectList").remove();
     }
     const siteSelectList = document.createElement("select");
-	siteSelectList.classList.add("form-select", "border", "rounded", "p-1");
+	siteSelectList.classList.add("form-control");
     if(sites.length < 2){
 		siteSelectList.classList.add("hidden");
     }
-    siteSelectList.style.width = "100%";
     siteSelectList.id = "siteSelectList";  
     parent = document.getElementById("sites");
     parent.appendChild(siteSelectList);
     for (var i = 0; i < sites.length; i++) {    
         var option = document.createElement("option");
         option.value = sites[i];
-        option.text = sites[i];
+        option.textContent = "🌐 " + sites[i];
         siteSelectList.appendChild(option);
     }
-
 }
 
 async function getUserSites(email){

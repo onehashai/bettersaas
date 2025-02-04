@@ -268,20 +268,17 @@ def schedule_files_backup_monthly(site_name=None):
     schedule_files_backup(site_name, backup_limit, "Monthly")
 
 def schedule_files_backup(site_name, backup_limit, frequency):
-    from frappe.utils.background_jobs import enqueue, get_jobs
+    from frappe.utils.background_jobs import enqueue
 
     frappe.only_for("System Manager")
-    queued_jobs = get_jobs(site=site_name, queue="long")
     method = "bettersaas.bettersaas.page.onehash_backups.onehash_backups.take_backups_s3"
+    enqueue(
+        method=method,
+        queue="long",
+        backup_limit=backup_limit,
+        site=site_name,
+        frequency=frequency,
+    )
+    frappe.msgprint(_("Queued for backup."))
 
-    if method not in queued_jobs[site_name]:
-        enqueue(
-            "bettersaas.bettersaas.page.onehash_backups.onehash_backups.take_backups_s3",
-            queue="long",
-            backup_limit=backup_limit,
-            site=site_name,
-            frequency=frequency,
-        )
-        frappe.msgprint(_("Queued for backup."))
-    else:
-        frappe.msgprint(_("Backup job is already queued."))
+       
