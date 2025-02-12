@@ -26,6 +26,11 @@ login.bind_events = function () {
 			return false;
 		}
 
+		if(args.usr.toLowerCase() == "administrator"){
+            login.call(args);
+			return false
+        }
+
 		sitename=""
 		if(document.getElementById("siteSelectList")){
             sitename = document.getElementById("siteSelectList").value
