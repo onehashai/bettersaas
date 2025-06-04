@@ -26,9 +26,13 @@ $(document).ready(function () {
                 <i class="fa fa-list" style="margin-right: 4px;"></i>
                 Summarize
             `;
-            summarizeBtn.onclick = () => {
+            summarizeBtn.onclick = async () => {
+                const doctype = frappe?.get_route()[1];
+                const docname = frappe?.get_route()[2]; 
+
+                const metadata = await fetchCommunications(doctype, docname);
                 window.CRMCopilotWidget.open(); 
-                window.CRMCopilotWidget.sendMessage("Hello");
+                window.CRMCopilotWidget.sendMessage('Summarize Conversations', metadata)
             }
 
             // let writeEmailBtn = document.createElement('button');
@@ -56,3 +60,9 @@ $(document).ready(function () {
         }
     }, 300);
 });
+
+async function fetchCommunications(doctype, docname) {
+  const res = await fetch(`/api/method/bettersaas.bettersaas.utils.get_all_communications?doctype=${doctype}&docname=${docname}`);
+  const data = await res.json();
+  return data.message;
+}
