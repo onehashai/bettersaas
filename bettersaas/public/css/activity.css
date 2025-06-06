@@ -7,8 +7,15 @@
     padding: 8px;
 }
 
-.ai-generate-wrapper .btn-main {
-    margin-bottom: 4px;
+.ai-generate-wrapper .ai-btn {
+    background: radial-gradient(
+        65.28% 65.28% at 50% 100%,
+        rgba(223, 113, 255, 0.8) 0%,
+        rgba(223, 113, 255, 0) 100%
+        ),
+        linear-gradient(0deg, #7a5af8, #7a5af8);
+    color: #ffffff;
+    margin-bottom: 2px;
 }
 
 .ai-generate-wrapper button {
@@ -21,7 +28,12 @@
     position: absolute;
     top: 100%;
     left: 0;
-    background: #fff;
+    background: radial-gradient(
+        65.28% 65.28% at 50% 100%,
+        rgba(223, 113, 255, 0.8) 0%,
+        rgba(223, 113, 255, 0) 100%
+        ),
+        linear-gradient(0deg, #7a5af8, #7a5af8);;
     border: 1px solid #ddd;
     padding: 5px;
     z-index: 1000;
@@ -30,8 +42,19 @@
     border-radius: 4px;
 }
 
-.ai-generate-dropdown button {
+.ai-generate-dropdown .ai-btn-options {
     display: block;
     margin: 2px 0;
+    color: #ffffff;
+    background: transparent;
+    border: 1px solid #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.ai-generate-dropdown .ai-btn-options:hover {
+    background: transparent !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}

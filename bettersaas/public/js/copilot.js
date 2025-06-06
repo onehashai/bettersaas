@@ -21,3 +21,13 @@ $(document).ready(function () {
     })
     .catch(error => console.error('Error fetching token:', error));
 })
+
+window.addEventListener("message", (event) => {
+  if (event.data?.type === "copilot-opened") {
+    document.body.classList.add("copilot-open");
+  }
+
+  if (event.data?.type === "copilot-closed") {
+    document.body.classList.remove("copilot-open");
+  }
+});

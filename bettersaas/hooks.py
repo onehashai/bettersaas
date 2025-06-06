@@ -11,11 +11,14 @@ app_license = "MIT"
 # ------------------ 
 
 # include js, css files in header of desk.html
-app_include_css = "/assets/bettersaas/css/activity.css"
+app_include_css = [
+    "/assets/bettersaas/css/activity.css",
+    "/assets/bettersaas/css/copilot.css",
+]
 app_include_js = [
-    "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js",
-    "/assets/bettersaas/js/copilot.js",
     "/assets/bettersaas/js/activity.js",
+    "/assets/bettersaas/js/copilot.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js",
 ]
 
 

@@ -12,7 +12,7 @@ $(document).ready(function () {
             wrapper.className = 'ai-generate-wrapper';
 
             let mainBtn = document.createElement('button');
-            mainBtn.className = 'btn btn-xs btn-secondary action-btn';
+            mainBtn.className = 'btn btn-xs btn-secondary action-btn ai-btn';
             mainBtn.innerHTML = `
                 <i class="fa fa-star" style="margin-right: 4px;"></i>
                 Ask AI
@@ -21,7 +21,7 @@ $(document).ready(function () {
             dropdown.className = 'ai-generate-dropdown';
 
             let summarizeBtn = document.createElement('button');
-            summarizeBtn.className = 'btn btn-xs btn-secondary';
+            summarizeBtn.className = 'btn btn-xs btn-secondary ai-btn-options';
             summarizeBtn.innerHTML = `
                 <i class="fa fa-list" style="margin-right: 4px;"></i>
                 Summarize
@@ -35,13 +35,19 @@ $(document).ready(function () {
                 window.CRMCopilotWidget.sendMessage('Summarize Conversations', metadata)
             }
 
-            // let writeEmailBtn = document.createElement('button');
-            // writeEmailBtn.className = 'btn btn-xs btn-secondary';
-            // writeEmailBtn.textContent = 'Write Email';
-            // writeEmailBtn.onclick = () => frappe.msgprint('Write Email clicked!');
+            let writeEmailBtn = document.createElement('button');
+            writeEmailBtn.className = 'btn btn-xs btn-secondary ai-btn-options';
+            writeEmailBtn.innerHTML = `
+                <i class="fa fa-envelope" style="margin-right: 4px;"></i>
+                Write Email
+            `;
+            writeEmailBtn.onclick = () => {
+                window.CRMCopilotWidget.open(); 
+                window.CRMCopilotWidget.sendMessage('Write a mail')
+            }
 
             dropdown.appendChild(summarizeBtn);
-            // dropdown.appendChild(writeEmailBtn);
+            dropdown.appendChild(writeEmailBtn);
 
             mainBtn.onclick = function (e) {
                 e.stopPropagation();

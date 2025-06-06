@@ -48,7 +48,7 @@ def get_all_communications(doctype, docname):
     communications = frappe.get_all(
         "Communication",
         filters={"reference_doctype": doctype, "reference_name": docname},
-        fields=["subject", "communication_medium", "sender", "recipients", "content", "text_content", "communication_date", "in_reply_to"],
-        order_by="communication_date desc",
+        fields=["name", "subject", "communication_medium", "sender", "recipients", "content", "text_content", "communication_date", "in_reply_to"],
+        order_by="communication_date asc",
     )
     return communications

@@ -1,0 +1,4 @@
+body.copilot-open #body {
+  margin-right: 400px;
+  transition: margin-right 0.3s ease-in-out;
+}
