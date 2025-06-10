@@ -90,12 +90,15 @@ def generate_jwt_token(user):
     if not doc:
         raise frappe.AuthenticationError
     user_details.api_secret = get_decrypted_password(doctype, doc, fieldname="api_secret")
+    timezone = user_details.time_zone or frappe.defaults.get_global_default("time_zone") or "UTC"
+
     payload = {
         "api_key": user_details.api_key,
         "api_secret": user_details.api_secret,
         "iat": int(time.time()),
         "jti": str(uuid.uuid4()),
         "iss": frappe.conf.domain,
+        "tz": timezone,
     }
     secret_key = frappe.conf.copilot_secret_key
     token = jwt.encode(payload, secret_key, algorithm="HS256")
