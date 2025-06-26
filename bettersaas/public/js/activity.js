@@ -43,7 +43,7 @@ $(document).ready(function () {
             `;
             writeEmailBtn.onclick = () => {
                 window.CRMCopilotWidget.open(); 
-                window.CRMCopilotWidget.sendMessage('Write a mail')
+                window.CRMCopilotWidget.sendMessage('Write an email')
             }
 
             dropdown.appendChild(summarizeBtn);
