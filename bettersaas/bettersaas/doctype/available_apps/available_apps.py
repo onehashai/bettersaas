@@ -4,7 +4,6 @@
 import frappe
 from frappe.model.document import Document
 
-@frappe.whitelist(allow_guest=True)
 def get_apps():
     all_apps = frappe.db.get_list('Available Apps',fields=['*'],ignore_permissions=True)
     return all_apps

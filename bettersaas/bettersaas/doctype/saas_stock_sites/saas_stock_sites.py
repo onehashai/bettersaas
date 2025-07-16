@@ -3,7 +3,6 @@ import os
 from frappe.model.document import Document
 from frappe.utils import random_string
 
-@frappe.whitelist(allow_guest=True)
 def get_all_stock_sites():
     stock_sites = frappe.db.get_list(
         "SaaS Stock Sites",

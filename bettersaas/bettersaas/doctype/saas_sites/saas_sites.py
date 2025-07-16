@@ -456,7 +456,6 @@ def convert_to_bytes(size):
     return float(size)
 
 
-@frappe.whitelist(allow_guest=True)
 def get_site_backup_size(site_name):
     docs = frappe.db.get_list(
         "SaaS Sites Backup",

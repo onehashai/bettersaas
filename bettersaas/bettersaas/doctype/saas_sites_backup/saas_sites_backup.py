@@ -6,7 +6,7 @@ import os
 import boto3
 from frappe.model.document import Document
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def get_backups(site):
     backups = frappe.db.get_list(
         "SaaS Sites Backup",
