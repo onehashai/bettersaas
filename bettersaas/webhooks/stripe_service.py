@@ -9,7 +9,7 @@ from bettersaas.bettersaas.doctype.saas_sites.saas_sites import (
 
 def get_site_name_from_customer_id(customer_id):
     customer = stripe.Customer.retrieve(customer_id)
-    site_name = customer.metadata.get("site_name")
+    site_name = customer.get("metadata", {}).get("site_name")
     return site_name
 
 
@@ -30,9 +30,11 @@ def get_current_invoice_due_date(site_name):
 def process_subscription_updated(data, plan_name):
     customer_id = data["customer"]
     metadata = data.get("metadata", {})
-    site_name = metadata.get("site_name", "")
+    site_name = metadata.get("site_name", "") or get_site_name_from_customer_id(
+        customer_id
+    )
     if not site_name:
-        site_name = get_site_name_from_customer_id(customer_id)
+        return
     subscription_id = data["id"]
     price_id = data["plan"]["id"]
     product_id = data["plan"]["product"]
@@ -92,9 +94,11 @@ def process_subscription_updated(data, plan_name):
 def process_subscription_deleted(data, plan_name):
     customer_id = data["customer"]
     metadata = data.get("metadata", {})
-    site_name = metadata.get("site_name", "")
+    site_name = metadata.get("site_name", "") or get_site_name_from_customer_id(
+        customer_id
+    )
     if not site_name:
-        site_name = get_site_name_from_customer_id(customer_id)
+        return
     subscription_id = data["id"]
     price_id = data["plan"]["id"]
     product_id = data["plan"]["product"]
