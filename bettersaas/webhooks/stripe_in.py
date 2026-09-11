@@ -48,17 +48,21 @@ def process_payload(*args, **kwargs):
         "customer.subscription.updated",
     }:
         process_subscription_updated(
-            event.data.object, get_plan_name(event.data.object)
+            event.data.object,
+            get_plan_name(event.data.object),
+            event_created=event.get("created"),
         )
     elif event["type"] == "customer.subscription.deleted":
         process_subscription_deleted(
-            event.data.object, get_plan_name(event.data.object)
+            event.data.object,
+            get_plan_name(event.data.object),
+            event_created=event.get("created"),
         )
     elif event["type"] in {
         "invoice.finalized",
         "invoice.paid",
         "invoice.marked_uncollectible",
-        "invoice.voided",
+        "invoice.overdue",
     }:
         process_invoice_update(event.data.object)
     else:

@@ -2,11 +2,11 @@
 # For license information, please see license.txt
 
 import os
+import shlex
 import frappe
 import shutil
 import traceback
 from datetime import datetime, timedelta
-from frappe import _
 from frappe.utils.password import decrypt
 from frappe.model.document import Document
 from markupsafe import Markup, escape
@@ -233,9 +233,7 @@ def get_site_expiry_reminder_content(site_name, expiry_date, payment_page_url=No
         else ""
     )
     payment_link = (
-        '<a href="{0}" style="color: #007ee5;">{0}</a>'.format(
-            escape(payment_page_url)
-        )
+        '<a href="{0}" style="color: #007ee5;">{0}</a>'.format(escape(payment_page_url))
         if payment_page_url
         else ""
     )
@@ -313,4 +311,72 @@ def notify_site_expiration():
 
 
 class SaaSSettings(Document):
-    pass
+    def on_update(self):
+        old_doc = self.get_doc_before_save()
+        if old_doc and (
+            old_doc.subscription_expiry_grace_days
+            == self.subscription_expiry_grace_days
+        ):
+            return
+
+        frappe.enqueue_doc(
+            self.doctype,
+            self.name,
+            "refresh_site_expiry_dates",
+            queue="long",
+            timeout=3600,
+            enqueue_after_commit=True,
+        )
+
+    def refresh_site_expiry_dates(self):
+        from bettersaas.bettersaas.doctype.saas_sites.saas_sites import (
+            execute_commands,
+            get_subscription_expiry_grace_days,
+            get_site_expiry_base_date,
+            get_site_expiry_date,
+        )
+
+        grace_days = get_subscription_expiry_grace_days()
+        sites_path = os.path.realpath(
+            os.path.join(frappe.utils.get_bench_path(), "sites")
+        )
+        commands = []
+        missing_site_configs = []
+        for site_name in frappe.get_all("SaaS Sites", pluck="site_name"):
+            site_path = os.path.realpath(os.path.join(sites_path, site_name))
+            site_config_path = os.path.join(site_path, "site_config.json")
+            if (
+                os.path.commonpath([sites_path, site_path]) != sites_path
+                or not os.path.isfile(site_config_path)
+            ):
+                missing_site_configs.append(site_name)
+                continue
+
+            site_config = frappe.get_site_config(site_path=site_name)
+            expiry_base_date = get_site_expiry_base_date(
+                site_config.get("subscription_status"),
+                site_config.get("subscription_starts_on"),
+                site_config.get("subscription_ends_on"),
+                site_config.get("invoice_due_date"),
+            )
+            commands.append(
+                "bench --site {} set-config subscription_expiry_grace_days {}".format(
+                    shlex.quote(str(site_name)),
+                    shlex.quote(str(grace_days)),
+                )
+            )
+            commands.append(
+                "bench --site {} set-config site_expiry_date {}".format(
+                    shlex.quote(str(site_name)),
+                    shlex.quote(str(get_site_expiry_date(expiry_base_date))),
+                )
+            )
+
+        if missing_site_configs:
+            frappe.log_error(
+                title="Skipped subscription expiry refresh for missing sites",
+                message="\n".join(missing_site_configs),
+            )
+
+        if commands:
+            execute_commands(commands)
