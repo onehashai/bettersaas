@@ -188,7 +188,8 @@
    "default": "5",
    "fieldname": "subscription_expiry_grace_days",
    "fieldtype": "Int",
-   "label": "Subscription Expiry Grace Days"
+   "label": "Subscription Expiry Grace Days",
+   "non_negative": 1
   },
   {
    "fieldname": "column_break_sexx",

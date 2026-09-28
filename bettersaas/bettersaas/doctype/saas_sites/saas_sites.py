@@ -187,8 +187,7 @@ def mark_site_as_used(site):
 
 def execute_commands(commands):
     command = " && ".join(commands)
-    process = sp.Popen(command, shell=True)
-    process.wait()
+    sp.run(command, shell=True, check=True)
     os.system(
         "echo {} | sudo -S sudo service nginx reload".format(
             frappe.conf.get("root_password")
@@ -539,10 +538,7 @@ def update_invoice_due(site_name, due_date):
 
 def get_subscription_expiry_grace_days():
     grace_days = frappe.get_doc("SaaS Settings").subscription_expiry_grace_days
-    if grace_days is None:
-        return 5
-
-    return int(grace_days)
+    return int(grace_days if grace_days is not None else 5)
 
 
 def get_site_expiry_date(base_date):
@@ -552,6 +548,21 @@ def get_site_expiry_date(base_date):
     return frappe_utils.add_days(
         frappe_utils.getdate(base_date), get_subscription_expiry_grace_days()
     )
+
+
+def get_site_expiry_base_date(
+    subscription_status,
+    subscription_starts_on,
+    subscription_ends_on,
+    invoice_due_date=None,
+):
+    if invoice_due_date == "None":
+        invoice_due_date = None
+
+    if subscription_status in {"past_due", "unpaid"}:
+        return invoice_due_date or subscription_starts_on or subscription_ends_on
+
+    return subscription_ends_on
 
 
 def update_site_expiry_date(site_name, site_expiry_date):
@@ -689,9 +700,13 @@ class SaaSSites(Document):
                     due_date = invoice.due_date
 
         update_invoice_due(self.site_name, due_date)
-        update_site_expiry_date(
-            self.site_name, get_site_expiry_date(due_date or self.subscription_ends_on)
+        expiry_base_date = get_site_expiry_base_date(
+            self.subscription_status,
+            self.subscription_starts_on,
+            self.subscription_ends_on,
+            due_date,
         )
+        update_site_expiry_date(self.site_name, get_site_expiry_date(expiry_base_date))
 
     def on_update(self):
         self.update_ips()
