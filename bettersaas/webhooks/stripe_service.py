@@ -55,6 +55,24 @@ def get_set_config_command(site_name, key, value):
     )
 
 
+def get_plan_name_from_subscription(data, country, fallback=None):
+    product_id = data["plan"]["product"]
+    products = (
+        frappe.conf.get("stripe_prices", {})
+        .get(country, {})
+        .get("products", {})
+    )
+    plan_names = {
+        "ONEHASH_CRM": "OneHash_CRM",
+        "ONEHASH_ERP": "OneHash_ERP",
+    }
+    for configured_name, product in products.items():
+        if product.get("product_id") == product_id:
+            return plan_names.get(configured_name, configured_name)
+
+    return fallback
+
+
 def process_subscription_updated(data, plan_name, event_created=None):
     sync_subscription(data, plan_name, event_created)
 
@@ -88,8 +106,11 @@ def sync_subscription_by_id(subscription_id, site_name, plan_name, event_created
         # Stripe doesn't guarantee webhook delivery order. Always retrieve the current
         # object while holding the per-site lock instead of applying an event snapshot.
         current_data = stripe.Subscription.retrieve(subscription_id)
+        current_plan_name = get_plan_name_from_subscription(
+            current_data, site_config.get("country"), fallback=plan_name
+        )
         update_subscription_config(
-            current_data, plan_name, site_name, event_created=event_created
+            current_data, current_plan_name, site_name, event_created=event_created
         )
 
 

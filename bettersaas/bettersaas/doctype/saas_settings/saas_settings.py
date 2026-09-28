@@ -1,15 +1,18 @@
 # Copyright (c) 2023, OneHash and contributors
 # For license information, please see license.txt
 
+import json
 import os
-import shlex
-import frappe
 import shutil
 import traceback
 from datetime import datetime, timedelta
-from frappe.utils.password import decrypt
+
+import frappe
+from filelock import FileLock
 from frappe.model.document import Document
+from frappe.utils.password import decrypt
 from markupsafe import Markup, escape
+
 from bettersaas.bettersaas.utils import parse_email_list, send_account_status_email
 
 
@@ -310,6 +313,45 @@ def notify_site_expiration():
         frappe.log_error("Failed to notify site expiration", failed_to_notify)
 
 
+def update_site_subscription_expiry_config(site_config_path, grace_days):
+    from bettersaas.bettersaas.doctype.saas_sites.saas_sites import (
+        get_site_expiry_base_date,
+    )
+
+    site_path = os.path.dirname(site_config_path)
+    locks_path = os.path.join(site_path, "locks")
+    os.makedirs(locks_path, exist_ok=True)
+
+    with FileLock(
+        os.path.join(locks_path, "stripe_subscription_sync.lock"), timeout=30
+    ):
+        with FileLock(os.path.join(locks_path, "site_config.lock"), timeout=30):
+            with open(site_config_path) as site_config_file:
+                site_config = json.load(site_config_file)
+
+            expiry_base_date = get_site_expiry_base_date(
+                site_config.get("subscription_status"),
+                site_config.get("subscription_starts_on"),
+                site_config.get("subscription_ends_on"),
+                site_config.get("invoice_due_date"),
+            )
+            expiry_date = (
+                frappe.utils.add_days(
+                    frappe.utils.getdate(expiry_base_date), grace_days
+                )
+                if expiry_base_date and expiry_base_date != "None"
+                else None
+            )
+
+            site_config["subscription_expiry_grace_days"] = grace_days
+            site_config["site_expiry_date"] = (
+                str(expiry_date) if expiry_date else None
+            )
+
+            with open(site_config_path, "w") as site_config_file:
+                json.dump(site_config, site_config_file, indent=1, sort_keys=True)
+
+
 class SaaSSettings(Document):
     def on_update(self):
         old_doc = self.get_doc_before_save()
@@ -330,18 +372,15 @@ class SaaSSettings(Document):
 
     def refresh_site_expiry_dates(self):
         from bettersaas.bettersaas.doctype.saas_sites.saas_sites import (
-            execute_commands,
             get_subscription_expiry_grace_days,
-            get_site_expiry_base_date,
-            get_site_expiry_date,
         )
 
         grace_days = get_subscription_expiry_grace_days()
         sites_path = os.path.realpath(
             os.path.join(frappe.utils.get_bench_path(), "sites")
         )
-        commands = []
         missing_site_configs = []
+        failed_sites = []
         for site_name in frappe.get_all("SaaS Sites", pluck="site_name"):
             site_path = os.path.realpath(os.path.join(sites_path, site_name))
             site_config_path = os.path.join(site_path, "site_config.json")
@@ -352,25 +391,15 @@ class SaaSSettings(Document):
                 missing_site_configs.append(site_name)
                 continue
 
-            site_config = frappe.get_site_config(site_path=site_name)
-            expiry_base_date = get_site_expiry_base_date(
-                site_config.get("subscription_status"),
-                site_config.get("subscription_starts_on"),
-                site_config.get("subscription_ends_on"),
-                site_config.get("invoice_due_date"),
-            )
-            commands.append(
-                "bench --site {} set-config subscription_expiry_grace_days {}".format(
-                    shlex.quote(str(site_name)),
-                    shlex.quote(str(grace_days)),
+            try:
+                update_site_subscription_expiry_config(
+                    site_config_path,
+                    grace_days,
                 )
-            )
-            commands.append(
-                "bench --site {} set-config site_expiry_date {}".format(
-                    shlex.quote(str(site_name)),
-                    shlex.quote(str(get_site_expiry_date(expiry_base_date))),
+            except Exception:
+                failed_sites.append(
+                    {"site": site_name, "error": traceback.format_exc()}
                 )
-            )
 
         if missing_site_configs:
             frappe.log_error(
@@ -378,5 +407,8 @@ class SaaSSettings(Document):
                 message="\n".join(missing_site_configs),
             )
 
-        if commands:
-            execute_commands(commands)
+        if failed_sites:
+            frappe.log_error(
+                title="Failed to refresh subscription expiry for sites",
+                message=frappe.as_json(failed_sites),
+            )

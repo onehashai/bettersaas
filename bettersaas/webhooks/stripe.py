@@ -63,6 +63,7 @@ def process_payload(*args, **kwargs):
         "invoice.paid",
         "invoice.marked_uncollectible",
         "invoice.overdue",
+        "invoice.voided",
     }:
         process_invoice_update(event.data.object)
     else:
