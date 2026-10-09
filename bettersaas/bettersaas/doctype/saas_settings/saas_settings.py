@@ -14,6 +14,7 @@ from frappe.utils.password import decrypt
 from markupsafe import Markup, escape
 
 from bettersaas.bettersaas.utils import parse_email_list, send_account_status_email
+from bettersaas.remote_management import is_enterprise_site, update_desired_state
 
 
 def get_days_since_creation(folder_path):
@@ -84,6 +85,8 @@ def delete_free_sites():
     )
     to_be_deleted = []
     for site in sites:
+        if is_enterprise_site(site.site_name):
+            continue
         try:
             site_config = frappe.get_site_config(site_path=site.site_name)
             expiry_date = frappe.utils.getdate(
@@ -392,6 +395,34 @@ class SaaSSettings(Document):
                 continue
 
             try:
+                if is_enterprise_site(site_name):
+                    site_config = frappe.get_site_config(site_path=site_name)
+                    from bettersaas.bettersaas.doctype.saas_sites.saas_sites import (
+                        get_site_expiry_base_date,
+                    )
+
+                    expiry_base_date = get_site_expiry_base_date(
+                        site_config.get("subscription_status"),
+                        site_config.get("subscription_starts_on"),
+                        site_config.get("subscription_ends_on"),
+                        site_config.get("invoice_due_date"),
+                    )
+                    expiry_date = (
+                        frappe.utils.add_days(
+                            frappe.utils.getdate(expiry_base_date), grace_days
+                        )
+                        if expiry_base_date and expiry_base_date != "None"
+                        else None
+                    )
+                    update_desired_state(
+                        site_name,
+                        {
+                            "subscription_expiry_grace_days": grace_days,
+                            "site_expiry_date": expiry_date,
+                        },
+                        reason="subscription grace period refreshed",
+                    )
+                    continue
                 update_site_subscription_expiry_config(
                     site_config_path,
                     grace_days,

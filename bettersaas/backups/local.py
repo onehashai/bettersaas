@@ -12,6 +12,8 @@ import frappe
 from frappe.utils import cint, get_bench_path, now_datetime
 from frappe.utils.background_jobs import enqueue
 
+from bettersaas.remote_management import is_enterprise_site
+
 
 DEFAULT_BACKUP_COUNT = 7
 DEFAULT_MIN_FREE_GB = 20
@@ -47,6 +49,8 @@ def schedule_nightly_database_backups():
 
 	queued = []
 	for site in sorted(filter(None, sites)):
+		if site != frappe.local.site and is_enterprise_site(site):
+			continue
 		if not _site_path(site).is_dir():
 			frappe.log_error(f"Site directory does not exist: {site}", "Local backup skipped")
 			continue
@@ -69,6 +73,8 @@ def cleanup_all_site_backups():
 	sites_root = Path(get_bench_path()) / "sites"
 	for path in sites_root.iterdir():
 		if not path.is_dir() or not (path / "site_config.json").is_file():
+			continue
+		if is_enterprise_site(path.name):
 			continue
 		try:
 			cleanup_site_backups(path.name)

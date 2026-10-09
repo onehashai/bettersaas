@@ -32,6 +32,13 @@ def delete_site_backup_records(site_name):
 
 @frappe.whitelist()
 def delete_site(site_name):
+    from bettersaas.remote_management import is_enterprise_site
+
+    if is_enterprise_site(site_name):
+        frappe.throw(
+            "Remote enterprise sites cannot be deleted from Bettersaas. "
+            "Delete them through their server-level operations process."
+        )
     saas_sites_doc = frappe.get_list(
         "SaaS Sites", filters={"name": site_name}, fields=["name"]
     )[0]

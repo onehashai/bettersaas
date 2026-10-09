@@ -18,6 +18,7 @@ from frappe import utils as frappe_utils
 from frappe.core.doctype.user.user import test_password_strength
 from frappe.utils.password import decrypt, encrypt
 from frappe.model.document import Document
+from bettersaas.remote_management import is_enterprise_site, update_desired_state
 
 
 @frappe.whitelist()
@@ -164,6 +165,22 @@ def login(name):
 
 @frappe.whitelist()
 def disable_enable_site(site_name, status):
+    if is_enterprise_site(site_name):
+        command = update_desired_state(
+            site_name,
+            {"saas_site_disabled": 1 if status == "Active" else 0},
+            reason="site disabled" if status == "Active" else "site enabled",
+        )
+        if not command:
+            return {"queued": False, "unprovisioned": True}
+        frappe.db.set_value(
+            "SaaS Sites",
+            site_name,
+            "status",
+            "In-Active" if status == "Active" else "Active",
+        )
+        return {"queued": True, "command": command}
+
     commands = []
     if status == "Active":
         commands.append(
@@ -432,6 +449,21 @@ def check_site_created(*args, **kwargs):
 
 @frappe.whitelist()
 def update_limits(*args, **kwargs):
+    values = {
+        key: value
+        for key, value in kwargs.items()
+        if key in ["min_license", "max_email", "max_storage"]
+    }
+    if is_enterprise_site(kwargs["site_name"]):
+        command = update_desired_state(
+            kwargs["site_name"], values, reason="limits updated"
+        )
+        return {
+            "queued": bool(command),
+            "command": command,
+            "unprovisioned": not bool(command),
+        }
+
     commands = []
     for key, value in kwargs.items():
         if key in ["min_license", "max_email", "max_storage"]:
@@ -530,6 +562,10 @@ def reignore_ips():
 
 
 def update_invoice_due(site_name, due_date):
+    if is_enterprise_site(site_name):
+        return update_desired_state(
+            site_name, {"invoice_due_date": due_date}, reason="invoice due date updated"
+        )
     commands = [
         "bench --site {} set-config invoice_due_date {}".format(site_name, due_date)
     ]
@@ -566,6 +602,12 @@ def get_site_expiry_base_date(
 
 
 def update_site_expiry_date(site_name, site_expiry_date):
+    if is_enterprise_site(site_name):
+        return update_desired_state(
+            site_name,
+            {"site_expiry_date": site_expiry_date},
+            reason="site expiry updated",
+        )
     commands = [
         "bench --site {} set-config site_expiry_date {}".format(
             site_name, site_expiry_date
@@ -575,6 +617,12 @@ def update_site_expiry_date(site_name, site_expiry_date):
 
 
 def update_skip_subscription_expiry(site_name, skip_subscription_expiry):
+    if is_enterprise_site(site_name):
+        return update_desired_state(
+            site_name,
+            {"skip_subscription_expiry": 1 if skip_subscription_expiry else 0},
+            reason="internal site exemption updated",
+        )
     commands = [
         "bench --site {} set-config skip_subscription_expiry {}".format(
             site_name, 1 if skip_subscription_expiry else 0
@@ -595,6 +643,10 @@ class SaaSSites(Document):
 
             if os.path.exists(config_file):
                 self.site_config = frappe.get_site_config(site_path=self.site_name)
+
+    @property
+    def is_enterprise_site(self):
+        return is_enterprise_site(self.site_name)
 
     @property
     def license_limit(self):
@@ -672,6 +724,8 @@ class SaaSSites(Document):
             return sid
 
     def update_ips(self):
+        if self.is_enterprise_site:
+            return
         old_doc = self.get_doc_before_save()
         old_ips = old_doc.parse_ips() if old_doc else []
         new_ips = self.parse_ips()
@@ -722,6 +776,8 @@ class SaaSSites(Document):
             frappe.msgprint("Failed to notify customer about invoice update.")
 
     def on_trash(self):
+        if self.is_enterprise_site:
+            return
         if self.whitelist_ips:
             f2b.remove_ignore_ips(self.parse_ips())
 

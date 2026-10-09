@@ -10,6 +10,7 @@
  "field_order": [
   "site_name",
   "status",
+  "is_enterprise_site",
   "is_internal_site",
   "saas_user",
   "linked_email",
@@ -39,6 +40,10 @@
   "subscription_id",
   "customer_id",
   "site_expiry_date",
+  "management_section",
+  "management_sync_status",
+  "last_management_sync",
+  "last_management_error",
   "section_break_ejpf",
   "invoices",
   "whitelisted_ips_tab",
@@ -208,6 +213,37 @@
    "fieldname": "status",
    "fieldtype": "Data",
    "label": "Status",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_enterprise_site",
+   "fieldtype": "Check",
+   "is_virtual": 1,
+   "label": "Enterprise Site",
+   "read_only": 1
+  },
+  {
+   "fieldname": "management_section",
+   "fieldtype": "Section Break",
+   "label": "Enterprise Management"
+  },
+  {
+   "fieldname": "management_sync_status",
+   "fieldtype": "Data",
+   "label": "Management Sync Status",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_management_sync",
+   "fieldtype": "Datetime",
+   "label": "Last Management Sync",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_management_error",
+   "fieldtype": "Small Text",
+   "label": "Last Management Error",
    "read_only": 1
   },
   {

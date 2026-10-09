@@ -1,0 +1,47 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "site",
+  "command_id",
+  "revision",
+  "reason",
+  "status",
+  "attempts",
+  "next_attempt",
+  "last_attempt",
+  "completed_at",
+  "response_status",
+  "last_error",
+  "payload"
+ ],
+ "fields": [
+  {"fieldname": "site", "fieldtype": "Link", "in_list_view": 1, "label": "Site", "options": "SaaS Sites", "reqd": 1},
+  {"fieldname": "command_id", "fieldtype": "Data", "label": "Command ID", "read_only": 1, "reqd": 1, "unique": 1},
+  {"fieldname": "revision", "fieldtype": "Int", "in_list_view": 1, "label": "Revision", "read_only": 1},
+  {"fieldname": "reason", "fieldtype": "Data", "label": "Reason", "read_only": 1},
+  {"fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Queued\nRunning\nRetrying\nSucceeded\nSuperseded\nFailed", "read_only": 1},
+  {"fieldname": "attempts", "fieldtype": "Int", "label": "Attempts", "read_only": 1},
+  {"fieldname": "next_attempt", "fieldtype": "Datetime", "label": "Next Attempt", "read_only": 1},
+  {"fieldname": "last_attempt", "fieldtype": "Datetime", "label": "Last Attempt", "read_only": 1},
+  {"fieldname": "completed_at", "fieldtype": "Datetime", "label": "Completed At", "read_only": 1},
+  {"fieldname": "response_status", "fieldtype": "Int", "label": "HTTP Status", "read_only": 1},
+  {"fieldname": "last_error", "fieldtype": "Small Text", "label": "Last Error", "read_only": 1},
+  {"fieldname": "payload", "fieldtype": "Code", "label": "Payload", "options": "JSON", "read_only": 1}
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-09 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Bettersaas",
+ "name": "SaaS Remote Command",
+ "owner": "Administrator",
+ "permissions": [
+  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "System Manager", "share": 1, "write": 1}
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
