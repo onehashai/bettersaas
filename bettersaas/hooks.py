@@ -126,6 +126,9 @@ doc_events = {
 
 
 scheduler_events = {
+    "all": [
+        "bettersaas.remote_management.process_due_commands",
+    ],
     "cron":{
         "30 1 * * *": [
             "bettersaas.backups.local.schedule_nightly_database_backups",

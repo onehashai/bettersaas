@@ -13,6 +13,7 @@ from bettersaas.bettersaas.doctype.saas_sites.saas_sites import (
     get_site_expiry_base_date,
     get_site_expiry_date,
 )
+from bettersaas.remote_management import is_enterprise_site, update_desired_state
 
 
 def get_site_name_from_customer_id(customer_id):
@@ -144,6 +145,12 @@ def update_subscription_config(data, plan_name, site_name, event_created=None):
     }
     if event_created is not None:
         values["stripe_subscription_event_created"] = event_created
+
+    if is_enterprise_site(site_name):
+        update_desired_state(
+            site_name, values, reason="Stripe subscription synchronized"
+        )
+        return
 
     site_config = frappe.get_site_config(site_path=site_name)
     commands = [
