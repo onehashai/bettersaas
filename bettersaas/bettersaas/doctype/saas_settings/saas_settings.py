@@ -8,6 +8,7 @@ import traceback
 from datetime import datetime, timedelta
 
 import frappe
+import stripe
 from filelock import FileLock
 from frappe.model.document import Document
 from frappe.utils.password import decrypt
@@ -218,15 +219,38 @@ def get_config_date(site_config, key):
         return frappe.utils.getdate(value)
 
 
-def get_payment_page_url(site):
-    invoices = [
-        invoice
-        for invoice in site.invoices
-        if invoice.payment_page_url and invoice.status in {"open", "uncollectible"}
-    ]
-    invoices.sort(key=lambda invoice: invoice.due_date or frappe.utils.getdate())
-    if invoices:
-        return invoices[0].payment_page_url
+def get_payment_page_url(site_name, site_config):
+    subscription_id = site_config.get("subscription_id")
+    if not subscription_id:
+        return
+
+    country = site_config.get("country")
+    try:
+        stripe.api_key = (
+            frappe.conf.stripe_secret_key_in
+            if country == "IN"
+            else frappe.conf.stripe_secret_key
+        )
+        stripe.api_version = frappe.conf.stripe_api_version
+        invoices = stripe.Invoice.list(
+            subscription=subscription_id,
+            status="open",
+            limit=100,
+        )
+    except Exception:
+        frappe.log_error(
+            title=f"Failed to validate Stripe invoice for {site_name}",
+            message=traceback.format_exc(),
+        )
+        return
+
+    for invoice in invoices.get("data", []):
+        if (
+            invoice.get("status") == "open"
+            and invoice.get("amount_remaining", 0) > 0
+            and invoice.get("hosted_invoice_url")
+        ):
+            return invoice.get("hosted_invoice_url")
 
 
 def get_site_expiry_reminder_content(site_name, expiry_date, payment_page_url=None):
@@ -297,9 +321,10 @@ def notify_site_expiration():
             if not recipient:
                 continue
 
-            site_doc = frappe.get_doc("SaaS Sites", site.name)
             content = get_site_expiry_reminder_content(
-                site.site_name, expiry_date, get_payment_page_url(site_doc)
+                site.site_name,
+                expiry_date,
+                get_payment_page_url(site.site_name, site_config),
             )
             send_account_status_email(
                 recipient,
